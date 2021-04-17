@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>eff</title>
+    <title>eff（日本語訳）</title>
     <link href="./images/s2.ico"                                   type="image/x-icon" rel="specs2 icon"/>
     <link href="./css/opensans-fonts.css"                          type="text/css"     rel="stylesheet" />
     <link href="./css/bootstrap.min.css"                           type="text/css"     rel="stylesheet" />
@@ -41,7 +41,7 @@
 <!-- table of contents -->
 <div id="tree"><ul>
                 <li id="index"><a href="index.html" title="eff">eff</a>
-      <ul><ul><li><a href="index.html#contributing" title="Contributing">Contributing</a>
+      <ul><ul><li><a href="index.html#contributing" title="貢献">貢献</a>
           
         </li></ul></ul>
       <ul>
@@ -295,26 +295,27 @@
 
 
 <div class="col-md-10 col-sm-9 col-xs-9">
-<h1>eff</h1>
+<h1>eff（日本語訳）</h1>
 <div id="tipue_search_content"></div>
 
-<p>Extensible effects are an alternative to monad transformers for computing with effects in a functional way. This library is based on the “free-er” monad and an “open union” of effects described by Oleg Kiselyov in <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer monads, more extensible effects</a>.</p>
-<p>You can learn more in the following sections, it is recommended to read them in order if you are new to <code class="prettyprint">eff</code>:</p>
+<p>Extensible effects は、モナドトランスフォーマーに代わるもののひとつで、関数的な方法で副作用（effects）のある計算を行うためのものだ。このライブラリは、Oleg Kiselyov の論文 <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer monads, more extensible effects</a> で述べられた、"free-er" モナドと "open union" の副作用に基づく。</p>
+<p>以下の章で詳しく学べる。<code class="prettyprint">eff</code> について何もかも初めてなら、順番に読んでいくことを推奨する。</p>
 <ol type="1">
-<li><link class="ok"><a href="org.atnos.site.Installation.html" tooltip="" class="ok">installation and imports</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.Introduction.html" tooltip="" class="ok">your first effects</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.OutOfTheBox.html" tooltip="" class="ok">standard effects in eff</a></link>: <code class="prettyprint">Reader</code>, <code class="prettyprint">Writer</code>, <code class="prettyprint">Eval</code>, <code class="prettyprint">State</code>,…</li>
-<li><link class="ok"><a href="org.atnos.site.Tutorial.html" tooltip="" class="ok">tutorial</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.CreateEffects.html" tooltip="" class="ok">create your own effects</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.TransformStack.html" tooltip="" class="ok">interpret and manipulate effect stacks</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.MemberImplicits.html" tooltip="" class="ok">use Member implicits</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.ApplicativeEvaluation.html" tooltip="" class="ok">use an applicative evaluation</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.Cookbook.html" tooltip="" class="ok">tips and tricks</a></link></li>
-<li><link class="ok"><a href="org.atnos.site.CommunityResources.html" tooltip="" class="ok">community resources</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.Installation.html" tooltip="" class="ok">インストールとインポート</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.Introduction.html" tooltip="" class="ok">初めての副作用</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.OutOfTheBox.html" tooltip="" class="ok">eff における一般的な副作用</a></link>: <code class="prettyprint">Reader</code>, <code class="prettyprint">Writer</code>, <code class="prettyprint">Eval</code>, <code class="prettyprint">State</code>,…</li>
+<li><link class="ok"><a href="org.atnos.site.Tutorial.html" tooltip="" class="ok">チュートリアル</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.CreateEffects.html" tooltip="" class="ok">自分の副作用を作ってみる</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.TransformStack.html" tooltip="" class="ok">副作用のスタックを解釈し、処理する</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.MemberImplicits.html" tooltip="" class="ok">Member implicits を使う</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.ApplicativeEvaluation.html" tooltip="" class="ok">アプリカティブ評価を使う</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.Cookbook.html" tooltip="" class="ok">ヒントとコツ</a></link></li>
+<li><link class="ok"><a href="org.atnos.site.CommunityResources.html" tooltip="" class="ok">コミュニティのリソース</a></link></li>
 </ol>
-<h3 id="contributing">Contributing</h3>
-<p><code class="prettyprint">eff</code> is a <a href="https://typelevel.org">Typelevel</a> project. This means we embrace pure, typeful, functional programming, and provide a safe and friendly environment for teaching, learning, and contributing as described in the <a href="https://www.scala-lang.org/conduct/">Scala Code of Conduct</a>.</p>
-<p>Feel free to open an issue if you notice a bug, have an idea for a feature, or have a question about the code. Pull requests are also gladly accepted.</p>
+<h3 id="contributing">貢献</h3>
+<p><code class="prettyprint">eff</code> は <a href="https://typelevel.org">Typelevel</a> のプロジェクトだ。これの意味するところは、われわれは、純粋で、型に満ち、関数型のプログラミングをわれわれは採用する。<a href="https://www.scala-lang.org/conduct/">Scala Code of Conduct（行動憲章）</a>にあるように、教育・学習・貢献のための安全で友好的な環境を提供する。</p>
+<p>何かバグに気づいたり、機能についてアイデアがあったり、コードについて質問があったりしたら、自由にイシューを開いてほしい。プルリクエストも喜んで受けいれられる。</p>
+<p>訳注）この日本語訳に対するイシューやプルリクエストは <a href="https://github.com/exoego/eff">exoego/eff</a> まで送って欲しい。</p>
 </div>
 
 <script>
