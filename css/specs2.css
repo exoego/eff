@@ -377,3 +377,8 @@ h3.both-ribbon::after {
   border-bottom: 10px solid transparent;
   border-left: 10px solid rgb(0, 80, 116);
 }
+
+#tipue_search_content {
+  padding-top: 15px;
+  margin: 0;
+}
