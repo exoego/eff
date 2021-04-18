@@ -76,7 +76,7 @@
                   </ul>
     </li>
               </ul><ul>
-                <li id="org-atnos-site-outofthebox"><a href="org.atnos.site.OutOfTheBox.html" title="Out of the box">Out of the box</a>
+                <li id="org-atnos-site-outofthebox"><a href="org.atnos.site.OutOfTheBox.html" title="すぐ使えるエフェクト">すぐ使えるエフェクト</a>
       <ul><ul><li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?" title="What’s next?">What’s next?</a>
           
         </li></ul></ul>
@@ -361,7 +361,7 @@ program[Stack].runReader(6).runWriter.runEval.run</code></pre>
 </ol>
 <p><br/> エフェクトがスタックでの宣言順と同じ順序で実行されていないことに気づいたかもしれない。エフェクトは実はどんな順序でも実行できる。ただ、どんな順序でも結果が同じになることを意味しない。例えば、<code class="prettyprint">Writer</code> エフェクトの次に <code class="prettyprint">Either</code> エフェクトを実行したら <code class="prettyprint">String Either (A, List[String])</code> が返るのに対して、<code class="prettyprint">Either</code> エフェクトの次に <code class="prettyprint">Writer</code> エフェクトを実行すると <code class="prettyprint">(String Either A, List[String])</code> が返る。</p>
 <p>これはすべて、Scala の型推論を正しい返り値に導いてくれるいくつかの implicit 定義のおかげだ。implicits については <a href="org.atnos.site.MemberImplicits.html"  class="ok">implicits</a> の章でさらに学べる.</p>
-<p>このあとは、<a href="org.atnos.site.Tutorial.html"  class="ok">チュートリアル</a> を読めば Eff モナドの使い方についてさらに具体的な説明が得られるし、このライブラリがサポートしている <a href="org.atnos.site.OutOfTheBox.html"  class="ok">すぐに使えるエフェクト</a> を学んでもいい。</p>
+<p>このあとは、<a href="org.atnos.site.Tutorial.html"  class="ok">チュートリアル</a> を読めば Eff モナドの使い方についてさらに具体的な説明が得られるし、このライブラリがサポートしている <a href="org.atnos.site.OutOfTheBox.html"  class="ok">すぐ使えるエフェクト</a> を学んでもいい。</p>
 </div>
 
 <script>
