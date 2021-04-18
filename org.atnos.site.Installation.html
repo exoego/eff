@@ -50,15 +50,15 @@
       <ul><ul><li><a href="org.atnos.site.Installation.html#additional-dependencies" title="さらなる依存関係">さらなる依存関係</a>
           
         </li><li><a href="org.atnos.site.Installation.html#imports" title="インポート">インポート</a>
-          <ul><li><a href="org.atnos.site.Installation.html#main-types" title="Main types">Main types</a>
+          <ul><li><a href="org.atnos.site.Installation.html#main-types" title="主要な型">主要な型</a>s</a>
           
-        </li><li><a href="org.atnos.site.Installation.html#creating-effects" title="Creating effects">Creating effects</a>
+        </li><li><a href="org.atnos.site.Installation.html#creating-effects" title="エフェクトの作成">エフェクトの作成</a>
           
-        </li><li><a href="org.atnos.site.Installation.html#interpreting-effects" title="Interpreting effects">Interpreting ef...</a>
+        </li><li><a href="org.atnos.site.Installation.html#interpreting-effects"title="エフェクトの解釈">エフェクトの解釈</a>
           
         </li><li><a href="org.atnos.site.Installation.html#intellij-support" title="Intellij support">Intellij support</a>
           
-        </li><li><a href="org.atnos.site.Installation.html#with-scalaz" title="With Scalaz">With Scalaz</a>
+        </li><li><a href="org.atnos.site.Installation.html#with-scalaz" title="Scalaz と使う">Scalaz と使う</a>
           
         </li></ul>
         </li></ul></ul>
@@ -208,7 +208,7 @@
                   </ul>
     </li>
               </ul><ul>
-                <li id="org-atnos-site-createeffects"><a href="org.atnos.site.CreateEffects.html" title="Creating effects">Creating effects</a>
+                <li id="org-atnos-site-createeffects"><a href="org.atnos.site.CreateEffects.html" title="エフェクトの作成">エフェクトの作成</a>
       <ul><ul><li><a href="org.atnos.site.CreateEffects.html#creation" title="Creation">Creation</a>
           
         </li><li><a href="org.atnos.site.CreateEffects.html#compiler-limitation" title="Compiler limitation">Compiler limita...</a>
@@ -305,7 +305,7 @@
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">addCompilerPlugin</span>(<span class="st">&quot;org.typelevel&quot;</span> %% <span class="st">&quot;kind-projector&quot;</span> % <span class="st">&quot;0.11.3&quot;</span> cross CrossVersion.<span class="fu">full</span>)</span></code></pre></div>
 <p> <code class="prettyprint">Reader[String, *]</code> （1つ以上の型パラメーター）のような型を正確に推論してほしければ、以下のコンパイラーオプションを使う必要がある。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>scalacOptions += <span class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre></div>
-<h5 id="additional-dependencies">さらなるの依存関係</h5>
+<h5 id="additional-dependencies">さらなる依存関係</h5>
 <p>この表はその他に利用できる eff モジュールを記載している。</p>
 <table>
 <colgroup>
@@ -343,8 +343,8 @@
 </table>
 <p/>
 <h3 id="imports">インポート</h3>
-<h4 id="main-types">主な型</h4>
-<p><code class="prettyprint">eff</code> の主な型: <code class="prettyprint">Eff</code>, <code class="prettyprint">Member</code>, <code class="prettyprint">Fx</code> は <code class="prettyprint">org.atnos.eff</code> パッケージで利用できる。</p>
+<h4 id="main-types">主要な型</h4>
+<p><code class="prettyprint">eff</code> の主要な型: <code class="prettyprint">Eff</code>, <code class="prettyprint">Member</code>, <code class="prettyprint">Fx</code> は <code class="prettyprint">org.atnos.eff</code> パッケージで利用できる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">_</span></span></code></pre></div>
 <p>多くの他のエフェクトも <a href="org.atnos.site.OutOfTheBox.html" tooltip="" class="ok">デフォルト設定で</a>利用できる.</p>
 <h4 id="creating-effects">エフェクトの作成</h4>
