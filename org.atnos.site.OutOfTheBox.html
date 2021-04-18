@@ -298,98 +298,98 @@
 <h1>すぐ使えるエフェクト</h1>
 <div id="tipue_search_content"></div>
 
-<p>This library comes with the following effects:</p>
+<p>このライブラリには以下のエフェクトが備わっている。</p>
 <table>
 <colgroup>
 <col style="width: 15%" />
 <col style="width: 75%" />
-<col style="width: 8%" />
+<col style="width: 10%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Description</th>
-<th>Link</th>
+<th>名前</th>
+<th>説明</th>
+<th>リンク</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><code class="prettyprint">EvalEffect</code></td>
-<td>an effect for delayed computations</td>
+<td>遅延された計算のためのエフェクト</td>
 <td><a href="org.atnos.site.lib.EvalEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">OptionEffect</code></td>
-<td>an effect for optional computations, stopping when there’s no available value</td>
+<td>任意の計算のためのエフェクトで、値が利用できないときは停止する</td>
 <td><a href="org.atnos.site.lib.OptionEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">EitherEffect</code></td>
-<td>an effect for computations with failures, stopping when there is a failure</td>
+<td>失敗しうる計算のためのエフェクトで、失敗したときは停止する</td>
 <td><a href="org.atnos.site.lib.EitherEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">ValidateEffect</code></td>
-<td>an effect for computations with failures, allowing to collect failures</td>
+<td>失敗しうる計算のためのエフェクトで、複数の失敗をまとめられる</td>
 <td><a href="org.atnos.site.lib.ValidateEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">ErrorEffect</code></td>
-<td>a mix of Eval and Either, catching exceptions and returning them as failures</td>
+<td>Eval と Either の複合エフェクトで、複数例外をキャッチしてそれらを失敗として返す</td>
 <td><a href="org.atnos.site.lib.ErrorEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">ReaderEffect</code></td>
-<td>an effect for depending on a configuration or an environment</td>
+<td>設定値や環境に依存するためのエフェクト</td>
 <td><a href="org.atnos.site.lib.ReaderEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">WriterEffect</code></td>
-<td>an effect to log messages</td>
+<td>メッセージ出力のためのエフェクト</td>
 <td><a href="org.atnos.site.lib.WriterEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">StateEffect</code></td>
-<td>an effect to pass state around</td>
+<td>プログラム内で状態を引き渡すためのエフェクト</td>
 <td><a href="org.atnos.site.lib.StateEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">ListEffect</code></td>
-<td>an effect for computations returning several values</td>
+<td>複数の値を返す計算のためのエフェクト</td>
 <td><a href="org.atnos.site.lib.ListEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">ChooseEffect</code></td>
-<td>an effect for modeling non-determinism</td>
+<td>非決定性計算をモデリングするためのエフェクト</td>
 <td><a href="org.atnos.site.lib.ChooseEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">MemoEffect</code></td>
-<td>an effect for memoizing values</td>
+<td>値をメモ化するためのエフェクト</td>
 <td><a href="org.atnos.site.lib.MemoEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">FutureEffect</code></td>
-<td>an effect for asynchronous computations</td>
+<td>非同期計算のためのエフェクト</td>
 <td><a href="org.atnos.site.lib.TimedFutureEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="odd">
 <td><code class="prettyprint">TaskEffect</code></td>
-<td>an effect for asynchronous computations using Monix Tasks</td>
+<td>Monix タスクを使った非同期計算のためのエフェクト</td>
 <td><a href="org.atnos.site.lib.TaskEffectPage.html"  class="ok">link</a></td>
 </tr>
 <tr class="even">
 <td><code class="prettyprint">SafeEffect</code></td>
-<td>an effect for guaranteeing resource safety</td>
+<td>リソースを安全に扱うことを保証するためのエフェクト</td>
 <td><a href="org.atnos.site.lib.SafeEffectPage.html"  class="ok">link</a></td>
 </tr>
 </tbody>
 </table>
-<p><small>(from <code class="prettyprint">org.atnos.eff._</code>)</small></p>
-<p>Other modules listed in <a href="org.atnos.site.Installation.html"  class="ok">Installation</a> provide additional effects (Twitter Future, Scalaz Task, Doobie ConnectionIO,…).</p>
+<p><small>(<code class="prettyprint">org.atnos.eff._</code> より)</small></p>
+<p><a href="org.atnos.site.Installation.html"  class="ok">インストール</a> で示された他のモジュールは、追加のエフェクト（Twitter Future、Scalaz Task、Doobie ConnectionIO……）を提供する。</p>
 <p><br/></p>
-<h2 id="whats-next">What’s next?</h2>
-<p>Now you can learn how to <a href="org.atnos.site.CreateEffects.html"  class="ok">create your own effects</a>!</p>
+<h2 id="whats-next">次は何？</h2>
+<p><a href="org.atnos.site.CreateEffects.html"  class="ok">自分のエフェクトを作る</a>方法を学べるだろう！</p>
 </div>
 
 <script>
