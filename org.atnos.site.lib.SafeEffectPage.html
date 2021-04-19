@@ -23,8 +23,75 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Safe</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The Safe effect is useful to handle resources which must be closed even in the presence of exceptions. The main operations are</p>
+        <ul>
+            <li><code class="prettyprint">finally</code> to create an action which must always be executed after another one, even if the first one fails</li>
+            <li><code class="prettyprint">catchThrowable</code> to handle a thrown exception</li>
+            <li><code class="prettyprint">bracket(open)(step)(close)</code> to open a resource, use it and then close it safely. The <code class="prettyprint">close</code> part is a “finalizer”
+                <p/></li>
+        </ul>
+        <p>Let’s see an example for the protection of a resource:</p>
+        <pre><code class="prettyprint">import org.atnos.eff.syntax.all._
+import org.atnos.eff._, all._
+
+// let&#39;s represent a resource which can be in use
+case class Resource(values: List[Int] = (1 to 10).toList, inUse: Boolean = false) {
+  def isClosed = !inUse
+}
+
+var resource = Resource()
+
+// our stack of effects, with safe evaluation
+type S = Fx.fx1[Safe]
+
+def openResource: Eff[S, Resource] =
+  protect { resource = resource.copy(inUse = true); resource }
+
+def closeResource(r: Resource): Eff[S, Unit] =
+  protect { resource = r.copy(inUse = false) }
+
+def useResource(ok: Boolean) = (r: Resource) =&gt;
+  protect[S, Int](if (ok) r.values.sum else throw new Exception(&quot;boo&quot;))
+
+// this program uses the resource safely even if there is an exception
+def program(ok: Boolean): (Throwable Either Int, List[Throwable]) =
+  bracket(openResource)(useResource(ok))(closeResource).
+    runSafe.run</code></pre>
+        <pre><code class="prettyprint">&gt; Results
+Without exception: Right(55), finalizers exceptions: no exceptions, resource is closed: true
+With exception   : Left(boo), finalizers exceptions: no exceptions, resource is closed: true</code></pre>
+        <p>As you can see in the signature of <code class="prettyprint">program</code> the return value of <code class="prettyprint">runSafe</code> is <code class="prettyprint">(Throwable Either A, List[Throwable])</code>. The first part is the result of your program, which may end with an exception, and the second part is the list of possible exceptions thrown by the finalizers which can themselves fail.</p>
+        <p>A simpler version of <code class="prettyprint">bracket</code> is <code class="prettyprint">finally</code>.</p>
+        <p>This example show how to use <code class="prettyprint">finally</code> but also what happens if a finalizer fails:</p>
+        <pre><code class="prettyprint">import org.atnos.eff.syntax.all._
+import org.atnos.eff._, all._
+
+// our stack of effects, with safe evaluation
+type S = Fx.fx1[Safe]
+
+var sumDone: Boolean = false
+
+def setDone(ok: Boolean): Eff[S, Unit] =
+  protect[S, Unit](if (ok) sumDone = true else throw new Exception(&quot;failed!!&quot;))
+
+// this program tries to set sumDone to true when the computation is done
+def program(ok: Boolean, finalizeOk: Boolean): (Throwable Either Int, List[Throwable]) =
+  (protect[S, Int](if (ok) (1 to 10).sum else throw new Exception(&quot;boo&quot;)) `finally` setDone(finalizeOk)).
+    runSafe.run
+</code></pre>
+        <pre><code class="prettyprint">&gt; Results
+Computation ok, finalizer ok: Right(55), finalizers exceptions: no exceptions
+Computation ok, finalizer ko: Right(55), finalizers exceptions: List(failed!!)
+Computation ko, finalizer ok: Left(boo), finalizers exceptions: no exceptions
+Computation ko, finalizer ko: Left(boo), finalizers exceptions: List(failed!!)</code></pre>
+        <p>Finally (no pun intended!) note that you can use <code class="prettyprint">execSafe</code> if you are not interested in the result of the finalizers.</p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,76 +352,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Safe</h1>
-<div id="tipue_search_content"></div>
-
-<p>The Safe effect is useful to handle resources which must be closed even in the presence of exceptions. The main operations are</p>
-<ul>
-<li><code class="prettyprint">finally</code> to create an action which must always be executed after another one, even if the first one fails</li>
-<li><code class="prettyprint">catchThrowable</code> to handle a thrown exception</li>
-<li><code class="prettyprint">bracket(open)(step)(close)</code> to open a resource, use it and then close it safely. The <code class="prettyprint">close</code> part is a “finalizer”
-<p/></li>
-</ul>
-<p>Let’s see an example for the protection of a resource:</p>
-<pre><code class="prettyprint">import org.atnos.eff.syntax.all._
-import org.atnos.eff._, all._
-
-// let&#39;s represent a resource which can be in use
-case class Resource(values: List[Int] = (1 to 10).toList, inUse: Boolean = false) {
-  def isClosed = !inUse
-}
-
-var resource = Resource()
-
-// our stack of effects, with safe evaluation
-type S = Fx.fx1[Safe]
-
-def openResource: Eff[S, Resource] =
-  protect { resource = resource.copy(inUse = true); resource }
-
-def closeResource(r: Resource): Eff[S, Unit] =
-  protect { resource = r.copy(inUse = false) }
-
-def useResource(ok: Boolean) = (r: Resource) =&gt;
-  protect[S, Int](if (ok) r.values.sum else throw new Exception(&quot;boo&quot;))
-
-// this program uses the resource safely even if there is an exception
-def program(ok: Boolean): (Throwable Either Int, List[Throwable]) =
-  bracket(openResource)(useResource(ok))(closeResource).
-    runSafe.run</code></pre>
-<pre><code class="prettyprint">&gt; Results
-Without exception: Right(55), finalizers exceptions: no exceptions, resource is closed: true
-With exception   : Left(boo), finalizers exceptions: no exceptions, resource is closed: true</code></pre>
-<p>As you can see in the signature of <code class="prettyprint">program</code> the return value of <code class="prettyprint">runSafe</code> is <code class="prettyprint">(Throwable Either A, List[Throwable])</code>. The first part is the result of your program, which may end with an exception, and the second part is the list of possible exceptions thrown by the finalizers which can themselves fail.</p>
-<p>A simpler version of <code class="prettyprint">bracket</code> is <code class="prettyprint">finally</code>.</p>
-<p>This example show how to use <code class="prettyprint">finally</code> but also what happens if a finalizer fails:</p>
-<pre><code class="prettyprint">import org.atnos.eff.syntax.all._
-import org.atnos.eff._, all._
-
-// our stack of effects, with safe evaluation
-type S = Fx.fx1[Safe]
-
-var sumDone: Boolean = false
-
-def setDone(ok: Boolean): Eff[S, Unit] =
-  protect[S, Unit](if (ok) sumDone = true else throw new Exception(&quot;failed!!&quot;))
-
-// this program tries to set sumDone to true when the computation is done
-def program(ok: Boolean, finalizeOk: Boolean): (Throwable Either Int, List[Throwable]) =
-  (protect[S, Int](if (ok) (1 to 10).sum else throw new Exception(&quot;boo&quot;)) `finally` setDone(finalizeOk)).
-    runSafe.run
-</code></pre>
-<pre><code class="prettyprint">&gt; Results
-Computation ok, finalizer ok: Right(55), finalizers exceptions: no exceptions
-Computation ok, finalizer ko: Right(55), finalizers exceptions: List(failed!!)
-Computation ko, finalizer ok: Left(boo), finalizers exceptions: no exceptions
-Computation ko, finalizer ko: Left(boo), finalizers exceptions: List(failed!!)</code></pre>
-<p>Finally (no pun intended!) note that you can use <code class="prettyprint">execSafe</code> if you are not interested in the result of the finalizers.</p>
-</div>
-
 </div>
 
 </body>

@@ -23,8 +23,31 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Reader</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The <code class="prettyprint">Reader</code> effect is used to request values from an “environment”. The main method is <code class="prettyprint">ask</code> to get the current environment (or “configuration” if you prefer to see it that way) and you can run an effect stack containing a <code class="prettyprint">Reader</code> effect by providing a value for the environment with the <code class="prettyprint">runReader</code> method.</p>
+        <p>You can also inject a “local” reader into a “bigger” one:</p>
+        <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+import cats.data._
+
+case class Conf(host: String, port: Int)
+
+type R1[A] = Reader[Int, A]
+type R2[A] = Reader[Conf, A]
+
+type S = Fx.fx2[R1, R2]
+
+def getPort[R](implicit r: Reader[Int, *] |= R): Eff[R, String] = for {
+  p1 &lt;- ask[R, Int]
+} yield &quot;the port is &quot; + p1
+
+getPort[S].translateReader((_: Conf).port).runReader(Conf(&quot;prod&quot;, 80)).run</code></pre>
+        <p><code class="prettyprint">&gt; the port is 80</code></p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,32 +308,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Reader</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">Reader</code> effect is used to request values from an “environment”. The main method is <code class="prettyprint">ask</code> to get the current environment (or “configuration” if you prefer to see it that way) and you can run an effect stack containing a <code class="prettyprint">Reader</code> effect by providing a value for the environment with the <code class="prettyprint">runReader</code> method.</p>
-<p>You can also inject a “local” reader into a “bigger” one:</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
-import cats.data._
-
-case class Conf(host: String, port: Int)
-
-type R1[A] = Reader[Int, A]
-type R2[A] = Reader[Conf, A]
-
-type S = Fx.fx2[R1, R2]
-
-def getPort[R](implicit r: Reader[Int, *] |= R): Eff[R, String] = for {
-  p1 &lt;- ask[R, Int]
-} yield &quot;the port is &quot; + p1
-
-getPort[S].translateReader((_: Conf).port).runReader(Conf(&quot;prod&quot;, 80)).run</code></pre>
-<p><code class="prettyprint">&gt; the port is 80</code></p>
-</div>
-
 </div>
 
 </body>

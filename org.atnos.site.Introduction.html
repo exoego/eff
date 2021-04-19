@@ -24,7 +24,77 @@
 
 <div class="container">
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>初めてのエフェクト</h1>
+        <div id="tipue_search_content"></div>
+
+        <p>Extensible effects は、モナドトランスフォーマーに代わるもののひとつで、エフェクト（effects、作用）のある計算を関数的な方法で行うためのものだ。このライブラリは <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Oleg Kiselyov の論文</a> で述べられたように、「エフェクトスタック」 を作るために "free-er" モナドと extensible effect を使っている。</p>
+        <p>このアプローチには多くの利点がある。</p>
+        <ul>
+            <li><p>操作がエフェクトを「必要とする」ものとして宣言でき、前もってフルスタック（full-stack）なエフェクトを決める必要はない。</p></li>
+            <li><p>エフェクトのハンドラーはモジュラーであり、必要に応じて（実行時でさえ）他の実装と入れ替えられる。</p></li>
+            <li><p>内部の実装は高性能で、スタックセーフである。</p></li>
+            <li><p>既存のモナディックなデータ型をこのライブラリと連携できる。</p></li>
+            <li><p>エフェクトスタックを変更したり結合したりできる。</p></li>
+        </ul>
+        <p>ここまではたぶん抽象的すぎるので、これらが一体何を意味するのかより詳細に見ていこう。</p>
+        <h3 id="first-example">最初の例</h3>
+        <p><strong>まず、<a href="org.atnos.site.Installation.html"  class="ok">インストール</a>ページで示されたセットアップをすべて完了しておくこと。</strong></p>
+        <p>モナディックな作用は <code class="prettyprint">Eff[R, A]</code> の値としてモデル化する。ここで <code class="prettyprint">R</code> はエフェクトの集合を、<code class="prettyprint">A</code> は計算によって返る値を意味する。この計算はおそらく、評価されたときに何らかのエフェクト（副作用）を引き起こす。</p>
+        <p>エフェクト <code class="prettyprint">R</code> は、「エフェクトコンストラクター」の型レベルリストとしてモデル化される。例えば、</p>
+        <pre><code class="prettyprint">import cats._, data._
+import org.atnos.eff._
+
+type ReaderInt[A] = Reader[Int, A]
+type WriterString[A] = Writer[String, A]
+
+type Stack = Fx.fx3[WriterString, ReaderInt, Eval]</code></pre>
+        <p>このエフェクトスタック <code class="prettyprint">Stack</code> は３つのエフェクトを宣言している。</p>
+        <ul>
+            <li><p><code class="prettyprint">ReaderInt</code> エフェクトは何らかの <code class="prettyprint">Int</code> 型の設定値にアクセスする</p></li>
+            <li><p><code class="prettyprint">WriterString</code> エフェクトは文字列のメッセージをログ出力する</p></li>
+            <li><p><code class="prettyprint">Eval</code> エフェクトは要求されたときにだけ値を計算する（Scala の lazy 値に少し似ている）</p></li>
+        </ul>
+        <p>さて、<code class="prettyprint">ReaderEffect</code>、<code class="prettyprint">WriterEffect</code> そして <code class="prettyprint">EvalEffect</code> によって与えられたプリミティブな操作を使うことで、３つのエフェクトのあるプログラムを書くことができる。</p>
+        <pre><code class="prettyprint">import org.atnos.eff.all._
+import org.atnos.eff.syntax.all._
+
+// ReaderInt と WriterString エフェクトが R の「メンバー」であると示している便利な型エイリアス。
+// ここで R はさらにエフェクトを持ちうることを示している。
+type _readerInt[R]    = ReaderInt |= R
+type _writerString[R] = WriterString |= R
+
+def program[R :_readerInt :_writerString :_eval]: Eff[R, Int] = for {
+  // 設定を取得
+  n &lt;- ask[R, Int]
+
+  // 現在の設定値をログ
+  _ &lt;- tell(&quot;必要な乗数は &quot; + n)
+
+  // 2 の n 乗を計算
+  a &lt;- delay(math.pow(2, n.toDouble).toInt)
+
+  // 結果をログ
+  _ &lt;- tell(&quot;結果は &quot; + a)
+} yield a
+
+// すべての「インタープリター」で操作を実行。
+// 各インタープリターは１つのエフェクトを実行する。
+program[Stack].runReader(6).runWriter.runEval.run</code></pre>
+        <p><code class="prettyprint">&gt; (64,List(必要な乗数は 6, 結果は 64))</code></p>
+        <p>ご覧のとおり、<code class="prettyprint">Stack</code> 型のすべてのエフェクトはひとつずつ実行される。</p>
+        <ol type="1">
+            <li><code class="prettyprint">Reader</code> エフェクトは、値 <code class="prettyprint">6</code> を、それを必要とする計算に提供する</li>
+            <li><code class="prettyprint">Writer</code> エフェクトはメッセージをログ出力する</li>
+            <li><code class="prettyprint">Eval</code> エフェクトは「2 の乗算」を計算する</li>
+            <li><code class="prettyprint">run</code> は最終結果を取り出す</li>
+        </ol>
+        <p><br/> エフェクトがスタックでの宣言順と同じ順序で実行されていないことに気づいたかもしれない。エフェクトは実はどんな順序でも実行できる。ただ、どんな順序でも結果が同じになることを意味しない。例えば、<code class="prettyprint">Writer</code> エフェクトの次に <code class="prettyprint">Either</code> エフェクトを実行したら <code class="prettyprint">String Either (A, List[String])</code> が返るのに対して、<code class="prettyprint">Either</code> エフェクトの次に <code class="prettyprint">Writer</code> エフェクトを実行すると <code class="prettyprint">(String Either A, List[String])</code> が返る。</p>
+        <p>これはすべて、Scala の型推論を正しい返り値に導いてくれるいくつかの implicit 定義のおかげだ。implicits については <a href="org.atnos.site.MemberImplicits.html"  class="ok">implicits</a> の章でさらに学べる.</p>
+        <p>このあとは、<a href="org.atnos.site.Tutorial.html"  class="ok">チュートリアル</a> を読めば Eff モナドの使い方についてさらに具体的な説明が得られるし、このライブラリがサポートしている <a href="org.atnos.site.OutOfTheBox.html"  class="ok">すぐ使えるエフェクト</a> を学んでもいい。</p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -284,77 +354,6 @@
               </ul></div><script>$(function () { $('#tree').jstree({'core':{'initially_open':['index','org-atnos-site-introduction'], 'animation':200}, 'themes' : {'theme': 'default','url': './css/themes/default/style.css'}, 'plugins':['themes', 'html_data']}); });</script>
 
 </div>
-</div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>初めてのエフェクト</h1>
-<div id="tipue_search_content"></div>
-
-<p>Extensible effects は、モナドトランスフォーマーに代わるもののひとつで、エフェクト（effects、作用）のある計算を関数的な方法で行うためのものだ。このライブラリは <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Oleg Kiselyov の論文</a> で述べられたように、「エフェクトスタック」 を作るために "free-er" モナドと extensible effect を使っている。</p>
-<p>このアプローチには多くの利点がある。</p>
-<ul>
-<li><p>操作がエフェクトを「必要とする」ものとして宣言でき、前もってフルスタック（full-stack）なエフェクトを決める必要はない。</p></li>
-<li><p>エフェクトのハンドラーはモジュラーであり、必要に応じて（実行時でさえ）他の実装と入れ替えられる。</p></li>
-<li><p>内部の実装は高性能で、スタックセーフである。</p></li>
-<li><p>既存のモナディックなデータ型をこのライブラリと連携できる。</p></li>
-<li><p>エフェクトスタックを変更したり結合したりできる。</p></li>
-</ul>
-<p>ここまではたぶん抽象的すぎるので、これらが一体何を意味するのかより詳細に見ていこう。</p>
-<h3 id="first-example">最初の例</h3>
-<p><strong>まず、<a href="org.atnos.site.Installation.html"  class="ok">インストール</a>ページで示されたセットアップをすべて完了しておくこと。</strong></p>
-<p>モナディックな作用は <code class="prettyprint">Eff[R, A]</code> の値としてモデル化する。ここで <code class="prettyprint">R</code> はエフェクトの集合を、<code class="prettyprint">A</code> は計算によって返る値を意味する。この計算はおそらく、評価されたときに何らかのエフェクト（副作用）を引き起こす。</p>
-<p>エフェクト <code class="prettyprint">R</code> は、「エフェクトコンストラクター」の型レベルリストとしてモデル化される。例えば、</p>
-<pre><code class="prettyprint">import cats._, data._
-import org.atnos.eff._
-
-type ReaderInt[A] = Reader[Int, A]
-type WriterString[A] = Writer[String, A]
-
-type Stack = Fx.fx3[WriterString, ReaderInt, Eval]</code></pre>
-<p>このエフェクトスタック <code class="prettyprint">Stack</code> は３つのエフェクトを宣言している。</p>
-<ul>
-<li><p><code class="prettyprint">ReaderInt</code> エフェクトは何らかの <code class="prettyprint">Int</code> 型の設定値にアクセスする</p></li>
-<li><p><code class="prettyprint">WriterString</code> エフェクトは文字列のメッセージをログ出力する</p></li>
-<li><p><code class="prettyprint">Eval</code> エフェクトは要求されたときにだけ値を計算する（Scala の lazy 値に少し似ている）</p></li>
-</ul>
-<p>さて、<code class="prettyprint">ReaderEffect</code>、<code class="prettyprint">WriterEffect</code> そして <code class="prettyprint">EvalEffect</code> によって与えられたプリミティブな操作を使うことで、３つのエフェクトのあるプログラムを書くことができる。</p>
-<pre><code class="prettyprint">import org.atnos.eff.all._
-import org.atnos.eff.syntax.all._
-
-// ReaderInt と WriterString エフェクトが R の「メンバー」であると示している便利な型エイリアス。
-// ここで R はさらにエフェクトを持ちうることを示している。
-type _readerInt[R]    = ReaderInt |= R
-type _writerString[R] = WriterString |= R
-
-def program[R :_readerInt :_writerString :_eval]: Eff[R, Int] = for {
-  // 設定を取得
-  n &lt;- ask[R, Int]
-
-  // 現在の設定値をログ
-  _ &lt;- tell(&quot;必要な乗数は &quot; + n)
-
-  // 2 の n 乗を計算
-  a &lt;- delay(math.pow(2, n.toDouble).toInt)
-
-  // 結果をログ
-  _ &lt;- tell(&quot;結果は &quot; + a)
-} yield a
-
-// すべての「インタープリター」で操作を実行。
-// 各インタープリターは１つのエフェクトを実行する。
-program[Stack].runReader(6).runWriter.runEval.run</code></pre>
-<p><code class="prettyprint">&gt; (64,List(必要な乗数は 6, 結果は 64))</code></p>
-<p>ご覧のとおり、<code class="prettyprint">Stack</code> 型のすべてのエフェクトはひとつずつ実行される。</p>
-<ol type="1">
-<li><code class="prettyprint">Reader</code> エフェクトは、値 <code class="prettyprint">6</code> を、それを必要とする計算に提供する</li>
-<li><code class="prettyprint">Writer</code> エフェクトはメッセージをログ出力する</li>
-<li><code class="prettyprint">Eval</code> エフェクトは「2 の乗算」を計算する</li>
-<li><code class="prettyprint">run</code> は最終結果を取り出す</li>
-</ol>
-<p><br/> エフェクトがスタックでの宣言順と同じ順序で実行されていないことに気づいたかもしれない。エフェクトは実はどんな順序でも実行できる。ただ、どんな順序でも結果が同じになることを意味しない。例えば、<code class="prettyprint">Writer</code> エフェクトの次に <code class="prettyprint">Either</code> エフェクトを実行したら <code class="prettyprint">String Either (A, List[String])</code> が返るのに対して、<code class="prettyprint">Either</code> エフェクトの次に <code class="prettyprint">Writer</code> エフェクトを実行すると <code class="prettyprint">(String Either A, List[String])</code> が返る。</p>
-<p>これはすべて、Scala の型推論を正しい返り値に導いてくれるいくつかの implicit 定義のおかげだ。implicits については <a href="org.atnos.site.MemberImplicits.html"  class="ok">implicits</a> の章でさらに学べる.</p>
-<p>このあとは、<a href="org.atnos.site.Tutorial.html"  class="ok">チュートリアル</a> を読めば Eff モナドの使い方についてさらに具体的な説明が得られるし、このライブラリがサポートしている <a href="org.atnos.site.OutOfTheBox.html"  class="ok">すぐ使えるエフェクト</a> を学んでもいい。</p>
 </div>
 
 </div>

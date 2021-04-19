@@ -23,8 +23,32 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Validate</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The <code class="prettyprint">Validate</code> effect is similar to the <code class="prettyprint">Either</code> effect but let you accumulate failures:</p>
+        <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+
+  /**
+   * Stack declaration
+   */
+  type S = Fx.fx1[Validate[String, *]]
+
+  def checkPositiveInt(i: Int): Eff[S, Unit] =
+  validateCheck(i &gt;= 0, s&quot;$i is not positive&quot;)
+
+  def checkPositiveInts(a: Int, b: Int, c: Int): Eff[S, (Int, Int, Int)] = for {
+  _ &lt;- checkPositiveInt(a)
+  _ &lt;- checkPositiveInt(b)
+  _ &lt;- checkPositiveInt(c)
+} yield (a, b, c)
+
+  checkPositiveInts(1, -3, -2).runNel.run</code></pre>
+        <p><code class="prettyprint">&gt; Left(NonEmptyList(-3 is not positive, -2 is not positive))</code></p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,33 +309,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Validate</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">Validate</code> effect is similar to the <code class="prettyprint">Either</code> effect but let you accumulate failures:</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
-
-  /**
-   * Stack declaration
-   */
-  type S = Fx.fx1[Validate[String, *]]
-
-  def checkPositiveInt(i: Int): Eff[S, Unit] =
-  validateCheck(i &gt;= 0, s&quot;$i is not positive&quot;)
-
-  def checkPositiveInts(a: Int, b: Int, c: Int): Eff[S, (Int, Int, Int)] = for {
-  _ &lt;- checkPositiveInt(a)
-  _ &lt;- checkPositiveInt(b)
-  _ &lt;- checkPositiveInt(c)
-} yield (a, b, c)
-
-  checkPositiveInts(1, -3, -2).runNel.run</code></pre>
-<p><code class="prettyprint">&gt; Left(NonEmptyList(-3 is not positive, -2 is not positive))</code></p>
-</div>
-
 </div>
 
 </body>

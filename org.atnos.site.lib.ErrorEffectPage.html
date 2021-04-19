@@ -23,8 +23,27 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Error</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The <code class="prettyprint">Error</code> effect is both an <code class="prettyprint">Eval</code> effect and a <code class="prettyprint">Either</code> one with <code class="prettyprint">Throwable Either F</code> on the “left” side. The idea is to represent computations which can fail, either with an exception or a failure. You can:</p>
+        <ul>
+            <li><p>create delayed computations with <code class="prettyprint">ok</code></p></li>
+            <li><p>fail with <code class="prettyprint">fail(f: F)</code> where <code class="prettyprint">F</code> is the failure type</p></li>
+            <li><p>throw an exception with <code class="prettyprint">exception</code></p></li>
+        </ul>
+        <p>Other useful combinators are available:</p>
+        <ul>
+            <li><p><code class="prettyprint">andFinally(last)</code> registers an action to be executed even in case of an exception or a failure</p></li>
+            <li><p><code class="prettyprint">orElse</code> runs an action and then run another one if the first is not successful</p></li>
+            <li><p><code class="prettyprint">whenFailed</code> does the same thing than <code class="prettyprint">orElse</code> but uses the error for <code class="prettyprint">action1</code> to decide which action to run next</p></li>
+        </ul>
+        <p>When you run an <code class="prettyprint">Error</code> effect you get back an <code class="prettyprint">Error Either A</code> where <code class="prettyprint">Error</code> is a type alias for <code class="prettyprint">Throwable Either Failure</code>.</p>
+        <p>The <code class="prettyprint">Error</code> object implements this effect with <code class="prettyprint">String</code> as the <code class="prettyprint">Failure</code> type but you are encouraged to create our own failure datatype and extend the <code class="prettyprint">Error[MyFailureDatatype]</code> trait.</p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,28 +304,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Error</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">Error</code> effect is both an <code class="prettyprint">Eval</code> effect and a <code class="prettyprint">Either</code> one with <code class="prettyprint">Throwable Either F</code> on the “left” side. The idea is to represent computations which can fail, either with an exception or a failure. You can:</p>
-<ul>
-<li><p>create delayed computations with <code class="prettyprint">ok</code></p></li>
-<li><p>fail with <code class="prettyprint">fail(f: F)</code> where <code class="prettyprint">F</code> is the failure type</p></li>
-<li><p>throw an exception with <code class="prettyprint">exception</code></p></li>
-</ul>
-<p>Other useful combinators are available:</p>
-<ul>
-<li><p><code class="prettyprint">andFinally(last)</code> registers an action to be executed even in case of an exception or a failure</p></li>
-<li><p><code class="prettyprint">orElse</code> runs an action and then run another one if the first is not successful</p></li>
-<li><p><code class="prettyprint">whenFailed</code> does the same thing than <code class="prettyprint">orElse</code> but uses the error for <code class="prettyprint">action1</code> to decide which action to run next</p></li>
-</ul>
-<p>When you run an <code class="prettyprint">Error</code> effect you get back an <code class="prettyprint">Error Either A</code> where <code class="prettyprint">Error</code> is a type alias for <code class="prettyprint">Throwable Either Failure</code>.</p>
-<p>The <code class="prettyprint">Error</code> object implements this effect with <code class="prettyprint">String</code> as the <code class="prettyprint">Failure</code> type but you are encouraged to create our own failure datatype and extend the <code class="prettyprint">Error[MyFailureDatatype]</code> trait.</p>
-</div>
-
 </div>
 
 </body>
