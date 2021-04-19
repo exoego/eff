@@ -70,7 +70,7 @@
     </li>
               </ul><ul>
                 <li id="org-atnos-site-outofthebox"><a href="org.atnos.site.OutOfTheBox.html" title="すぐ使えるエフェクト">すぐ使えるエフェクト</a>
-      <ul><ul><li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?" title="What’s next?">What’s next?</a>
+      <ul><ul><li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?" title="次にすることは？">次にすることは？</a>
           
         </li></ul></ul>
       <ul>
@@ -202,11 +202,11 @@
     </li>
               </ul><ul>
                 <li id="org-atnos-site-createeffects"><a href="org.atnos.site.CreateEffects.html" title="エフェクトの作成">エフェクトの作成</a>
-      <ul><ul><li><a href="org.atnos.site.CreateEffects.html#creation" title="Creation">Creation</a>
+      <ul><ul><li><a href="org.atnos.site.CreateEffects.html#creation" title="作成">作成</a>
           
-        </li><li><a href="org.atnos.site.CreateEffects.html#compiler-limitation" title="Compiler limitation">Compiler limita...</a>
+        </li><li><a href="org.atnos.site.CreateEffects.html#compiler-limitation" title="コンパイラーの制限">コンパイラーの制限</a>
           
-        </li><li><a href="org.atnos.site.CreateEffects.html#interpreter" title="Interpreter">Interpreter</a>
+        </li><li><a href="org.atnos.site.CreateEffects.html#interpreter" title="インタープリター">インタープリター</a>
           
         </li></ul></ul>
       <ul>
@@ -294,7 +294,7 @@
 <p>sbt の依存関係として <code class="prettyprint">eff</code> を追加する。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>libraryDependencies += <span class="st">&quot;org.atnos&quot;</span> %% <span class="st">&quot;eff&quot;</span> % <span class="st">&quot;5.16.0-SNAPSHOT&quot;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">//（任意）Reader[String, *] のように型を書たければ</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">//（任意）Reader[String, *] のように型を書きたければ</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">addCompilerPlugin</span>(<span class="st">&quot;org.typelevel&quot;</span> %% <span class="st">&quot;kind-projector&quot;</span> % <span class="st">&quot;0.11.3&quot;</span> cross CrossVersion.<span class="fu">full</span>)</span></code></pre></div>
 <p> <code class="prettyprint">Reader[String, *]</code> （1つ以上の型パラメーター）のような型を正確に推論してほしければ、以下のコンパイラーオプションを使う必要がある。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>scalacOptions += <span class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre></div>
