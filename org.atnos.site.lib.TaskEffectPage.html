@@ -24,7 +24,43 @@
 
 <div class="container">
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Task</h1>
+        <div id="tipue_search_content"></div>
+
+        <p>The <code class="prettyprint">Task</code> effect is a thin shim on top of Monix’s <code class="prettyprint">Task</code>. This effect is not bundled in core Eff and requires the <code class="prettyprint">eff-monix</code> extension to use.</p>
+        <p>Now, let’s create some <code class="prettyprint">Task</code> effects:</p>
+        <pre><code class="prettyprint">import org.atnos.eff._
+import org.atnos.eff.addon.monix.task._
+import org.atnos.eff.syntax.addon.monix.task._
+
+import monix.eval.Task
+
+type R = Fx.fx2[Task, Option]
+
+val action: Eff[R, Int] =
+  for {
+  // create a value now
+    a &lt;- Eff.pure[R, Int](1)
+
+    // evaluate a value later, on the thread pool specified by a Monix `Scheduler`, and continue when it&#39;s finished
+    b &lt;- taskDelay[R, Int](1)
+  } yield b
+
+</code></pre>
+        <p>Then we need to pass a Monix <code class="prettyprint">Scheduler</code> in to begin the computation.</p>
+        <pre><code class="prettyprint">
+implicit val scheduler =
+  monix.execution.Scheduler(ExecutionContext.fromExecutorService(Executors.newScheduledThreadPool(10)): ExecutionContext)
+
+</code></pre>
+        <p>Monix doesn’t natively offer an Await API to block on a Task result. Instead it advises converting to a Scala <code class="prettyprint">Future</code> and using <code class="prettyprint">Await.result</code>. See https://monix.io/docs/2x/eval/task.html#blocking-for-a-result</p>
+        <pre><code class="prettyprint">import scala.concurrent.Await
+
+Await.result(action.runOption.runAsync.runToFuture, 1 second)</code></pre>
+        <p><code class="prettyprint">&gt; Some(1)</code></p>
+    </div>
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -284,44 +320,6 @@
               </ul></div><script>$(function () { $('#tree').jstree({'core':{'initially_open':['org-atnos-site-outofthebox','index','org-atnos-site-lib-taskeffectpage'], 'animation':200}, 'themes' : {'theme': 'default','url': './css/themes/default/style.css'}, 'plugins':['themes', 'html_data']}); });</script>
 
 </div>
-</div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Task</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">Task</code> effect is a thin shim on top of Monix’s <code class="prettyprint">Task</code>. This effect is not bundled in core Eff and requires the <code class="prettyprint">eff-monix</code> extension to use.</p>
-<p>Now, let’s create some <code class="prettyprint">Task</code> effects:</p>
-<pre><code class="prettyprint">import org.atnos.eff._
-import org.atnos.eff.addon.monix.task._
-import org.atnos.eff.syntax.addon.monix.task._
-
-import monix.eval.Task
-
-type R = Fx.fx2[Task, Option]
-
-val action: Eff[R, Int] =
-  for {
-  // create a value now
-    a &lt;- Eff.pure[R, Int](1)
-
-    // evaluate a value later, on the thread pool specified by a Monix `Scheduler`, and continue when it&#39;s finished
-    b &lt;- taskDelay[R, Int](1)
-  } yield b
-
-</code></pre>
-<p>Then we need to pass a Monix <code class="prettyprint">Scheduler</code> in to begin the computation.</p>
-<pre><code class="prettyprint">
-implicit val scheduler =
-  monix.execution.Scheduler(ExecutionContext.fromExecutorService(Executors.newScheduledThreadPool(10)): ExecutionContext)
-
-</code></pre>
-<p>Monix doesn’t natively offer an Await API to block on a Task result. Instead it advises converting to a Scala <code class="prettyprint">Future</code> and using <code class="prettyprint">Await.result</code>. See https://monix.io/docs/2x/eval/task.html#blocking-for-a-result</p>
-<pre><code class="prettyprint">import scala.concurrent.Await
-
-Await.result(action.runOption.runAsync.runToFuture, 1 second)</code></pre>
-<p><code class="prettyprint">&gt; Some(1)</code></p>
 </div>
 
 </div>

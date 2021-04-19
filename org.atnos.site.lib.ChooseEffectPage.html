@@ -24,7 +24,36 @@
 
 <div class="container">
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+<h1>Choose</h1>
+<div id="tipue_search_content"></div>
+
+<p>The <code class="prettyprint">Choose</code> effect is used for non-deterministic computations. With the <code class="prettyprint">Choose</code> effect you can model computations which either:</p>
+<ul>
+    <li>return no result at all</li>
+    <li>choose between 2 different computations</li>
+</ul>
+<p><code class="prettyprint">Choose</code> is actually a generalization of <code class="prettyprint">List</code> where instead of “exploring” all the branches we might “cut” some of them. That behaviour is controlled by the <code class="prettyprint">Alternative[F]</code> instance you use when running <code class="prettyprint">Choose</code>.</p>
+<p>For example if we take <code class="prettyprint">List</code> to run a similar example as before, we get the list of all the accepted pairs:</p>
+<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+
+type S = Fx.fx1[Choose]
+
+// create all the possible pairs for a given list
+// where the sum is greater than a value
+def pairsBiggerThan[R :_choose](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
+a &lt;- chooseFrom(list)
+b &lt;- chooseFrom(list)
+found &lt;- if (a + b &gt; n) EffMonad[R].pure((a, b))
+else           zero
+} yield found
+
+import cats.instances.list._
+
+pairsBiggerThan[S](List(1, 2, 3, 4), 5).runChoose.run</code></pre>
+<p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
+</div>
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -287,35 +316,6 @@
 </div>
 
 
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Choose</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">Choose</code> effect is used for non-deterministic computations. With the <code class="prettyprint">Choose</code> effect you can model computations which either:</p>
-<ul>
-<li>return no result at all</li>
-<li>choose between 2 different computations</li>
-</ul>
-<p><code class="prettyprint">Choose</code> is actually a generalization of <code class="prettyprint">List</code> where instead of “exploring” all the branches we might “cut” some of them. That behaviour is controlled by the <code class="prettyprint">Alternative[F]</code> instance you use when running <code class="prettyprint">Choose</code>.</p>
-<p>For example if we take <code class="prettyprint">List</code> to run a similar example as before, we get the list of all the accepted pairs:</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
-
-type S = Fx.fx1[Choose]
-
-// create all the possible pairs for a given list
-// where the sum is greater than a value
-def pairsBiggerThan[R :_choose](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
-  a &lt;- chooseFrom(list)
-  b &lt;- chooseFrom(list)
-  found &lt;- if (a + b &gt; n) EffMonad[R].pure((a, b))
-  else           zero
-} yield found
-
-import cats.instances.list._
-
-pairsBiggerThan[S](List(1, 2, 3, 4), 5).runChoose.run</code></pre>
-<p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
-</div>
 
 </div>
 

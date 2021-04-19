@@ -24,7 +24,102 @@
 
 <div class="container">
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>エフェクトの作成</h1>
+        <div id="tipue_search_content"></div>
+
+        <h3 id="creation">作成</h3>
+        <p>新しいエフェクトはとても簡単にこのライブラリに追加できる。Effect 型を新しい「オプショナル型」用に作ってみよう。</p>
+        <p>必要なものは、</p>
+        <ul>
+            <li><p>ベースとなる型。<code class="prettyprint">Maybe</code> データ型とする。２つのケース <code class="prettyprint">Just</code> と <code class="prettyprint">Nothing</code> がある。</p></li>
+            <li><p><code class="prettyprint">A</code> 型の値を <code class="prettyprint">Eff[R, A]</code> に送り込むメソッド。</p></li>
+            <li><p>インタープリター</p></li>
+        </ul>
+        <pre><code class="prettyprint">import cats._, implicits._
+import org.atnos.eff._
+import all._
+import org.atnos.eff.interpret._
+
+sealed trait Maybe[A]
+case class Just[A](a: A) extends Maybe[A]
+case class Nothing[A]() extends Maybe[A]
+
+object MaybeEffect {
+  type _maybe[R] = Maybe |= R
+
+  def just[R :_maybe, A](a: A): Eff[R, A] =
+    send[Maybe, R, A](Just(a))
+
+  def nothing[R :_maybe, A]: Eff[R, A] =
+    send[Maybe, R, A](Nothing())
+
+  def runMaybe[R, U, A, B](effect: Eff[R, A])(implicit m: Member.Aux[Maybe, R, U]): Eff[U, Option[A]] =
+    recurse(effect)(new Recurser[Maybe, U, A, Option[A]] {
+      def onPure(a: A) = Some(a)
+
+      def onEffect[X](m: Maybe[X]): X Either Eff[U, Option[A]] =
+        m match {
+          case Just(x)   =&gt; Left(x)
+          case Nothing() =&gt; Right(Eff.pure(None))
+        }
+
+      def onApplicative[X, T[_]: Traverse](ms: T[Maybe[X]]): T[X] Either Maybe[T[X]] =
+        Right(ms.sequence)
+    })
+
+  implicit val applicativeMaybe: Applicative[Maybe] = new Applicative[Maybe] {
+    def pure[A](a: A): Maybe[A] = Just(a)
+
+    def ap[A, B](ff: Maybe[A =&gt; B])(fa: Maybe[A]): Maybe[B] =
+      (fa, ff) match {
+        case (Just(a), Just(f)) =&gt; Just(f(a))
+        case _                  =&gt; Nothing()
+      }
+  }
+}
+</code></pre>
+        <p>上のコードでは、</p>
+        <ul>
+            <li><p><code class="prettyprint">just</code> と <code class="prettyprint">nothing</code> メソッドは、値を大きなエフェクト <code class="prettyprint">Eff[R, A]</code> に送り込むために、 <code class="prettyprint">Eff.send</code> を使っている。</p></li>
+            <li><p><code class="prettyprint">runMaybe</code> は、<code class="prettyprint">Maybe</code> 値を <code class="prettyprint">Option</code> 値に翻訳するために <code class="prettyprint">interpret.recurse</code> と <code class="prettyprint">Recurser</code> を使うことで <code class="prettyprint">Maybe</code> エフェクトを実行している。</p></li>
+        </ul>
+        <h3 id="compiler-limitation">コンパイラーの制限</h3>
+        <p>エフェクトを作るときは、そのエフェクトで起こり得ることの区別を表現するために sealed trait と case class を定義できる。たとえばデータベースとやりとりするときはこんな風に作るだろう。</p>
+        <pre><code class="prettyprint">trait DatabaseEffect {
+
+  case class Record(fields: List[String])
+
+  sealed trait Db[A]
+  case class Get[A](id: Int) extends Db[Record]
+  case class Update[A](id: Int, record: Record) extends Db[Record]
+}</code></pre>
+        <p>実際は <code class="prettyprint">Db</code> 型を <code class="prettyprint">DatabaseEffect</code> trait の<strong>外側</strong>で作ることをおすすめする。<code class="prettyprint">Member</code> implicit が解決されるときに、<code class="prettyprint">Db</code> エフェクト型をどのようにインポートしているか（オブジェクトから継承しているか否か）によって、コンパイラーのクラッシュを経験するかもしれない :-(。</p>
+        <h3 id="interpreter">インタープリター</h3>
+        <p>通常、与えられたエフェクトを解釈（interpret）するということは、型 <code class="prettyprint">M[X]</code> の値に対してすべきことが分かっているということを意味する。 ここで <code class="prettyprint">M</code> はエフェクトだ。もしインタープリターがエフェクトを「実行（execute）」できるのなら、つまりログを出力したり（<code class="prettyprint">Writer</code>）、非同期に計算したり（<code class="prettyprint">Future</code>）、値をチェックしたり（<code class="prettyprint">Either</code>）できるなら、<code class="prettyprint">X</code> を取り出して、そして次のエフェクトを取得して同じ用に解釈できるように継続（continuation ）を呼び出すことができる。</p>
+        <p><code class="prettyprint">org.atnos.eff.interpret</code> オブジェクトはインタープリターを書くためのいくつかの trait と関数を提供している。この例では <code class="prettyprint">Recurser</code> を使う。これは、<code class="prettyprint">Maybe[X]</code> から値 <code class="prettyprint">X</code> を 「取り出す」、もしくは諦めて <code class="prettyprint">Eff.pure(None)</code> を実行する。</p>
+        <p><code class="prettyprint">runMaybe</code> メソッドは <code class="prettyprint">Member.Aux[Maybe, R, U]</code> 型の implicit パラメーターを必要とする。この型は次のように解釈すべきだ。</p>
+        <ul>
+            <li><code class="prettyprint">Maybe</code> はエフェクトスタック <code class="prettyprint">R</code> のメンバーでなければならず、<code class="prettyprint">R</code> から取り除くにはエフェクトスタック <code class="prettyprint">U</code> となるべきだ。</li>
+        </ul>
+        <p><br/></p>
+        <p>これでこのエフェクトを計算で使える。</p>
+        <pre><code class="prettyprint">import org.atnos.eff._
+import org.atnos.eff.eff._
+import MaybeEffect._
+
+val action: Eff[Fx.fx1[Maybe], Int] =
+  for {
+    a &lt;- just(2)
+    b &lt;- just(3)
+  } yield a + b
+
+run(runMaybe(action))</code></pre>
+        <p><code class="prettyprint">&gt; Some(5)</code></p>
+        <hr />
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -286,101 +381,6 @@
 </div>
 </div>
 
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>エフェクトの作成</h1>
-<div id="tipue_search_content"></div>
-
-<h3 id="creation">作成</h3>
-<p>新しいエフェクトはとても簡単にこのライブラリに追加できる。Effect 型を新しい「オプショナル型」用に作ってみよう。</p>
-<p>必要なものは、</p>
-<ul>
-<li><p>ベースとなる型。<code class="prettyprint">Maybe</code> データ型とする。２つのケース <code class="prettyprint">Just</code> と <code class="prettyprint">Nothing</code> がある。</p></li>
-<li><p><code class="prettyprint">A</code> 型の値を <code class="prettyprint">Eff[R, A]</code> に送り込むメソッド。</p></li>
-<li><p>インタープリター</p></li>
-</ul>
-<pre><code class="prettyprint">import cats._, implicits._
-import org.atnos.eff._
-import all._
-import org.atnos.eff.interpret._
-
-sealed trait Maybe[A]
-case class Just[A](a: A) extends Maybe[A]
-case class Nothing[A]() extends Maybe[A]
-
-object MaybeEffect {
-  type _maybe[R] = Maybe |= R
-
-  def just[R :_maybe, A](a: A): Eff[R, A] =
-    send[Maybe, R, A](Just(a))
-
-  def nothing[R :_maybe, A]: Eff[R, A] =
-    send[Maybe, R, A](Nothing())
-
-  def runMaybe[R, U, A, B](effect: Eff[R, A])(implicit m: Member.Aux[Maybe, R, U]): Eff[U, Option[A]] =
-    recurse(effect)(new Recurser[Maybe, U, A, Option[A]] {
-      def onPure(a: A) = Some(a)
-
-      def onEffect[X](m: Maybe[X]): X Either Eff[U, Option[A]] =
-        m match {
-          case Just(x)   =&gt; Left(x)
-          case Nothing() =&gt; Right(Eff.pure(None))
-        }
-
-      def onApplicative[X, T[_]: Traverse](ms: T[Maybe[X]]): T[X] Either Maybe[T[X]] =
-        Right(ms.sequence)
-    })
-
-  implicit val applicativeMaybe: Applicative[Maybe] = new Applicative[Maybe] {
-    def pure[A](a: A): Maybe[A] = Just(a)
-
-    def ap[A, B](ff: Maybe[A =&gt; B])(fa: Maybe[A]): Maybe[B] =
-      (fa, ff) match {
-        case (Just(a), Just(f)) =&gt; Just(f(a))
-        case _                  =&gt; Nothing()
-      }
-  }
-}
-</code></pre>
-<p>上のコードでは、</p>
-<ul>
-<li><p><code class="prettyprint">just</code> と <code class="prettyprint">nothing</code> メソッドは、値を大きなエフェクト <code class="prettyprint">Eff[R, A]</code> に送り込むために、 <code class="prettyprint">Eff.send</code> を使っている。</p></li>
-<li><p><code class="prettyprint">runMaybe</code> は、<code class="prettyprint">Maybe</code> 値を <code class="prettyprint">Option</code> 値に翻訳するために <code class="prettyprint">interpret.recurse</code> と <code class="prettyprint">Recurser</code> を使うことで <code class="prettyprint">Maybe</code> エフェクトを実行している。</p></li>
-</ul>
-<h3 id="compiler-limitation">コンパイラーの制限</h3>
-<p>エフェクトを作るときは、そのエフェクトで起こり得ることの区別を表現するために sealed trait と case class を定義できる。たとえばデータベースとやりとりするときはこんな風に作るだろう。</p>
-<pre><code class="prettyprint">trait DatabaseEffect {
-
-  case class Record(fields: List[String])
-
-  sealed trait Db[A]
-  case class Get[A](id: Int) extends Db[Record]
-  case class Update[A](id: Int, record: Record) extends Db[Record]
-}</code></pre>
-<p>実際は <code class="prettyprint">Db</code> 型を <code class="prettyprint">DatabaseEffect</code> trait の<strong>外側</strong>で作ることをおすすめする。<code class="prettyprint">Member</code> implicit が解決されるときに、<code class="prettyprint">Db</code> エフェクト型をどのようにインポートしているか（オブジェクトから継承しているか否か）によって、コンパイラーのクラッシュを経験するかもしれない :-(。</p>
-<h3 id="interpreter">インタープリター</h3>
-<p>通常、与えられたエフェクトを解釈（interpret）するということは、型 <code class="prettyprint">M[X]</code> の値に対してすべきことが分かっているということを意味する。 ここで <code class="prettyprint">M</code> はエフェクトだ。もしインタープリターがエフェクトを「実行（execute）」できるのなら、つまりログを出力したり（<code class="prettyprint">Writer</code>）、非同期に計算したり（<code class="prettyprint">Future</code>）、値をチェックしたり（<code class="prettyprint">Either</code>）できるなら、<code class="prettyprint">X</code> を取り出して、そして次のエフェクトを取得して同じ用に解釈できるように継続（continuation ）を呼び出すことができる。</p>
-<p><code class="prettyprint">org.atnos.eff.interpret</code> オブジェクトはインタープリターを書くためのいくつかの trait と関数を提供している。この例では <code class="prettyprint">Recurser</code> を使う。これは、<code class="prettyprint">Maybe[X]</code> から値 <code class="prettyprint">X</code> を 「取り出す」、もしくは諦めて <code class="prettyprint">Eff.pure(None)</code> を実行する。</p>
-<p><code class="prettyprint">runMaybe</code> メソッドは <code class="prettyprint">Member.Aux[Maybe, R, U]</code> 型の implicit パラメーターを必要とする。この型は次のように解釈すべきだ。</p>
-<ul>
-<li><code class="prettyprint">Maybe</code> はエフェクトスタック <code class="prettyprint">R</code> のメンバーでなければならず、<code class="prettyprint">R</code> から取り除くにはエフェクトスタック <code class="prettyprint">U</code> となるべきだ。</li>
-</ul>
-<p><br/></p>
-<p>これでこのエフェクトを計算で使える。</p>
-<pre><code class="prettyprint">import org.atnos.eff._
-import org.atnos.eff.eff._
-import MaybeEffect._
-
-val action: Eff[Fx.fx1[Maybe], Int] =
-  for {
-    a &lt;- just(2)
-    b &lt;- just(3)
-  } yield a + b
-
-run(runMaybe(action))</code></pre>
-<p><code class="prettyprint">&gt; Some(5)</code></p>
-<hr />
-</div>
 
 </div>
 

@@ -23,8 +23,41 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Memo</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The Memo effect allows the caching of expensive computations. Computations are “stored” with a given key, so that the next computation with the same key will return the previously computed value. When interpreting those computations a <code class="prettyprint">Cache</code> must be provided:</p>
+        <pre><code class="prettyprint">import cats.Eval
+import cats.implicits._
+import org.atnos.eff._, memo._
+import org.atnos.eff.syntax.memo._
+import org.atnos.eff.syntax.eval._
+import org.atnos.eff.syntax.eff._
+
+type S = Fx.fx2[Memoized, Eval]
+
+var i = 0
+
+def expensive[R :_memo]: Eff[R, Int] =
+  memoize(&quot;key&quot;, { i += 1; 10 * 10 })
+
+(expensive[S] &gt;&gt; expensive[S]).runMemo(ConcurrentHashMapCache()).runEval.run === 100
+
+&quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
+        <p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
+        <p>There are 2 cache implementations provided in this library to support the Memo effect:</p>
+        <ul>
+            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentHashMapCache</code>: backed by a <code class="prettyprint">java.util.concurrent.ConcurrentHashMap</code> where the keys are hashcodes for the keys used to memoize the values. This cache is thread-safe but unbounded so use with care!</p></li>
+            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentWeakIdentityHashMapCache</code>: backed by a <code class="prettyprint">ConcurrentWeakIdentityHashMap</code> where the keys are <code class="prettyprint">System.identityHashCode</code> for the keys used to memoize the values. This cache is thread-safe and uses weak references which can be garbage collected when necessary.</p></li>
+        </ul>
+        <p>You can also use other, and better, cache implementations like <a href="https://github.com/ben-manes/caffeine">Caffeine</a> to get more functionalities like eviction policies, maximum size and so on. You will need to implement the <code class="prettyprint">Cache</code> interface for this</p>
+        <div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Cache {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> memo[V](key: AnyRef, value: =&gt;V): V</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,42 +318,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Memo</h1>
-<div id="tipue_search_content"></div>
-
-<p>The Memo effect allows the caching of expensive computations. Computations are “stored” with a given key, so that the next computation with the same key will return the previously computed value. When interpreting those computations a <code class="prettyprint">Cache</code> must be provided:</p>
-<pre><code class="prettyprint">import cats.Eval
-import cats.implicits._
-import org.atnos.eff._, memo._
-import org.atnos.eff.syntax.memo._
-import org.atnos.eff.syntax.eval._
-import org.atnos.eff.syntax.eff._
-
-type S = Fx.fx2[Memoized, Eval]
-
-var i = 0
-
-def expensive[R :_memo]: Eff[R, Int] =
-  memoize(&quot;key&quot;, { i += 1; 10 * 10 })
-
-(expensive[S] &gt;&gt; expensive[S]).runMemo(ConcurrentHashMapCache()).runEval.run === 100
-
-&quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
-<p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
-<p>There are 2 cache implementations provided in this library to support the Memo effect:</p>
-<ul>
-<li><p><code class="prettyprint">org.atnos.eff.ConcurrentHashMapCache</code>: backed by a <code class="prettyprint">java.util.concurrent.ConcurrentHashMap</code> where the keys are hashcodes for the keys used to memoize the values. This cache is thread-safe but unbounded so use with care!</p></li>
-<li><p><code class="prettyprint">org.atnos.eff.ConcurrentWeakIdentityHashMapCache</code>: backed by a <code class="prettyprint">ConcurrentWeakIdentityHashMap</code> where the keys are <code class="prettyprint">System.identityHashCode</code> for the keys used to memoize the values. This cache is thread-safe and uses weak references which can be garbage collected when necessary.</p></li>
-</ul>
-<p>You can also use other, and better, cache implementations like <a href="https://github.com/ben-manes/caffeine">Caffeine</a> to get more functionalities like eviction policies, maximum size and so on. You will need to implement the <code class="prettyprint">Cache</code> interface for this</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Cache {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> memo[V](key: AnyRef, value: =&gt;V): V</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-</div>
-
 </div>
 
 </body>

@@ -23,8 +23,82 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>TimedFuture</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The <code class="prettyprint">TimedFuture</code> effect is a thin shim on top of Scala’s <code class="prettyprint">Future</code>. The only extra capability it has built-in is timeouts, which are supported by passing in a <code class="prettyprint">ScheduledExecutionContext</code>. Note that because <code class="prettyprint">Future</code> represents a computation already taking place, <code class="prettyprint">TimedFuture</code> is a function that returns a <code class="prettyprint">Future</code>. This means if you start a computation before passing the <code class="prettyprint">Future</code> into Eff, the <code class="prettyprint">Future</code> will begin less predictably.</p>
+        <p>Now, let’s create some <code class="prettyprint">TimedFuture</code> effects:</p>
+        <pre><code class="prettyprint">import org.atnos.eff._
+import org.atnos.eff.future._
+import org.atnos.eff.syntax.all._
+
+import scala.concurrent._, duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+type R = Fx.fx2[TimedFuture, Option]
+
+val action: Eff[R, Int] =
+  for {
+  // create a value now
+    a &lt;- Eff.pure[R, Int](1)
+
+    // evaluate a value later, on some other thread pool, and continue when it&#39;s finished
+    b &lt;- futureDelay[R, Int](1)
+  } yield b
+
+</code></pre>
+        <p>Then we need to pass a <code class="prettyprint">Scheduler</code> and an <code class="prettyprint">ExecutionContext</code> in to begin the computation.</p>
+        <pre><code class="prettyprint">
+implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
+import org.atnos.eff.syntax.future._
+
+Await.result(action.runOption.runSequential, 1 second)</code></pre>
+        <p><code class="prettyprint">&gt; Some(1)</code></p>
+        <p>You can also use other <code class="prettyprint">Future</code> or <code class="prettyprint">Task</code> effects:</p>
+        <ul>
+            <li><code class="prettyprint">twitter</code>: depend on <code class="prettyprint">eff-twitter</code> and import <code class="prettyprint">org.atnos.eff.addon.twitter.future._</code></li>
+            <li><code class="prettyprint">scalaz</code>: depend on <code class="prettyprint">eff-scalaz</code> and import <code class="prettyprint">org.atnos.eff.addon.scalaz.task._</code></li>
+            <li><code class="prettyprint">monix</code>: depend on <code class="prettyprint">eff-monix</code> and import <code class="prettyprint">org.atnos.eff.addon.monix.task._</code></li>
+        </ul>
+        <p>There are corresponding syntax imports to be able to call <code class="prettyprint">runAsync</code> methods in:</p>
+        <ul>
+            <li><code class="prettyprint">twitter</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.twitter.future._</code></li>
+            <li><code class="prettyprint">scalaz</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.scalaz.task._</code></li>
+            <li><code class="prettyprint">monix</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.monix.task._</code></li>
+        </ul>
+        <p><code class="prettyprint">Future</code> and <code class="prettyprint">Task</code> computations can also be memoized to avoid expensive computations to be done several times. You can either</p>
+        <ul>
+            <li>use the <code class="prettyprint">futureMemo/taskMemo</code> operator with a (mutable) cache</li>
+            <li>use the <code class="prettyprint">futureMemoized/taskMemoized</code> operator with the <code class="prettyprint">Memoized</code> effect (you will need to provide the cache later)
+                <p/></li>
+        </ul>
+        <pre><code class="prettyprint">import cats.implicits._
+import org.atnos.eff._, future._, all._
+import org.atnos.eff.syntax.all._
+import org.atnos.eff.syntax.future._
+import scala.concurrent._, duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+var i = 0
+
+def expensive[R :_Future :_memo]: Eff[R, Int] =
+  futureMemoized[R, Int](&quot;key&quot;, futureDelay[R, Int] { i += 1; 10 * 10})
+
+type S = Fx.fx2[Memoized, TimedFuture]
+
+implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
+
+val futureMemo: Future[Int] =
+  (expensive[S] &gt;&gt; expensive[S]).runFutureMemo(ConcurrentHashMapCache()).runSequential
+
+Await.result(futureMemo, 1.second)
+
+&quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
+        <p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,83 +359,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>TimedFuture</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">TimedFuture</code> effect is a thin shim on top of Scala’s <code class="prettyprint">Future</code>. The only extra capability it has built-in is timeouts, which are supported by passing in a <code class="prettyprint">ScheduledExecutionContext</code>. Note that because <code class="prettyprint">Future</code> represents a computation already taking place, <code class="prettyprint">TimedFuture</code> is a function that returns a <code class="prettyprint">Future</code>. This means if you start a computation before passing the <code class="prettyprint">Future</code> into Eff, the <code class="prettyprint">Future</code> will begin less predictably.</p>
-<p>Now, let’s create some <code class="prettyprint">TimedFuture</code> effects:</p>
-<pre><code class="prettyprint">import org.atnos.eff._
-import org.atnos.eff.future._
-import org.atnos.eff.syntax.all._
-
-import scala.concurrent._, duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-
-type R = Fx.fx2[TimedFuture, Option]
-
-val action: Eff[R, Int] =
-  for {
-  // create a value now
-    a &lt;- Eff.pure[R, Int](1)
-
-    // evaluate a value later, on some other thread pool, and continue when it&#39;s finished
-    b &lt;- futureDelay[R, Int](1)
-  } yield b
-
-</code></pre>
-<p>Then we need to pass a <code class="prettyprint">Scheduler</code> and an <code class="prettyprint">ExecutionContext</code> in to begin the computation.</p>
-<pre><code class="prettyprint">
-implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
-import org.atnos.eff.syntax.future._
-
-Await.result(action.runOption.runSequential, 1 second)</code></pre>
-<p><code class="prettyprint">&gt; Some(1)</code></p>
-<p>You can also use other <code class="prettyprint">Future</code> or <code class="prettyprint">Task</code> effects:</p>
-<ul>
-<li><code class="prettyprint">twitter</code>: depend on <code class="prettyprint">eff-twitter</code> and import <code class="prettyprint">org.atnos.eff.addon.twitter.future._</code></li>
-<li><code class="prettyprint">scalaz</code>: depend on <code class="prettyprint">eff-scalaz</code> and import <code class="prettyprint">org.atnos.eff.addon.scalaz.task._</code></li>
-<li><code class="prettyprint">monix</code>: depend on <code class="prettyprint">eff-monix</code> and import <code class="prettyprint">org.atnos.eff.addon.monix.task._</code></li>
-</ul>
-<p>There are corresponding syntax imports to be able to call <code class="prettyprint">runAsync</code> methods in:</p>
-<ul>
-<li><code class="prettyprint">twitter</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.twitter.future._</code></li>
-<li><code class="prettyprint">scalaz</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.scalaz.task._</code></li>
-<li><code class="prettyprint">monix</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.monix.task._</code></li>
-</ul>
-<p><code class="prettyprint">Future</code> and <code class="prettyprint">Task</code> computations can also be memoized to avoid expensive computations to be done several times. You can either</p>
-<ul>
-<li>use the <code class="prettyprint">futureMemo/taskMemo</code> operator with a (mutable) cache</li>
-<li>use the <code class="prettyprint">futureMemoized/taskMemoized</code> operator with the <code class="prettyprint">Memoized</code> effect (you will need to provide the cache later)
-<p/></li>
-</ul>
-<pre><code class="prettyprint">import cats.implicits._
-import org.atnos.eff._, future._, all._
-import org.atnos.eff.syntax.all._
-import org.atnos.eff.syntax.future._
-import scala.concurrent._, duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-
-var i = 0
-
-def expensive[R :_Future :_memo]: Eff[R, Int] =
-  futureMemoized[R, Int](&quot;key&quot;, futureDelay[R, Int] { i += 1; 10 * 10})
-
-type S = Fx.fx2[Memoized, TimedFuture]
-
-implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
-
-val futureMemo: Future[Int] =
-  (expensive[S] &gt;&gt; expensive[S]).runFutureMemo(ConcurrentHashMapCache()).runSequential
-
-Await.result(futureMemo, 1.second)
-
-&quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
-<p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
-</div>
-
 </div>
 
 </body>

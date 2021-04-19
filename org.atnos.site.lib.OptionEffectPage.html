@@ -23,8 +23,33 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>Option</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>Adding an <code class="prettyprint">Option</code> effect in your stack allows to stop computations when necessary. If you create a value with <code class="prettyprint">some(a)</code> this value will be used downstream but if you use <code class="prettyprint">none</code> all computations will stop:</p>
+        <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+
+/**
+ * Stack declaration
+ */
+type S = Fx.fx1[Option]
+
+// compute with this stack
+val map: Map[String, Int] =
+  Map(&quot;key1&quot; -&gt; 10, &quot;key2&quot; -&gt; 20)
+
+// get 2 keys from the map and add the corresponding values
+def addKeys(key1: String, key2: String): Eff[S, Int] = for {
+  a &lt;- fromOption(map.get(key1))
+  b &lt;- fromOption(map.get(key2))
+} yield a + b
+
+(addKeys(&quot;key1&quot;, &quot;key2&quot;).runOption.run, addKeys(&quot;key1&quot;, &quot;missing&quot;).runOption.run)</code></pre>
+        <p><code class="prettyprint">&gt; (Some(30),None)</code></p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,34 +310,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>Option</h1>
-<div id="tipue_search_content"></div>
-
-<p>Adding an <code class="prettyprint">Option</code> effect in your stack allows to stop computations when necessary. If you create a value with <code class="prettyprint">some(a)</code> this value will be used downstream but if you use <code class="prettyprint">none</code> all computations will stop:</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
-
-/**
- * Stack declaration
- */
-type S = Fx.fx1[Option]
-
-// compute with this stack
-val map: Map[String, Int] =
-  Map(&quot;key1&quot; -&gt; 10, &quot;key2&quot; -&gt; 20)
-
-// get 2 keys from the map and add the corresponding values
-def addKeys(key1: String, key2: String): Eff[S, Int] = for {
-  a &lt;- fromOption(map.get(key1))
-  b &lt;- fromOption(map.get(key2))
-} yield a + b
-
-(addKeys(&quot;key1&quot;, &quot;key2&quot;).runOption.run, addKeys(&quot;key1&quot;, &quot;missing&quot;).runOption.run)</code></pre>
-<p><code class="prettyprint">&gt; (Some(30),None)</code></p>
-</div>
-
 </div>
 
 </body>

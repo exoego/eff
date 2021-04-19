@@ -23,8 +23,29 @@
 <body onload="prettyPrint(); tabberAutomatic([])">
 
 <div class="container">
+<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+        <h1>List</h1>
+        <div id="tipue_search_content"></div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 sidebar-outer">
+        <p>The <code class="prettyprint">List</code> effect is used for computations which may return several values. A simple example using this effect would be</p>
+        <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+
+type S = Fx.fx1[List]
+
+// create all the possible pairs for a given list
+// where the sum is greater than a value
+def pairsBiggerThan[R :_list](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
+  a &lt;- values(list:_*)
+  b &lt;- values(list:_*)
+  found &lt;- if (a + b &gt; n) singleton((a, b))
+  else           empty
+} yield found
+
+pairsBiggerThan[S](List(1, 2, 3, 4), 5).runList.run</code></pre>
+        <p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
+    </div>
+
+<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
 <div class="col-md-2 fixed">
 
 <!-- search box -->
@@ -285,30 +306,6 @@
 
 </div>
 </div>
-
-
-<div class="col-md-10 col-sm-9 col-xs-9">
-<h1>List</h1>
-<div id="tipue_search_content"></div>
-
-<p>The <code class="prettyprint">List</code> effect is used for computations which may return several values. A simple example using this effect would be</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
-
-type S = Fx.fx1[List]
-
-// create all the possible pairs for a given list
-// where the sum is greater than a value
-def pairsBiggerThan[R :_list](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
-  a &lt;- values(list:_*)
-  b &lt;- values(list:_*)
-  found &lt;- if (a + b &gt; n) singleton((a, b))
-  else           empty
-} yield found
-
-pairsBiggerThan[S](List(1, 2, 3, 4), 5).runList.run</code></pre>
-<p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
-</div>
-
 </div>
 
 </body>
