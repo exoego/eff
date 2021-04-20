@@ -27,76 +27,76 @@
         <h1>チュートリアル</h1>
         <div id="tipue_search_content"></div>
 
-        <p>This tutorial is intentionally structured like the <a href="https://typelevel.org/cats/datatypes/freemonad.html">Free monad tutorial for cats</a> so that a side-by-side comparison of the 2 approaches is possible.</p>
-        <h3 id="study-your-topic">Study your topic</h3>
-        <p>Let’s imagine that we want to create a DSL for a key-value store. We want to be able to do three things with keys:</p>
+        <p>このチュートリアルは意図して <a href="https://typelevel.org/cats/datatypes/freemonad.html">Free monad tutorial for cats</a> と同じように構造化している。そのため両者のアプローチを並べて比較できる。</p>
+        <h3 id="study-your-topic">自分のテーマを研究する</h3>
+        <p>キーバリューストアのための DSL を作りたいとしよう。キーを使って３つのことができるようにしたい。</p>
         <ul>
-            <li>put a value into the store, associated with its key.</li>
-            <li>get a value from the store given its key.</li>
-            <li>delete a value from the store given its key.
-                <p/></li>
+            <li>キーとひもづけて、ストアに値を入れる。</li>
+            <li>キーを与えてストアから値を得る。</li>
+            <li>キーを与えてストから値を削除する</li>
         </ul>
-        <p>The idea is to write a sequence of these operations in the embedded DSL as a “program”, interpret the “program”, and finally execute the “program” to interact with the actual key-value store.</p>
-        <p>For example:</p>
+        <br/>
+        <p>考えとしては、組み込み DSL でこれら一連の操作を「プログラム」として書き、その「プログラム」を解釈し、そして最後に実際のキーバリューストアと作用させるように「プログラム」を実行したい。</p>
+        <p>例えば、</p>
         <pre><code class="prettyprint"> put(&quot;toto&quot;, 3)
- get(&quot;toto&quot;) // returns 3
+ get(&quot;toto&quot;) // 3 が返る
  delete(&quot;toto&quot;)</code></pre>
-        <p>But we want:</p>
+        <p>だが欲しいのは、</p>
         <ul>
-            <li>the computation to be represented as a pure, immutable value</li>
-            <li>to separate the creation and execution of the program</li>
-            <li>to be able to support many different methods of execution</li>
+            <li>純粋（pure）で不変（immutable）な値として表現される計算</li>
+            <li>プログラムの作成と実行の区別</li>
+            <li>異なる実行方法がサポートできること</li>
         </ul>
-        <h3 id="create-an-adt-representing-your-grammar">Create an ADT representing your grammar</h3>
-        <p>ADT stands for “Algebraic Data Type”. In this context, it refers to a closed set of types which can be combined to build up complex, recursive values.</p>
-        <p>We need to create an ADT to represent our key-value operations:</p>
-        <pre><code class="prettyprint">// the type parameter A can be read as the type of value returned by the operation
+        <h3 id="create-an-adt-representing-your-grammar">自分の文法を表す ADT を作る</h3>
+        <p>ADT とは代数的データ型（Algebraic Data Type）を表す。今回の文脈では、複合的で再帰的な値を構築するために組み合わせて使える、型の閉じた集合のことだ。</p>
+        <p>私たちのキーバリュー操作を表す ADT を作る必要がある。</p>
+        <pre><code class="prettyprint">// 型パラメーター A は操作が返す値の型として読める
 sealed trait KVStore[+A]
 
 case class Put[T](key: String, value: T) extends KVStore[Unit]
 case class Get[T](key: String) extends KVStore[Option[T]]
 case class Delete(key: String) extends KVStore[Unit]
 </code></pre>
-        <h3 id="free-your-adt">Free your ADT</h3>
-        <p>There are four basic steps to “freeing” the ADT:</p>
+        <h3 id="free-your-adt">ADT を自由にする</h3>
+        <p>ADT を「自由にする」には４つの基本ステップがある。</p>
         <ol type="1">
-            <li>Create smart constructors for <code class="prettyprint">KVStore[_]</code> using <code class="prettyprint">Eff.send</code></li>
-            <li>Build a program out of key-value DSL operations</li>
-            <li>Build an interpreter for programs of DSL operations</li>
-            <li>Execute our interpreted program</li>
-            <li>[optional] add some syntax for the interpreter</li>
+            <li><code class="prettyprint">Eff.send</code> を使うことで、<code class="prettyprint">KVStore[_]</code> 用のスマートコンストラクタを作る</li>
+            <li>キーバリュー DSL 操作用のプログラムを作る</li>
+            <li>DSL 操作のプログラム用のインタープリターを作る</li>
+            <li>インタープリターが解釈したプログラムを実行する</li>
+            <li>[任意] インタープリター用のシンタックスを追加する</li>
         </ol>
-        <h3 id="create-smart-constructors-using-eff.send">Create smart constructors using <code class="prettyprint">Eff.send</code></h3>
-        <p>These methods will let you create <code class="prettyprint">Eff</code> values for your key-value store “Effect”:</p>
+        <h3 id="create-smart-constructors-using-eff.send"><code class="prettyprint">Eff.send</code> を使ってスマートコンストラクタを作る</h3>
+        <p>これらのメソッドで、キーバリューストア「エフェクト」用に <code class="prettyprint">Eff</code> の値を作ることができる。</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
-// T |= R is an alias for MemberIn[T, R]
-// stating that effects of type T[_] can be injected in the effect stack R
-// It is also equivalent to MemberIn[KVStore, R]
+// T |= R は MemberIn[T, R] のエイリアスであり、
+// 型 T[_] のエフェクトをエフェクトスタック R に注入できることを宣言する。
+// 以下は MemberIn[KVStore, R] と等価でもある
 type _kvstore[R] = KVStore |= R
 
-/** store returns nothing (i.e. Unit) */
+/** store は何も返さない（Unit） */
 def store[T, R :_kvstore](key: String, value: T): Eff[R, Unit] =
   Eff.send[KVStore, R, Unit](Put(key, value))
 
-/** find returns a T value if the key exists */
+/** find はキーが存在すれば T の値を返す */
 def find[T, R :_kvstore](key: String): Eff[R, Option[T]] =
   Eff.send[KVStore, R, Option[T]](Get(key))
 
-/** delete returns nothing (i.e. Unit) */
+/** delete は何も返さない（Unit） */
 def delete[T, R :_kvstore](key: String): Eff[R, Unit] =
   Eff.send(Delete(key))
 
-/** update composes get and put, and returns nothing. */
+/** update は get と put を合成し、何も返さない */
 def update[T, R :_kvstore](key: String, f: T =&gt; T): Eff[R, Unit] =
   for {
     ot &lt;- find[T, R](key)
     _  &lt;- ot.map(t =&gt; store[T, R](key, f(t))).getOrElse(Eff.pure(()))
   } yield ()
 </code></pre>
-        <p>Each method requires the <code class="prettyprint">KVStore</code> effect to be a member of an “effect stack” <code class="prettyprint">R</code>. The return values are of type <code class="prettyprint">Eff[R, A]</code> where <code class="prettyprint">R</code> is a stack of effects possibly containing other effects than key-value store operations and yielding values of type <code class="prettyprint">A</code>.</p>
-        <h3 id="build-a-program">Build a program</h3>
-        <p>Now that we can construct values with <code class="prettyprint">KVStore</code> effects we can use our DSL to write “programs” using a for-comprehension:</p>
+        <p>それぞれのメソッドは <code class="prettyprint">KVStore</code> エフェクトが「エフェクトスタック」 <code class="prettyprint">R</code> のメンバーであることを要求し、戻り値は <code class="prettyprint">Eff[R, A]</code> 型だ。ここで <code class="prettyprint">R</code> はエフェクトのスタックであり、キーバリューストア操作以外のエフェクトを含んでいるかもしれず、型 <code class="prettyprint">A</code> の値を生成する。</p>
+        <h3 id="build-a-program">プログラムを作る</h3>
+        <p>これでNow that we can construct values with <code class="prettyprint">KVStore</code> エフェクトで値を生成でき、for 内包表記を使うことで「プログラム」を書くための DSL が使える。</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
 def program[R :_kvstore]: Eff[R, Option[Int]] =
@@ -108,12 +108,12 @@ def program[R :_kvstore]: Eff[R, Option[Int]] =
     _ &lt;- delete(&quot;tame-cats&quot;)
   } yield n
 </code></pre>
-        <p>This looks like a monadic flow. However, it just builds a recursive data structure representing the sequence of operations.</p>
-        <h3 id="write-an-interpreter-for-your-program">Write an interpreter for your program</h3>
-        <p>As you may have understood now, <code class="prettyprint">Eff</code> is used to create an embedded DSL. By itself, this DSL only represents a sequence of operations (defined by a recursive data structure); it doesn’t produce anything.</p>
-        <p><code class="prettyprint">Eff</code> is a programming language inside your programming language!</p>
-        <p>So, like any other programming language, we need to interpret our abstract language into concrete values.</p>
-        <p>To do this, we will use an interpreter transforming our <code class="prettyprint">KVStore</code> effects using a simple mutable map:</p>
+        <p>これはモナドの流れのように見える。だが、一連の操作を表す再帰的なデータ構造を組み立てているだけだ。</p>
+        <h3 id="write-an-interpreter-for-your-program">プログラム用のインタープリターを書く</h3>
+        <p>もう理解できたとだろうが、<code class="prettyprint">Eff</code> は埋め込み DSL を使うために使える。それ単独では、この DSL は（再帰的データ構造で定義された）一連の操作を表現するだけだ。何も生成しない。</p>
+        <p><code class="prettyprint">Eff</code> はプログラミング言語内のプログラミング言語なのだ！</p>
+        <p>なので、他のプログラミング言語と同様に、われわれの抽象的な言語を具体的な値へと解釈する必要がある。</p>
+        <p>これをするためには、単純なミュータブルなマップを使って <code class="prettyprint">KVStore</code> エフェクトを変換するインタープリターを使う。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, interpret._
 import cats.Traverse
 import cats.implicits._
@@ -121,25 +121,23 @@ import scala.collection.mutable._
 
 
 /**
- * Unsafe interpreter for KVStore effects
+ * KVStore エフェクトの安全でないインタープリター
  *
- * the program will crash if a type is incorrectly specified.
+ * 間違った方が指定されたらプログラムはクラッシュするだろう。
  *
- * The interpreter requires the KVStore effect to be a Member of R (with &lt;=)
- * Meaning that we can statically know the resulting type once we have removed
- * KVStore from R, and this type is m.Out.
+ * このインタープリターは KVStore エフェクトが R の「メンバーである（<=）」ことを要求する。
+ * つまり、R から KVStore を取り除いたら結果の型が m.Out であると静的に知ることができる。
  *
- * The interpreter uses the `interpretUnsafe` method from `org.atnos.eff.Interpreter` to implement a
- * stack-safe interpretation of effects as a side-effect.
+ * インタープリターは `org.atnos.eff.Interpreter` にある `interpretUnsafe` メソッドを使うことで、
+ * スタック安全なエフェクトの解釈を副作用として実装する。
  *
- * `interpretUnsafe` needs the definition of a side-effect where
- * we get each `KVStore[X]` effect, run side-effects and return a value `X`.
+ * `interpretUnsafe` はそれぞれの `KVStore[X]` エフェクトを得る副作用の定義を要求し、副作用を実行して、値 `X` を返す。
  *
- * The resulting effect stack is m.Out which is R without the KVStore effects
+ * 結果として生まれるエフェクトスタックは m.Out であり、KVStore エフェクトを含まない R となる
  *
  */
 def runKVStoreUnsafe[R, A](effects: Eff[R, A])(implicit m: KVStore &lt;= R): Eff[m.Out, A] = {
-  // a very simple (and imprecise) key-value store
+  // 超単純（で不正確な）キーバリューストア
   val kvs = Map.empty[String, Any]
 
   val sideEffect = new SideEffect[KVStore] {
@@ -167,14 +165,14 @@ def runKVStoreUnsafe[R, A](effects: Eff[R, A])(implicit m: KVStore &lt;= R): Eff
 
 }
 </code></pre>
-        <p>Please note this interpreter is impure – it mutates <code class="prettyprint">kvs</code> and also produces logging output using <code class="prettyprint">println</code>. The whole purpose of functional programming isn’t to prevent side-effects, it is just to push side-effects to the boundaries of your system in a well-known and controlled way.</p>
-        <p>We can also interpret <code class="prettyprint">KVStore</code> effects differently and delegate the results to other effects in the same stack:</p>
+        <p>このインタープリターは純粋でないことに注意してほしい。<code class="prettyprint">kvs</code> を変化させており、<code class="prettyprint">println</code> を使ってログ出力を生成している。関数プログラミングの新の目的は副作用を防ぐことではない。よく知られた、管理された方法で、副作用を、あなたのシステムと外部の境界に副作用を追いやることなのだ。</p>
+        <p>違う方法で <code class="prettyprint">KVStore</code> エフェクトを解釈し、同じスタックの他のエフェクトに結果を委託することもできる。</p>
         <ul>
-            <li><code class="prettyprint">State</code> for maintaining the map of values</li>
-            <li><code class="prettyprint">Writer</code> for logging</li>
-            <li><code class="prettyprint">Either[E, *]</code> for type errors
-                <p/></li>
+            <li><code class="prettyprint">State</code> は値のマップ構造を保持するため</li>
+            <li><code class="prettyprint">Writer</code> はログのため</li>
+            <li><code class="prettyprint">Either[E, *]</code> は型エラーのため</li>
         </ul>
+        <br/>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.either._
 import org.atnos.eff.writer._
@@ -187,27 +185,27 @@ type _writerString[R] = Writer[String, *] |= R
 type _stateMap[R]     = State[Map[String, Any], *] |= R
 
 /**
- * Safe interpreter for KVStore effects
+ * KVStore エフェクトの安全なインタープリター
  *
- * It uses the following effects:
+ * 次のエフェクトを使っている。
  *
- *  - Writer to create log statements
- *  - State to update a key-value Map
- *  - Either to raise errors if the type of an object in the map is not of the expected type
+ * - Writer はログ出力のため
+ * - State はキーバリュー Map を更新するため
+ * - Either は map 内のオブジェクトの型が期待する型でないときにエラーを発生させるため
  *
- *  The resulting effect stack is U which is R without the KVStore effects
+ * 結果として生じるエフェクトスタックは U であり、R から KVStore エフェクトを除いたものだ。
  *
- *  Note that we just require the Throwable, Writer and State effects to
- *  be able to be created in the stack U
+ * スタック U 内で作れるようになっているエフェクトは Throwable、Writer そして State エフェクト
+ * だけであることに気づいてほしい。
  *
- * This interpreter uses the org.atnos.eff.interpreter.translate method
- * translating one effect of the stack to other effects in the same stack
+ * このインタープリターは org.atnos.eff.interpreter.translate メソッドを使っており、
+ * スタックのエフェクトを同じスタックの他のエフェクトに変換している。
  *
  *
- * NOTE:
- * - It is really important for type inference that the effects for U are listed after those for R!
+ * 備考:
+ * - 型推論のために U のエフェクトが R のエフェクトより後ろに並んでいることはとても重要！
  *
- * Implicit member definitions will NOT be found with the following definition:
+ * Implicit の Member 定義は以下の定義では見つからない。
  *
  * def runKVStore[R, U :_throwableEither :_writerString :_stateMap, A](effects: Eff[R, A]) (
  *   implicit m: Member.Aux[KVStore, R, U]): Eff[U, A] = {
@@ -246,19 +244,19 @@ def runKVStore[R, U, A](effects: Eff[R, A])
   })
 }
 </code></pre>
-        <p><code class="prettyprint">Eff</code> is just a recursive structure that can be seen as sequence of operations producing other operations, with potentially other effects. In this way it is similar to folding a <code class="prettyprint">List</code>. We often use folds (e.g. <code class="prettyprint">foldRight</code>) to obtain a single value from a list; this recurses over the structure, combining its contents.</p>
-        <p>The idea behind an <code class="prettyprint">Eff</code> interpreter is exactly the same. We “fold” the recursive structure by:</p>
+        <p><code class="prettyprint">Eff</code> はただの再帰的な構造であり、副作用があるかもしれない、他の操作を生成する操作の連続としてとらえることができる。この場合、<code class="prettyprint">List</code> の畳み込みと似ている。われわれはよくリストから１つの値を得るために畳み込み（例えば <code class="prettyprint">foldRight</code>）を使う。これは構造を再帰的に処理し、中身を結合していく。</p>
+        <p><code class="prettyprint">Eff</code> インタープリターの背景にある考え方はまったく同じだ。次の操作で再帰的構造を「畳み込む」。</p>
         <ul>
-            <li>consuming each operation</li>
-            <li>compiling the operation into a target language</li>
-            <li>computing next operation
-                <p/></li>
+            <li>それぞれの操作を消費する</li>
+            <li>操作をターゲット言語のためにコンパイルする</li>
+            <li>次の操作を計算する</li>
         </ul>
-        <p>An important aspect of interpreters is stack-safety. An interpreter evaluates each step of a computation on the stack then calls itself to evaluate the other steps. The <code class="prettyprint">org.atnos.eff.interpreter</code> object provides various methods helping you write a stack-safe interpreter:</p>
+        <br>
+        <p>インタープリターの重要な特徴はスタック安全であることだ。インタープリターはスタック上の計算の各ステップを評価してから、他のステップを評価するために自分自身を呼び出す。<code class="prettyprint">org.atnos.eff.interpreter</code> オブジェクトはスタック安全なインタープリターを書くのを助けてくれる色々なメソッドを提供している。</p>
         <ul>
-            <li><p><code class="prettyprint">interpretUnsafe</code> makes you define a <code class="prettyprint">SideEffect</code> trait to return a value <code class="prettyprint">X</code> from an effect <code class="prettyprint">T[X]</code></p></li>
-            <li><p><code class="prettyprint">translate</code> makes you define a <code class="prettyprint">Translate</code> trait to “translate” your effect into other effects in the same stack</p></li>
-            <li><p>both are specialized version of <code class="prettyprint">interpret1</code> which makes you define a <code class="prettyprint">Recurse</code> trait to either return a value <code class="prettyprint">X</code> from an effect or produce another <code class="prettyprint">Eff</code> computation</p></li>
+            <li><p><code class="prettyprint">interpretUnsafe</code> を使うには <code class="prettyprint">SideEffect</code> trait を実装し、エフェクト <code class="prettyprint">T[X]</code> から値 <code class="prettyprint">X</code> を返させる</p></li>
+            <li><p><code class="prettyprint">translate</code> を使うには <code class="prettyprint">Translate</code> trait を実装し、エフェクトを同じスタックの他のエフェクトに変換させる</p></li>
+            <li><p>どちらも <code class="prettyprint">interpret1</code> の特別版である。それを使うには <code class="prettyprint">Recurse</code> trait を実装し、エフェクトから値 <code class="prettyprint">X</code> を返すか、または他の <code class="prettyprint">Eff</code> の計算を生成させる</p></li>
         </ul>
         <h3 id="run-your-program">Run your program</h3>
         <p>The final step is naturally running your program after interpreting it to another <code class="prettyprint">Eff</code> value. We need to</p>
