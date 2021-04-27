@@ -28,7 +28,7 @@
         <div id="tipue_search_content"></div>
 
         <p>このチュートリアルは意図して <a href="https://typelevel.org/cats/datatypes/freemonad.html">Free monad tutorial for cats</a> と同じように構造化している。そのため両者のアプローチを並べて比較できる。</p>
-        <h3 id="study-your-topic">自分のテーマを研究する</h3>
+        <h3 id="study-your-topic">自分のテーマを深く知る</h3>
         <p>キーバリューストアのための DSL を作りたいとしよう。キーを使って３つのことができるようにしたい。</p>
         <ul>
             <li>キーとひもづけて、ストアに値を入れる。</li>
@@ -258,32 +258,32 @@ def runKVStore[R, U, A](effects: Eff[R, A])
             <li><p><code class="prettyprint">translate</code> を使うには <code class="prettyprint">Translate</code> trait を実装し、エフェクトを同じスタックの他のエフェクトに変換させる</p></li>
             <li><p>どちらも <code class="prettyprint">interpret1</code> の特別版である。それを使うには <code class="prettyprint">Recurse</code> trait を実装し、エフェクトから値 <code class="prettyprint">X</code> を返すか、または他の <code class="prettyprint">Eff</code> の計算を生成させる</p></li>
         </ul>
-        <h3 id="run-your-program">Run your program</h3>
-        <p>The final step is naturally running your program after interpreting it to another <code class="prettyprint">Eff</code> value. We need to</p>
+        <h3 id="run-your-program">プログラムを実行する</h3>
+        <p>最後のステップは当然、他の <code class="prettyprint">Eff</code> の値にひもづけてプログラムを解釈してから、プログラムを実行することだ。やるべきことは、</p>
         <ul>
-            <li>specify a concrete stack of effects containing the effect we want to interpret <code class="prettyprint">Fx.fx1[KVStore]</code> (just one effect in the stack)</li>
-            <li>call our interpreter to get a <code class="prettyprint">Eff[NoFx, A]</code> value</li>
-            <li>call a final <code class="prettyprint">run</code> to get an <code class="prettyprint">A</code> value
+            <li>specify a concrete stack of effects containing the effect we want to 解釈したいエフェクト <code class="prettyprint">Fx.fx1[KVStore]</code>（今回のスタックではエフェクトは１つだけ）を含んでいるエフェクトの具体的なスタックを指定する</li>
+            <li><code class="prettyprint">Eff[NoFx, A]</code> 値を取得するインタープリターを呼ぶ</li>
+            <li><code class="prettyprint">A</code> の値を得るために最後に <code class="prettyprint">run</code> を実行する
                 <p/></li>
         </ul>
-        <p>Like this:</p>
+        <p>こんな感じだ。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, syntax.all._
 
-// run the program with the unsafe interpreter
+// 安全でないインタープリターでプログラムを実行
 runKVStoreUnsafe(program[Fx.fx1[KVStore]]).run</code></pre>
         <p><code class="prettyprint">&gt; Some(14)</code></p>
-        <p>With the safe interpreter, the process is the same and we need to</p>
+        <p>安全なインタープリターを使うと、プロセスは同様でやるべきことは、</p>
         <ul>
-            <li>specify an effect stack definition with all the effects</li>
-            <li>call our “safe” interpreter</li>
-            <li>call interpreters for all the other effects, including the final <code class="prettyprint">NoFx</code> effect with <code class="prettyprint">run</code>
+            <li>すべてのエフェクトを含むエフェクトスタックの定義を指定する</li>
+            <li>“safe” インタープリターを呼ぶ</li>
+            <li>残りのエフェクト全部のインタープリターを読んでいく。最後は <code class="prettyprint">NoFx</code> エフェクトの <code class="prettyprint">run</code>
                 <p/></li>
         </ul>
-        <p>Like that:</p>
+        <p>こんな感じだ。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, syntax.all._
 import cats._, data._
 
-// run the program with the safe interpreter
+// 安全なインタープリターでプログラムを実行
 type Stack = Fx.fx4[KVStore, Either[Throwable, *], State[Map[String, Any], *], Writer[String, *]]
 
 val (result, logs) =
@@ -297,8 +297,8 @@ put(wild-cats, 14)
 put(tame-cats, 5)
 get(wild-cats)
 delete(tame-cats)</code></pre>
-        <h3 id="add-some-syntax">Add some syntax</h3>
-        <p>It is nice to be able to “chain” <code class="prettyprint">run</code> methods with this additional piece of syntax:</p>
+        <h3 id="add-some-syntax">シンタックスを追加する</h3>
+        <p>すばらしいことに、シンタックス用の次の追加コードで <code class="prettyprint">run</code> メソッドをチェーン（数珠つなぎ）していけるのだ。</p>
         <pre><code class="prettyprint">implicit class KVStoreOps[R, A](effects: Eff[R, A]) {
   def runStore[U](implicit m: Member.Aux[KVStore, R, U],
                   throwable:_throwableEither[U],
@@ -318,9 +318,9 @@ put(wild-cats, 14)
 put(tame-cats, 5)
 get(wild-cats)
 delete(tame-cats)</code></pre>
-        <h3 id="composing-adts-with-the-eff-monad">Composing ADTs with the Eff monad</h3>
-        <p>Real world applications often time combine different algebras. The typelevel set of effects <code class="prettyprint">R</code> in <code class="prettyprint">Eff[R, A]</code> lets us compose different algebras in the context of <code class="prettyprint">Eff</code>.</p>
-        <p>Let’s see a trivial example of unrelated ADT’s getting composed that can form a more complex program. First you define your ADTs with smart constructors:</p>
+        <h3 id="composing-adts-with-the-eff-monad">Eff モナドで ADTs を合成する</h3>
+        <p>現実世界のアプリケーションは異なる代数をしばしば合成する。<code class="prettyprint">Eff[R, A]</code> におけるエフェクトの型レベル集合 <code class="prettyprint">R</code> のおかげで、 <code class="prettyprint">Eff</code> のコンテキストで異なる代数を合成できる。</p>
+        <p>無関係の ADT が合成されてより複雑なプログラムを形成している、ちょっとした例を見てみよう。まず ADT をスマートコンストラクタで定義する。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._
 
 sealed trait Interact[A]
@@ -350,7 +350,7 @@ def getAllCats[R :_dataOp]: Eff[R, List[String]] =
   send(GetAllCats())
 
 </code></pre>
-        <p>Then you simply require your program to have <code class="prettyprint">MemberIn</code> instances for those effects:</p>
+        <p>それから、これらエフェクトについてプログラム上で <code class="prettyprint">MemberIn</code> インスタンスを用意する必要がある。</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
 def program[R :_interact :_dataOp]: Eff[R, Unit] =
@@ -360,7 +360,7 @@ def program[R :_interact :_dataOp]: Eff[R, Unit] =
     cats &lt;- getAllCats
     _    &lt;- tellUser(&quot;Current cats: &quot;+cats.mkString(&quot;, &quot;))
   } yield ()</code></pre>
-        <p>Finally we write one interpreter per ADT:</p>
+        <p>最後に ADT ごとにひとつずつインタープリターを書く。</p>
         <pre><code class="prettyprint">import cats._
 import cats.implicits._
 import org.atnos.eff._, interpret._
@@ -413,7 +413,7 @@ def runDataOp[R, A](effect: Eff[R, A])(implicit m: DataOp &lt;= R): Eff[m.Out, A
 
 }
 </code></pre>
-        <p>Now if we run our program for a Stack combining both effects and type in “snuggles” when prompted, we see something like this:</p>
+        <p>両方のエフェクトを合成したスタックを使ってプログラムを実行し、入力指示に "snuggles" と入力したら、こんな結果を見るだろう。</p>
         <pre><code class="prettyprint">type Stack = Fx.fx2[Interact, DataOp]
 
 runInteract(runDataOp(program[Stack]))</code></pre>
@@ -573,24 +573,24 @@ Current cats: snuggles</code></pre>
                   </ul>
     </li>
               </ul><ul>
-                <li id="org-atnos-site-tutorial"><a href="org.atnos.site.Tutorial.html" title="Tutorial">Tutorial</a>
-      <ul><ul><li><a href="org.atnos.site.Tutorial.html#study-your-topic" title="Study your topic">Study your topic</a>
+                <li id="org-atnos-site-tutorial"><a href="org.atnos.site.Tutorial.html" title="チュートリアル">チュートリアル</a>
+      <ul><ul><li><a href="org.atnos.site.Tutorial.html#study-your-topic" title="自分のテーマを深く知る">自分のテーマを深く知る</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#create-an-adt-representing-your-grammar" title="Create an ADT representing your grammar">Create an ADT r...</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#create-an-adt-representing-your-grammar" title="自分の文法を表す ADT を作る">文法を表す ADT を作る</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#free-your-adt" title="Free your ADT">Free your ADT</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#free-your-adt" title="ADT を自由にする">ADT を自由にする</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#create-smart-constructors-using-eff.send" title="Create smart constructors using Eff.send">Create smart co...</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#create-smart-constructors-using-eff.send" title="Eff.send でスマートコンストラクタを作る">Eff.send でスマート…</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#build-a-program" title="Build a program">Build a program</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#build-a-program" title="プログラムを作る">プログラムを作る</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#write-an-interpreter-for-your-program" title="Write an interpreter for your program">Write an interp...</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#write-an-interpreter-for-your-program" title="インタープリターを書く">インタープリターを書く</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#run-your-program" title="Run your program">Run your program</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#run-your-program" title="プログラムを実行する">プログラムを実行する</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#add-some-syntax" title="Add some syntax">Add some syntax</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#add-some-syntax" title="シンタックスを追加する">シンタックスを追加する</a>
           
-        </li><li><a href="org.atnos.site.Tutorial.html#composing-adts-with-the-eff-monad" title="Composing ADTs with the Eff monad">Composing ADTs ...</a>
+        </li><li><a href="org.atnos.site.Tutorial.html#composing-adts-with-the-eff-monad" title="Eff モナドで ADT を合成する">Eff モナドで ADT 合成</a>
           
         </li></ul></ul>
       <ul>
