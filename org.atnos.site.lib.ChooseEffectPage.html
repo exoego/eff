@@ -28,19 +28,18 @@
 <h1>Choose</h1>
 <div id="tipue_search_content"></div>
 
-<p>The <code class="prettyprint">Choose</code> effect is used for non-deterministic computations. With the <code class="prettyprint">Choose</code> effect you can model computations which either:</p>
+<p><code class="prettyprint">Choose</code> エフェクトは非決定性計算のために使われる。<code class="prettyprint">Choose</code> エフェクトにより、次のどちらかになる計算をモデル化できる。</p>
 <ul>
-    <li>return no result at all</li>
-    <li>choose between 2 different computations</li>
+    <li>結果をまったく返さない</li>
+    <li>２つの異なる結果からどちらか選ぶ</li>
 </ul>
-<p><code class="prettyprint">Choose</code> is actually a generalization of <code class="prettyprint">List</code> where instead of “exploring” all the branches we might “cut” some of them. That behaviour is controlled by the <code class="prettyprint">Alternative[F]</code> instance you use when running <code class="prettyprint">Choose</code>.</p>
-<p>For example if we take <code class="prettyprint">List</code> to run a similar example as before, we get the list of all the accepted pairs:</p>
+<p><code class="prettyprint">Choose</code> は、実質的には <code class="prettyprint">List</code> を一般化したものだ。すべての分岐を「探索」する代わりに、いくつかを「無視」する。このふるまいは、<code class="prettyprint">Choose</code> エフェクトを実行するときに使う <code class="prettyprint">Alternative[F]</code> インスタンスにより管理されている。</p>
+<p>たとえば以前と同じような例を実行するために <code class="prettyprint">List</code> を受け取るとしたら、許されるペアすべてのリストが得られる。</p>
 <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
 type S = Fx.fx1[Choose]
 
-// create all the possible pairs for a given list
-// where the sum is greater than a value
+// 与えられたリストから許されるペア（その合計が値 n より大きい）すべてを作る。
 def pairsBiggerThan[R :_choose](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
 a &lt;- chooseFrom(list)
 b &lt;- chooseFrom(list)
