@@ -27,11 +27,11 @@
         <h1>Validate</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">Validate</code> effect is similar to the <code class="prettyprint">Either</code> effect but let you accumulate failures:</p>
+        <p><code class="prettyprint">Validate</code> エフェクトは <code class="prettyprint">Either</code> エフェクトと似ているが、失敗をまとめることができる。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
   /**
-   * Stack declaration
+   * スタックの宣言
    */
   type S = Fx.fx1[Validate[String, *]]
 

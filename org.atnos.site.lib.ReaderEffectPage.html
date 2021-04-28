@@ -27,8 +27,8 @@
         <h1>Reader</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">Reader</code> effect is used to request values from an “environment”. The main method is <code class="prettyprint">ask</code> to get the current environment (or “configuration” if you prefer to see it that way) and you can run an effect stack containing a <code class="prettyprint">Reader</code> effect by providing a value for the environment with the <code class="prettyprint">runReader</code> method.</p>
-        <p>You can also inject a “local” reader into a “bigger” one:</p>
+        <p><code class="prettyprint">Reader</code> エフェクトは「環境」に値を要求するのに使う。主なメソッドは <code class="prettyprint">ask</code> であり、現在の環境（またはそう見なすのがお好みなら「設定」）を取得する。それから <code class="prettyprint">runReader</code> メソッドに環境を表す値を提供することで <code class="prettyprint">Reader</code> エフェクトを含んだエフェクトスタックを実行することができる。</p>
+        <p>「局所的」なリーダーを「より大きな」リーダーに注入することもできる。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.data._
 
