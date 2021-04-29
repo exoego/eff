@@ -27,7 +27,7 @@
         <h1>Memo</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The Memo effect allows the caching of expensive computations. Computations are “stored” with a given key, so that the next computation with the same key will return the previously computed value. When interpreting those computations a <code class="prettyprint">Cache</code> must be provided:</p>
+    <p><code class="prettyprint">Memo</code> エフェクトはコストがかかる計算のキャッシュを可能にする。計算結果は与えられたキーにひもづけて「保存」され、同じキーに対する次の計算では以前に計算された値が返される。これらの計算をインタープリターで解釈するには、<code class="prettyprint">Cache</code> を提供しなければいけない。</p>
         <pre><code class="prettyprint">import cats.Eval
 import cats.implicits._
 import org.atnos.eff._, memo._
@@ -46,12 +46,12 @@ def expensive[R :_memo]: Eff[R, Int] =
 
 &quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
         <p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
-        <p>There are 2 cache implementations provided in this library to support the Memo effect:</p>
+        <p>このライブラリには、Memo エフェクトをサポートするためのキャッシュ実装が 2 つある。</p>
         <ul>
-            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentHashMapCache</code>: backed by a <code class="prettyprint">java.util.concurrent.ConcurrentHashMap</code> where the keys are hashcodes for the keys used to memoize the values. This cache is thread-safe but unbounded so use with care!</p></li>
-            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentWeakIdentityHashMapCache</code>: backed by a <code class="prettyprint">ConcurrentWeakIdentityHashMap</code> where the keys are <code class="prettyprint">System.identityHashCode</code> for the keys used to memoize the values. This cache is thread-safe and uses weak references which can be garbage collected when necessary.</p></li>
+            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentHashMapCache</code>: 内部で <code class="prettyprint">java.util.concurrent.ConcurrentHashMap</code> を使っており、そのキーは値をメモ化するために使うキーのハッシュ値となる。このキャッシュはスレッドセーフだが、制限がないので注意して使おう！</p></li>
+            <li><p><code class="prettyprint">org.atnos.eff.ConcurrentWeakIdentityHashMapCache</code>: 内部で <code class="prettyprint">ConcurrentWeakIdentityHashMap</code> を使っており、そのキーは値をメモ化するために使うキーの <code class="prettyprint">System.identityHashCode</code> となる。このキャッシュはスレッドセーフであり、弱い参照を使っているので必要なときにガベージコレクトされる。</p></li>
         </ul>
-        <p>You can also use other, and better, cache implementations like <a href="https://github.com/ben-manes/caffeine">Caffeine</a> to get more functionalities like eviction policies, maximum size and so on. You will need to implement the <code class="prettyprint">Cache</code> interface for this</p>
+        <p>キャッシュサイズの上限、キャッシュエビクションポリシー（上限まで来たときに古いキャッシュを追い出すなど）、といった機能が欲しいなら、<a href="https://github.com/ben-manes/caffeine">Caffeine</a> のような他のより良いキャッシュ実装を使うこともできる。<code class="prettyprint">Cache</code> インターフェースを実装すればよい。</p>
         <div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Cache {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> memo[V](key: AnyRef, value: =&gt;V): V</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>

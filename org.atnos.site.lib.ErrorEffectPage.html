@@ -27,20 +27,20 @@
         <h1>Error</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">Error</code> effect is both an <code class="prettyprint">Eval</code> effect and a <code class="prettyprint">Either</code> one with <code class="prettyprint">Throwable Either F</code> on the “left” side. The idea is to represent computations which can fail, either with an exception or a failure. You can:</p>
+    <p><code class="prettyprint">Error</code> エフェクトは、<code class="prettyprint">Eval</code> エフェクトと <code class="prettyprint">Either</code> エフェクトを合わせたもので、「左」側を <code class="prettyprint">Either[Throwable, F]</code> としている。その狙いは、例外、または任意の失敗を表す任意の型の、どちらかでも失敗できる計算を表現することだ。できることは、</p>
         <ul>
-            <li><p>create delayed computations with <code class="prettyprint">ok</code></p></li>
-            <li><p>fail with <code class="prettyprint">fail(f: F)</code> where <code class="prettyprint">F</code> is the failure type</p></li>
-            <li><p>throw an exception with <code class="prettyprint">exception</code></p></li>
+            <li><p><code class="prettyprint">ok</code> で遅延された計算を作る</p></li>
+            <li><p><code class="prettyprint">fail(f: F)</code> で失敗させる。ここで <code class="prettyprint">F</code> は失敗を表す型だ</p></li>
+            <li><p><code class="prettyprint">exception</code> で例外を投げる</p></li>
         </ul>
-        <p>Other useful combinators are available:</p>
+        <p>他にも便利なコンビネーターが利用できる。</p>
         <ul>
-            <li><p><code class="prettyprint">andFinally(last)</code> registers an action to be executed even in case of an exception or a failure</p></li>
-            <li><p><code class="prettyprint">orElse</code> runs an action and then run another one if the first is not successful</p></li>
-            <li><p><code class="prettyprint">whenFailed</code> does the same thing than <code class="prettyprint">orElse</code> but uses the error for <code class="prettyprint">action1</code> to decide which action to run next</p></li>
+            <li><p><code class="prettyprint">andFinally(last)</code> は例外や失敗が発生したときでも実行されるアクションを登録する。</p></li>
+            <li><p><code class="prettyprint">orElse</code> はアクションを実行し、それが成功しなかったときに別のアクションを実行させる。</p></li>
+            <li><p><code class="prettyprint">whenFailed</code> は <code class="prettyprint">orElse</code> と同様だが、but uses the error for <code class="prettyprint">action1</code> のエラーを使って次に実行するアクションを決められる。</p></li>
         </ul>
-        <p>When you run an <code class="prettyprint">Error</code> effect you get back an <code class="prettyprint">Error Either A</code> where <code class="prettyprint">Error</code> is a type alias for <code class="prettyprint">Throwable Either Failure</code>.</p>
-        <p>The <code class="prettyprint">Error</code> object implements this effect with <code class="prettyprint">String</code> as the <code class="prettyprint">Failure</code> type but you are encouraged to create our own failure datatype and extend the <code class="prettyprint">Error[MyFailureDatatype]</code> trait.</p>
+        <p><code class="prettyprint">Error</code> エフェクトを実行すると <code class="prettyprint">Either[Error, A]</code> が返ってくる。ここで <code class="prettyprint">Error</code> は <code class="prettyprint">Either[Throwable, Failure]</code> のエイリアスだ。</p>
+        <p><code class="prettyprint">Error</code> オブジェクトはこのエフェクトを <code class="prettyprint">String</code> を <code class="prettyprint">Failure</code> 型として実装してはいるが、自分たちの失敗データ型を作り、<code class="prettyprint">Error[MyFailureDatatype]</code> トレイトを実装することを推奨する。</p>
     </div>
 
 <div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">

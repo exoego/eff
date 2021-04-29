@@ -27,19 +27,19 @@
         <h1>Option</h1>
         <div id="tipue_search_content"></div>
 
-        <p>Adding an <code class="prettyprint">Option</code> effect in your stack allows to stop computations when necessary. If you create a value with <code class="prettyprint">some(a)</code> this value will be used downstream but if you use <code class="prettyprint">none</code> all computations will stop:</p>
+        <p><code class="prettyprint">Option</code> をエフェクトに追加することで、必要なときに計算を止めることができる。<code class="prettyprint">some(a)</code> で値を作ったらこの値は下流で使われるが、<code class="prettyprint">none</code> を使ったら残りの計算が停止する。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
 /**
- * Stack declaration
+ * スタックの宣言
  */
 type S = Fx.fx1[Option]
 
-// compute with this stack
+// このスタックを計算
 val map: Map[String, Int] =
   Map(&quot;key1&quot; -&gt; 10, &quot;key2&quot; -&gt; 20)
 
-// get 2 keys from the map and add the corresponding values
+// マップから２つのキーを取りだし、それらに対応する値を結合する
 def addKeys(key1: String, key2: String): Eff[S, Int] = for {
   a &lt;- fromOption(map.get(key1))
   b &lt;- fromOption(map.get(key2))

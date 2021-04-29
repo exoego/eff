@@ -27,19 +27,19 @@
         <h1>Either</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">Either</code> effect is similar to the <code class="prettyprint">Option</code> effect but adds the possibility to specify why a computation stopped:</p>
+        <p><code class="prettyprint">Either</code> エフェクトは <code class="prettyprint">Option</code> エフェクトに似ているが、計算が止まった理由を含める能力を追加している。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
   /**
-   * Stack declaration
+   * スタックの宣言
    */
   type S = Fx.fx1[Either[String, *]]
 
-  // compute with this stack
+  // このスタックを計算
   val map: Map[String, Int] =
     Map(&quot;key1&quot; -&gt; 10, &quot;key2&quot; -&gt; 20)
 
-  // get 2 keys from the map and add the corresponding values
+  // マップから２つのキーを取りだし、それらに対応する値を結合する
   def addKeys(key1: String, key2: String): Eff[S, Int] = for {
     a &lt;- optionEither(map.get(key1), s&quot;&#39;$key1&#39; not found&quot;)
     b &lt;- optionEither(map.get(key2), s&quot;&#39;$key2&#39; not found&quot;)
@@ -47,8 +47,7 @@
 
   (addKeys(&quot;key1&quot;, &quot;key2&quot;).runEither.run, addKeys(&quot;key1&quot;, &quot;missing&quot;).runEither.run)</code></pre>
         <p><code class="prettyprint">&gt; (Right(30),Left('missing' not found))</code></p>
-        <p><em>Note</em>: the <code class="prettyprint">?</code> syntax comes from the <a href="https://github.com/typelevel/kind-projector">kind-projector</a> project and allows us to avoid type lambdas.</p>
-        <p>A <code class="prettyprint">catchLeft</code> method can also be used to intercept an error and possibly recover from it:</p>
+        <p><code class="prettyprint">catchLeft</code> メソッドは、エラーを傍受して場合により復旧させるために使うことができる。</p>
         <pre><code class="prettyprint">  case class TooBig(value: Int)
   type E = Fx.fx1[Either[TooBig, *]]
 
@@ -64,7 +63,7 @@
   }
 
   action.runEither.run ==== Right(7)</code></pre>
-        <p><em>Note</em>: the type annotations on <code class="prettyprint">left</code> and <code class="prettyprint">right</code> can be avoided by adding an implicit declaration in scope. You can learn more about this in the <a href="org.atnos.site.MemberImplicits.html"  class="ok">Implicits</a> section.</p>
+        <p><em>備考</em>: <code class="prettyprint">left</code> と <code class="prettyprint">right</code> の型アノテーションは、スコープ内宣言を追加することで避けられる。詳しくは <a href="org.atnos.site.MemberImplicits.html"  class="ok">Implicits</a> セクションで学べる。</p>
     </div>
 
 <div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">

@@ -27,13 +27,13 @@
         <h1>List</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">List</code> effect is used for computations which may return several values. A simple example using this effect would be</p>
+        <p><code class="prettyprint">List</code> エフェクトは複数の値を返す計算に使うことができる。このエフェクトを使う単純な例はこうだ。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
 type S = Fx.fx1[List]
 
-// create all the possible pairs for a given list
-// where the sum is greater than a value
+// 与えられたリストから、指定の値よりも合計が大きくなる
+// ありえる組み合わせすべてを作る
 def pairsBiggerThan[R :_list](list: List[Int], n: Int): Eff[R, (Int, Int)] = for {
   a &lt;- values(list:_*)
   b &lt;- values(list:_*)

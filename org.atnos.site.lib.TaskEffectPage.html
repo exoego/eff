@@ -28,8 +28,8 @@
         <h1>Task</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">Task</code> effect is a thin shim on top of Monix’s <code class="prettyprint">Task</code>. This effect is not bundled in core Eff and requires the <code class="prettyprint">eff-monix</code> extension to use.</p>
-        <p>Now, let’s create some <code class="prettyprint">Task</code> effects:</p>
+    <p><code class="prettyprint">Task</code> エフェクトは <a href="https://monix.io/">Monix</a> の <code class="prettyprint">Task</code> の薄いラッパーだ。このエフェクトは Eff のコアにはバンドルされておらず、使うには <code class="prettyprint">eff-monix</code> 拡張モジュールが必要だ。</p>
+        <p>それでは <code class="prettyprint">Task</code> エフェクトをいくつか作ってみよう。</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.addon.monix.task._
 import org.atnos.eff.syntax.addon.monix.task._
@@ -40,21 +40,21 @@ type R = Fx.fx2[Task, Option]
 
 val action: Eff[R, Int] =
   for {
-  // create a value now
+    // 新しい値を即座に作る
     a &lt;- Eff.pure[R, Int](1)
 
-    // evaluate a value later, on the thread pool specified by a Monix `Scheduler`, and continue when it&#39;s finished
+    // Monix の `Scheduler` で指定されたスレッドプールで値をあとで評価し、評価が完了したら処理を続ける
     b &lt;- taskDelay[R, Int](1)
   } yield b
 
 </code></pre>
-        <p>Then we need to pass a Monix <code class="prettyprint">Scheduler</code> in to begin the computation.</p>
+        <p>それから、この計算を開始するには Monix の <code class="prettyprint">Scheduler</code> を渡す必要がある。</p>
         <pre><code class="prettyprint">
 implicit val scheduler =
   monix.execution.Scheduler(ExecutionContext.fromExecutorService(Executors.newScheduledThreadPool(10)): ExecutionContext)
 
 </code></pre>
-        <p>Monix doesn’t natively offer an Await API to block on a Task result. Instead it advises converting to a Scala <code class="prettyprint">Future</code> and using <code class="prettyprint">Await.result</code>. See https://monix.io/docs/2x/eval/task.html#blocking-for-a-result</p>
+    <p>Monix は Task の結果をブロッキングで取得する Await API をネイティブでは提供していない。代わりに、<a href="https://monix.io/docs/2x/eval/task.html#blocking-for-a-result">Scala の <code class="prettyprint">Future</code> に変換して <code class="prettyprint">Await.result</code> を使う</a>ことを勧めている。</p>
         <pre><code class="prettyprint">import scala.concurrent.Await
 
 Await.result(action.runOption.runAsync.runToFuture, 1 second)</code></pre>
