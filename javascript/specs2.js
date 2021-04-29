@@ -1,46 +1,14 @@
-function toggleImage(image) {
-  if (image.style.listStyleImage.match('expanded')) {
-    image.style.listStyleImage = "url(images/collapsed.gif)";
-  } else {
-    image.style.listStyleImage = "url(images/expanded.gif)";
-  }
-};
-function showHide(id) {
-  element = document.getElementById(id);
-  element.style.display = (element.style.display == 'block')? 'none' : 'block';
-};
-function showHideByClass(name) {
-  var elements = document.getElementsByClassName(name);
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.display = (elements[i].style.display == 'none') ? elements[i].style.display = '': 'none';
-  }
-};
-function showByClass(name) {
-  var elements = document.getElementsByClassName(name);
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.display = '';
-  }
-};
-function showAll() {
-  showByTag('text');
-  showByTag('example');
-  showByTag('step');
-};
-function showByTag(name) {
-  var elements = document.getElementsByTagName(name);
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.display = 'block';
-  }
-};
-function hideByClass(name) {
-  var elements = document.getElementsByClassName(name);
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.display = 'none';
-  }
-};
-function showById(id) {
-  document.getElementById(id).style.display = ''
-};
-function hideById(id) {
-  document.getElementById(id).style.display = 'none'
-};
+window.addEventListener("DOMContentLoaded", function (event) {
+    const footer = document.createElement("div");
+    footer.className = "container";
+    const filepath = location.pathname.replace(/^\/eff\//, "");
+    const englishUrl = `https://atnos-org.github.io/eff/${filepath}`;
+    const editUrl = `https://github.com/exoego/eff/edit/gh-pages/${filepath}`;
+    footer.innerHTML = `
+        <hr>
+        <p><a href="${editUrl}">このページを修正</a> | <a href="${englishUrl}">原文</a> | 翻訳に関する貢献は <a href="https://github.com/exoego/eff">exoego/eff</a> まで</p>
+        <p>Licensed under <a href="http://opensource.org/licenses/mit-license.html">MIT License</a></p>
+        <p></p>
+    `;
+    document.body.appendChild(footer);
+});
