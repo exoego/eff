@@ -31,7 +31,7 @@
         <p>このエフェクトを実行するために２つのメソッドが利用できる。</p>
         <ul>
             <li><p><code class="prettyprint">runEval: Eff[U, A]</code> は計算を単純に実行する</p></li>
-            <li><p><code class="prettyprint">attemptEval: Eff[U, Throwable Either A]</code> は計算を実行し、発生するかもしれない <code class="prettyprint">Throwable</code> をキャッチすることもできる</p></li>
+            <li><p><code class="prettyprint">attemptEval: Eff[U, Either[Throwable, A]]</code> は計算を実行し、発生するかもしれない <code class="prettyprint">Throwable</code> をキャッチすることもできる</p></li>
         </ul>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
