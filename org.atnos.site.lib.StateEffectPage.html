@@ -27,12 +27,12 @@
         <h1>State</h1>
         <div id="tipue_search_content"></div>
 
-        <p>A <code class="prettyprint">State</code> effect can be seen as the combination of both a <code class="prettyprint">Reader</code> and a <code class="prettyprint">Writer</code> with these operations:</p>
+        <p><code class="prettyprint">State</code> エフェクトは <code class="prettyprint">Reader</code> と <code class="prettyprint">Writer</code> を組み合わせたものと見ることができる。これらの操作を備えている。</p>
         <ul>
-            <li><p><code class="prettyprint">get</code> get the current state</p></li>
-            <li><p><code class="prettyprint">put</code> set a new state</p></li>
+            <li><p><code class="prettyprint">get</code> 現在の状態を取得</p></li>
+            <li><p><code class="prettyprint">put</code> 新しい状態を設定</p></li>
         </ul>
-        <p>Let’s see an example showing that we can also use tags to track different states at the same time:</p>
+        <p>同時にいくつかの状態を追跡するためにタグも使えることを示した例を見てみよう。</p>
         <pre><code class="prettyprint">import cats.data._
   import org.atnos.eff._, all._, syntax.all._
 
@@ -52,8 +52,9 @@
 
   swapVariables.evalState(10).evalState(&quot;hello&quot;).run</code></pre>
         <p><code class="prettyprint">&gt; initial: (10,hello), final: (5,10)</code></p>
-        <p>In the example above we have used an <code class="prettyprint">eval</code> method to get the <code class="prettyprint">A</code> in <code class="prettyprint">Eff[R, A]</code> but it is also possible to get both the value and the state with <code class="prettyprint">run</code> or only the state with <code class="prettyprint">exec</code>.</p>
-        <p>Instead of tagging state effects it is also possible to transform a State effect acting on a “small” state into a State effect acting on a “bigger” state:</p>
+        <p>この例では <code class="prettyprint">Eff[R, A]</code>
+            の <code class="prettyprint">A</code> を取得するために <code class="prettyprint">eval</code> メソッドを使っているが、<code class="prettyprint">run</code> で値と状態の両方を取得することもできるし、<code class="prettyprint">exec</code> で状態だけを取得することもできる.</p>
+        <p>複数の State エフェクトを区別するのではなく、「小さな」状態を実行する State エフェクトを「より大きな」状態を実行する State エフェクトに変換することもできる。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.data.State
 

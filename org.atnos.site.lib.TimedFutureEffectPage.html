@@ -27,7 +27,7 @@
         <h1>TimedFuture</h1>
         <div id="tipue_search_content"></div>
 
-        <p>The <code class="prettyprint">TimedFuture</code> effect is a thin shim on top of Scala’s <code class="prettyprint">Future</code>. The only extra capability it has built-in is timeouts, which are supported by passing in a <code class="prettyprint">ScheduledExecutionContext</code>. Note that because <code class="prettyprint">Future</code> represents a computation already taking place, <code class="prettyprint">TimedFuture</code> is a function that returns a <code class="prettyprint">Future</code>. This means if you start a computation before passing the <code class="prettyprint">Future</code> into Eff, the <code class="prettyprint">Future</code> will begin less predictably.</p>
+        <p><code class="prettyprint">TimedFuture</code> エフェクトは Scala の <code class="prettyprint">Future</code> の薄いラッパーだ。唯一追加された機能は組み込みのタイムアウトであり、<code class="prettyprint">ScheduledExecutionContext</code> に渡されることでサポートされる。注意することとして、<code class="prettyprint">Future</code> はすでに実行されている計算を表しているので、<code class="prettyprint">TimedFuture</code> は <code class="prettyprint">Future</code> を返す関数である。つまり、<code class="prettyprint">Future</code> を Eff にわたす前に計算を始めたいなら、その <code class="prettyprint">Future</code> がいつ始まっているかは予測がしにくくなる。</p>
         <p>Now, let’s create some <code class="prettyprint">TimedFuture</code> effects:</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.future._
@@ -40,37 +40,37 @@ type R = Fx.fx2[TimedFuture, Option]
 
 val action: Eff[R, Int] =
   for {
-  // create a value now
+    // 新しい値を即座に作る
     a &lt;- Eff.pure[R, Int](1)
 
-    // evaluate a value later, on some other thread pool, and continue when it&#39;s finished
+    // 同じスレッドプールで値をあとで評価し、評価が完了したら処理を続ける
     b &lt;- futureDelay[R, Int](1)
   } yield b
 
 </code></pre>
-        <p>Then we need to pass a <code class="prettyprint">Scheduler</code> and an <code class="prettyprint">ExecutionContext</code> in to begin the computation.</p>
+        <p>次に、計算を始めるために、<code class="prettyprint">Scheduler</code> と <code class="prettyprint">ExecutionContext</code> を渡す必要がある。</p>
         <pre><code class="prettyprint">
 implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
 import org.atnos.eff.syntax.future._
 
 Await.result(action.runOption.runSequential, 1 second)</code></pre>
         <p><code class="prettyprint">&gt; Some(1)</code></p>
-        <p>You can also use other <code class="prettyprint">Future</code> or <code class="prettyprint">Task</code> effects:</p>
+        <p>他の <code class="prettyprint">Future</code> or <code class="prettyprint">Task</code> エフェクトを使うこともできる。</p>
         <ul>
-            <li><code class="prettyprint">twitter</code>: depend on <code class="prettyprint">eff-twitter</code> and import <code class="prettyprint">org.atnos.eff.addon.twitter.future._</code></li>
-            <li><code class="prettyprint">scalaz</code>: depend on <code class="prettyprint">eff-scalaz</code> and import <code class="prettyprint">org.atnos.eff.addon.scalaz.task._</code></li>
-            <li><code class="prettyprint">monix</code>: depend on <code class="prettyprint">eff-monix</code> and import <code class="prettyprint">org.atnos.eff.addon.monix.task._</code></li>
+            <li><code class="prettyprint">twitter</code> Future を使うなら依存関係に <code class="prettyprint">eff-twitter</code> を追加し、<code class="prettyprint">org.atnos.eff.addon.twitter.future._</code> をインポートする</li>
+            <li><code class="prettyprint">scalaz</code> Task を使うなら依存関係に <code class="prettyprint">eff-scalaz</code> を追加し、<code class="prettyprint">org.atnos.eff.addon.scalaz.task._</code> をインポートする</li>
+            <li><code class="prettyprint">monix</code> Task を使うなら依存関係に <code class="prettyprint">eff-monix</code> を追加し、<code class="prettyprint">org.atnos.eff.addon.monix.task._</code> をインポートする</li>
         </ul>
-        <p>There are corresponding syntax imports to be able to call <code class="prettyprint">runAsync</code> methods in:</p>
+        <p><code class="prettyprint">runAsync</code> メソッドを呼ぶための対応するシンタックスのインポートもある。</p>
         <ul>
             <li><code class="prettyprint">twitter</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.twitter.future._</code></li>
             <li><code class="prettyprint">scalaz</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.scalaz.task._</code></li>
             <li><code class="prettyprint">monix</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.monix.task._</code></li>
         </ul>
-        <p><code class="prettyprint">Future</code> and <code class="prettyprint">Task</code> computations can also be memoized to avoid expensive computations to be done several times. You can either</p>
+        <p><code class="prettyprint">Future</code> と <code class="prettyprint">Task</code> の計算はメモ化しておいて、コストの高い計算が何度も実行されるのを避けることもできる。それぞれこうする。r</p>
         <ul>
-            <li>use the <code class="prettyprint">futureMemo/taskMemo</code> operator with a (mutable) cache</li>
-            <li>use the <code class="prettyprint">futureMemoized/taskMemoized</code> operator with the <code class="prettyprint">Memoized</code> effect (you will need to provide the cache later)
+            <li><code class="prettyprint">futureMemo/taskMemo</code> オペレーターを（ミュータブルな）キャッシュと使う</li>
+            <li><code class="prettyprint">futureMemoized/taskMemoized</code> オペレーターを <code class="prettyprint">Memoized</code> エフェクトと使う（キャッシュをあとで提供する必要がある）
                 <p/></li>
         </ul>
         <pre><code class="prettyprint">import cats.implicits._

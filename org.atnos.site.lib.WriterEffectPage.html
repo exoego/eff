@@ -27,7 +27,7 @@
         <h1>Writer</h1>
         <div id="tipue_search_content"></div>
 
-        <p>You can then define your own custom <code class="prettyprint">Fold</code> to log the values to a file:</p>
+        <p>ファイルに値を書き込むためのカスタム <code class="prettyprint">Fold</code> を定義できる。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.data.Writer
 import java.io.PrintWriter
@@ -43,7 +43,7 @@ val action: Eff[S, Int] = for {
 
 } yield a + b
 
-// define a fold to output values
+// 値を出力する Fold を定義
 def fileFold(path: String) = new RightFold[String, Unit] {
   type S = PrintWriter
   val init: S = new PrintWriter(path)
