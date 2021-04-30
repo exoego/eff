@@ -425,6 +425,8 @@
     `;
 
     window.addEventListener("DOMContentLoaded", function (event) {
+        prettyPrint();
+
         const footer = document.createElement("div");
         footer.className = "container";
         footer.innerHTML = footerHtml;
