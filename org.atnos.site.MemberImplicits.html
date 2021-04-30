@@ -1,38 +1,48 @@
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>eff - Member implicits</title>
-    <link href="./images/s2.ico"                                   type="image/x-icon" rel="specs2 icon"/>
+    <link href="./images/s2.ico" type="image/x-icon" rel="specs2 icon"/>
 
-    <link href="./css/bootstrap.min.css"                           type="text/css"     rel="stylesheet" />
-    <link href="./css/font-awesome.min.css"                        type="text/css"     rel="stylesheet" />
-    <link href="./css/prettify.css"                                type="text/css"     rel="stylesheet" />
-    <link href="./css/tabber.css"                                  type="text/css"     rel="stylesheet" />
-    <link href="./css/specs2.css"                                  type="text/css"     rel="stylesheet" />
-    <!--<link href="./css/specs2-user.css"                             type="text/css"     rel="stylesheet" />-->
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
 
-    <script src="./javascript/jquery.js"                           type="text/javascript"></script>
-    <script src="./javascript/jquery.jstree.js"                    type="text/javascript"></script>
-    <script src="./javascript/tabber.js"                           type="text/javascript"></script>
-    <script src="./javascript/tabber_start.js"                     type="text/javascript"></script>
-    <script src="./javascript/prettify.js"                         type="text/javascript"></script>
-    <script src="./javascript/specs2.js"                           type="text/javascript"></script>
-    <!--<script src="./javascript/specs2-user.js"                      type="text/javascript"></script>-->
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
+
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+
+
+    <script src="./javascript/jquery.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.jstree.js" type="text/javascript"></script>
+
+
+    <script src="./javascript/prettify.js" type="text/javascript"></script>
+    <script src="./javascript/specs2.js" type="text/javascript"></script>
+
 
 </head>
-<body onload="prettyPrint(); tabberAutomatic([])">
+<body>
 
 <div class="container">
-<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+    <div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
         <h1>Member implicits</h1>
         <div id="tipue_search_content"></div>
 
-        <p>Type inference with the Eff monad can be a bit tricky to get right if we want to avoid type annotations. Here are some tips to help you.</p>
+        <p>Type inference with the Eff monad can be a bit tricky to get right if we want to avoid type annotations. Here
+            are some tips to help you.</p>
         <h3 id="running-effects-with-several-type-parameters">Running effects with several type parameters</h3>
-        <p>Some effects use 2 type variables, like <code class="prettyprint">Reader</code> or <code class="prettyprint">Writer</code>. If you want to use those effects in an effect stack you need to make sure you have the following <code class="prettyprint">scalac</code> option:</p>
-        <div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>scalacOptions += <span class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre></div>
+        <p>Some effects use 2 type variables, like <code class="prettyprint">Reader</code> or <code class="prettyprint">Writer</code>.
+            If you want to use those effects in an effect stack you need to make sure you have the following <code
+                    class="prettyprint">scalac</code> option:</p>
+        <div class="sourceCode" id="cb1">
+            <pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1"
+                                                                                             aria-hidden="true"
+                                                                                             tabindex="-1"></a>scalacOptions += <span
+                    class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre>
+        </div>
         <h3 id="use-context-bounds-and-type-aliases">Use context bounds and type aliases</h3>
-        <p>When creating effects you can always “require” a stack containing the right effects with the <code class="prettyprint">MemberIn</code> typeclass:</p>
+        <p>When creating effects you can always “require” a stack containing the right effects with the <code
+                class="prettyprint">MemberIn</code> typeclass:</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.all._
 
@@ -46,7 +56,8 @@ def putAndTell[R](i: Int)(implicit s: StateInt |= R, w: WriterString |= R): Eff[
     _ &lt;- put(i)
     _ &lt;- tell(&quot;stored &quot; + i)
   } yield i</code></pre>
-        <p>You can even use context bounds to make the declaration of <code class="prettyprint">putAndTell</code> more concise:</p>
+        <p>You can even use context bounds to make the declaration of <code class="prettyprint">putAndTell</code> more
+            concise:</p>
         <pre><code class="prettyprint">import org.atnos.eff.all._
 
 type _stateInt[R] = State[Int, *] |= R
@@ -61,10 +72,10 @@ def putAndTell[R :_stateInt :_writerString](i: Int): Eff[R, Int] =
         <p>There are 3 different ways to declare that an effect is part of an effect stack with 3 typeclasses:</p>
         <table>
             <colgroup>
-                <col style="width: 16%" />
-                <col style="width: 7%" />
-                <col style="width: 29%" />
-                <col style="width: 47%" />
+                <col style="width: 16%"/>
+                <col style="width: 7%"/>
+                <col style="width: 29%"/>
+                <col style="width: 47%"/>
             </colgroup>
             <thead>
             <tr class="header">
@@ -84,21 +95,32 @@ def putAndTell[R :_stateInt :_writerString](i: Int): Eff[R, Int] =
             <tr class="even">
                 <td><code class="prettyprint">MemberInOut[M, R]</code></td>
                 <td><code class="prettyprint">M /= R</code></td>
-                <td>“<code class="prettyprint">M</code> is part of <code class="prettyprint">R</code> and can be extracted from it”</td>
-                <td>to intercept the effect <code class="prettyprint">M</code> (see <code class="prettyprint">Interpreter.scala</code>) and transform it while staying in the same stack. For example to <code class="prettyprint">handleError</code> for an Error effect</td>
+                <td>“<code class="prettyprint">M</code> is part of <code class="prettyprint">R</code> and can be
+                    extracted from it”
+                </td>
+                <td>to intercept the effect <code class="prettyprint">M</code> (see <code class="prettyprint">Interpreter.scala</code>)
+                    and transform it while staying in the same stack. For example to <code class="prettyprint">handleError</code>
+                    for an Error effect
+                </td>
             </tr>
             <tr class="odd">
                 <td><code class="prettyprint">Member[M, R]</code></td>
                 <td><code class="prettyprint">M &lt;= R</code></td>
-                <td>“<code class="prettyprint">M</code> is part of <code class="prettyprint">R</code>, can be extracted from it, and the resulting stack is <code class="prettyprint">m.Out</code>”</td>
-                <td>to interpret the effect in terms of special values or other effects and remove the effect from the stack</td>
+                <td>“<code class="prettyprint">M</code> is part of <code class="prettyprint">R</code>, can be extracted
+                    from it, and the resulting stack is <code class="prettyprint">m.Out</code>”
+                </td>
+                <td>to interpret the effect in terms of special values or other effects and remove the effect from the
+                    stack
+                </td>
             </tr>
             </tbody>
         </table>
         <h3 id="packing-member-instances">“Packing” member instances</h3>
         <p>Some function signatures can be repetitive when they always require the same list of effects:</p>
-        <p>def foo1<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int] def foo2<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int] def foo3<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int]</p>
-        <p>It is possible to “pack” them with the following <code class="prettyprint">_effects</code> type definition:</p>
+        <p>def foo1<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int] def foo2<a href="i:%20Int">R :_foo :_bar
+            :_baz</a>: Eff[R, Int] def foo3<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int]</p>
+        <p>It is possible to “pack” them with the following <code class="prettyprint">_effects</code> type definition:
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff.Members.{&amp;:, &amp;&amp;:}
 
 trait Foo[A]
@@ -134,270 +156,14 @@ type U = Fx.fx4[Foo, Bar, Baz, Boo]
 
 t.foo[S](1)
 t.foo[U](1)</code></pre>
-        <p>The implicit definition <code class="prettyprint">extractMember</code> in the <code class="prettyprint">Members</code> object will take care of “unpacking” the member instances where required. Note that this implicit must <em>not</em> be in scope when calling the methods requiring the “packed” implicits otherwise it will trigger a divergent implicit search.</p>
+        <p>The implicit definition <code class="prettyprint">extractMember</code> in the <code class="prettyprint">Members</code>
+            object will take care of “unpacking” the member instances where required. Note that this implicit must <em>not</em>
+            be in scope when calling the methods requiring the “packed” implicits otherwise it will trigger a divergent
+            implicit search.</p>
     </div>
 
-<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
-<div class="col-md-2 fixed">
-
-<!-- search box -->
-<div class="search-box">
-</div>
-
-<!-- table of contents -->
-<div id="tree"><ul>
-                <li id="index"><a href="index.html" title="eff">eff</a>
-      <ul><ul><li><a href="index.html#contributing" title="貢献">貢献</a>
-          
-        </li></ul></ul>
-      <ul>
-                    <ul>
-                <li id="org-atnos-site-installation"><a href="org.atnos.site.Installation.html" title="インストール">インストール</a>
-      <ul><ul><li><a href="org.atnos.site.Installation.html#additional-dependencies" title="さらなる依存関係">さらなる依存関係</a>
-          
-        </li><li><a href="org.atnos.site.Installation.html#imports" title="インポート">インポート</a>
-          <ul><li><a href="org.atnos.site.Installation.html#main-types" title="主要な型">主要な型</a>s</a>
-          
-        </li><li><a href="org.atnos.site.Installation.html#creating-effects" title="エフェクトの作成">エフェクトの作成</a>
-          
-        </li><li><a href="org.atnos.site.Installation.html#interpreting-effects"title="エフェクトの解釈">エフェクトの解釈</a>
-          
-        <!--</li><li><a href="org.atnos.site.Installation.html#intellij-support" title="Intellij support">Intellij support</a>-->
-          
-        </li><li><a href="org.atnos.site.Installation.html#with-scalaz" title="Scalaz と使う">Scalaz と使う</a>
-          
-        </li></ul>
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-introduction"><a href="org.atnos.site.Introduction.html" title="初めてのエフェクト">初めてのエフェクト</a>
-      <ul><ul><li><a href="org.atnos.site.Introduction.html#first-example" title="最初の例">最初の例</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-outofthebox"><a href="org.atnos.site.OutOfTheBox.html" title="すぐ使えるエフェクト">すぐ使えるエフェクト</a>
-      <ul><ul><li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?" title="次にすることは？">次にすることは？</a>
-          
-        </li></ul></ul>
-      <ul>
-                    <ul>
-                <li id="org-atnos-site-lib-evaleffectpage"><a href="org.atnos.site.lib.EvalEffectPage.html" title="Eval">Eval</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-optioneffectpage"><a href="org.atnos.site.lib.OptionEffectPage.html" title="Option">Option</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-eithereffectpage"><a href="org.atnos.site.lib.EitherEffectPage.html" title="Either">Either</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-validateeffectpage"><a href="org.atnos.site.lib.ValidateEffectPage.html" title="Validate">Validate</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-erroreffectpage"><a href="org.atnos.site.lib.ErrorEffectPage.html" title="Error">Error</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-readereffectpage"><a href="org.atnos.site.lib.ReaderEffectPage.html" title="Reader">Reader</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-writereffectpage"><a href="org.atnos.site.lib.WriterEffectPage.html" title="Writer">Writer</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-stateeffectpage"><a href="org.atnos.site.lib.StateEffectPage.html" title="State">State</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-listeffectpage"><a href="org.atnos.site.lib.ListEffectPage.html" title="List">List</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-chooseeffectpage"><a href="org.atnos.site.lib.ChooseEffectPage.html" title="Choose">Choose</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-memoeffectpage"><a href="org.atnos.site.lib.MemoEffectPage.html" title="Memo">Memo</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-timedfutureeffectpage"><a href="org.atnos.site.lib.TimedFutureEffectPage.html" title="TimedFuture">TimedFuture</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-taskeffectpage"><a href="org.atnos.site.lib.TaskEffectPage.html" title="Task">Task</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-lib-safeeffectpage"><a href="org.atnos.site.lib.SafeEffectPage.html" title="Safe">Safe</a>
-      <ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul>
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-tutorial"><a href="org.atnos.site.Tutorial.html" title="チュートリアル">チュートリアル</a>
-      <ul><ul><li><a href="org.atnos.site.Tutorial.html#study-your-topic" title="自分のテーマを深く知る">自分のテーマを深く知る</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#create-an-adt-representing-your-grammar" title="自分の文法を表す ADT を作る">文法を表す ADT を作る</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#free-your-adt" title="ADT を自由にする">ADT を自由にする</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#create-smart-constructors-using-eff.send" title="Eff.send でスマートコンストラクタを作る">Eff.send でスマート…</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#build-a-program" title="プログラムを作る">プログラムを作る</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#write-an-interpreter-for-your-program" title="インタープリターを書く">インタープリターを書く</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#run-your-program" title="プログラムを実行する">プログラムを実行する</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#add-some-syntax" title="シンタックスを追加する">シンタックスを追加する</a>
-          
-        </li><li><a href="org.atnos.site.Tutorial.html#composing-adts-with-the-eff-monad" title="Eff モナドで ADT を合成する">Eff モナドで ADT 合成</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-createeffects"><a href="org.atnos.site.CreateEffects.html" title="エフェクトの作成">エフェクトの作成</a>
-      <ul><ul><li><a href="org.atnos.site.CreateEffects.html#creation" title="作成">作成</a>
-          
-        </li><li><a href="org.atnos.site.CreateEffects.html#compiler-limitation" title="コンパイラーの制限">コンパイラーの制限</a>
-          
-        </li><li><a href="org.atnos.site.CreateEffects.html#interpreter" title="インタープリター">インタープリター</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-transformstack"><a href="org.atnos.site.TransformStack.html" title="Transform stacks">Transform stacks</a>
-      <ul><ul><li><a href="org.atnos.site.TransformStack.html#what-is-an-“effect-stack”?" title="What is an “effect stack”?">What is an “eff...</a>
-          
-        </li><li><a href="org.atnos.site.TransformStack.html#transform-an-effect-to-another" title="Transform an effect to another">Transform an ef...</a>
-          <ul><li><a href="org.atnos.site.TransformStack.html#change-the-effect" title="Change the effect">Change the effect</a>
-          
-        </li></ul>
-        </li><li><a href="org.atnos.site.TransformStack.html#translate-an-effect-into-multiple-others" title="Translate an effect into multiple others">Translate an ef...</a>
-          
-        </li><li><a href="org.atnos.site.TransformStack.html#interpret-an-effect-“locally”" title="Interpret an effect “locally”">Interpret an ef...</a>
-          
-        </li><li><a href="org.atnos.site.TransformStack.html#merge-stacks" title="Merge stacks">Merge stacks</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-memberimplicits"><a href="org.atnos.site.MemberImplicits.html" title="Member implicits">Member implicits</a>
-      <ul><ul><li><a href="org.atnos.site.MemberImplicits.html#running-effects-with-several-type-parameters" title="Running effects with several type parameters">Running effects...</a>
-          
-        </li><li><a href="org.atnos.site.MemberImplicits.html#use-context-bounds-and-type-aliases" title="Use context bounds and type aliases">Use context bou...</a>
-          
-        </li><li><a href="org.atnos.site.MemberImplicits.html#know-your-member-typeclasses" title="Know your Member typeclasses">Know your Membe...</a>
-          
-        </li><li><a href="org.atnos.site.MemberImplicits.html#“packing”-member-instances" title="“Packing” member instances">“Packing” membe...</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-applicativeevaluation"><a href="org.atnos.site.ApplicativeEvaluation.html" title="Applicative">Applicative</a>
-      <ul><ul><li><a href="org.atnos.site.ApplicativeEvaluation.html#concurrent-evaluation" title="Concurrent evaluation">Concurrent eval...</a>
-          
-        </li><li><a href="org.atnos.site.ApplicativeEvaluation.html#batching" title="Batching">Batching</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-cookbook"><a href="org.atnos.site.Cookbook.html" title="Cookbook">Cookbook</a>
-      <ul><ul><li><a href="org.atnos.site.Cookbook.html#partial-interpretation" title="Partial Interpretation">Partial Interpr...</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul><ul>
-                <li id="org-atnos-site-communityresources"><a href="org.atnos.site.CommunityResources.html" title="Community resources">Community resou...</a>
-      <ul><ul><li><a href="org.atnos.site.CommunityResources.html#blog-posts" title="Blog posts">Blog posts</a>
-          
-        </li><li><a href="org.atnos.site.CommunityResources.html#tutorials-&amp;-examples" title="Tutorials &amp; Examples">Tutorials &amp; Exa...</a>
-          
-        </li></ul></ul>
-      <ul>
-                    
-                  </ul>
-    </li>
-              </ul>
-                  </ul>
-    </li>
-              </ul></div><script>$(function () { $('#tree').jstree({'core':{'initially_open':['index','org-atnos-site-memberimplicits'], 'animation':200}, 'themes' : {'theme': 'default','url': './css/themes/default/style.css'}, 'plugins':['themes', 'html_data']}); });</script>
-
-</div>
-</div>
+    <div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
+    </div>
 </div>
 
 </body>
