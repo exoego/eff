@@ -241,15 +241,12 @@
         const sidebarOut = document.querySelector(".sidebar-outer");
         sidebarOut.appendChild(sidebar);
 
-        const initiallyOpen = ($(sidebarOut).attr("data-open") || '').split(" ");
-        // $('#tree').jstree({
-        //     'core': {
-        //         'initially_open': initiallyOpen,
-        //         'animation': 200
-        //     },
-        //     'themes': {'theme': 'default', 'url': './css/themes/default/style.css'},
-        //     'plugins': ['themes', 'html_data']
-        // });
+        const activeLink = sidebarOut.dataset.active || '';
+        document.getElementById(activeLink).className += "active"
+
+        const target = document.getElementById(activeLink);
+        const parentNode = document.getElementById("tree")
+        parentNode.scrollTop = target.offsetTop - parentNode.offsetTop;
     });
 })();
 

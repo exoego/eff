@@ -3,7 +3,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   font-weight: normal;
-  color: #3D3B3B;	
+  color: #3D3B3B;
 }
 .sidebar-outer {
   top: 0;
@@ -17,11 +17,11 @@ body {
   margin: 30px 5px 0 10px;
 }
 .text-flow {
-  white-space: pre-wrap;	
+  white-space: pre-wrap;
 }
 pre.prettyprint.prettyprinted {
   margin-bottom: 10px;
-  padding: 2px; 
+  padding: 2px;
   border: 0px;
 }
 
@@ -258,7 +258,7 @@ pre {
 #tree {
   max-height: 100vh;
   overflow: scroll;
-  border-right: 1px solid #ddd
+  border-right: 1px solid #ddd;
 }
 #tree ul {
   list-style: none;
@@ -270,9 +270,18 @@ pre {
   padding:0;
 }
 
-#tree li:not([id])::before {
+#tree li:not([id]) > a::before {
   content: "🔸 "
 }
-#tree li[id]::before {
+#tree li[id] > a::before {
   content: "📄 "
+}
+#tree li a {
+  display: block;
+}
+
+li.active > a {
+  color: #666 !important;
+  background: #fff3ee;
+  font-weight: bold
 }
