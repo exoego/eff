@@ -1,24 +1,29 @@
 body {
   margin: 0 5px 0 5px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   font-size: 14px;
   font-weight: normal;
-  color: #3D3B3B;
+  color: #3d3b3b;
 }
+
 .sidebar-outer {
   top: 0;
   position: sticky;
 }
+
 .fixed {
   margin-top: 10px;
   margin-left: 0px;
 }
+
 .spec {
   margin: 30px 5px 0 10px;
 }
+
 .text-flow {
   white-space: pre-wrap;
 }
+
 pre.prettyprint.prettyprinted {
   margin-bottom: 10px;
   padding: 2px;
@@ -26,7 +31,7 @@ pre.prettyprint.prettyprinted {
 }
 
 h1 {
-  color: #5981B4;
+  color: #5981b4;
   font-size: 32px;
   font-weight: bold;
   padding: 6px 0px 6px 10px;
@@ -34,13 +39,14 @@ h1 {
   margin-bottom: 5px;
   margin-left: -10px;
   border-radius: 5px;
-  box-shadow: 3px 3px 5px rgba(0,0,0,.65);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.65);
   border: 2px solid rgb(178, 189, 183);
   background-color: #f5f5f5;
 }
+
 h2 {
-  color: #BE6181;
-  background-color: #F6F3F3;
+  color: #be6181;
+  background-color: #f6f3f3;
   font-size: 24px;
   font-weight: bold;
   border-radius: 3px;
@@ -50,48 +56,59 @@ h2 {
   margin-bottom: 10px;
   margin-left: -5px;
 }
+
 h3 {
-  color: #3A6AAC;
-  background-color: #F6F3F3;
+  color: #3a6aac;
+  background-color: #f6f3f3;
   font-size: 22px;
   padding: 3px 0px 5px 6px;
   border: 1px solid #aaa;
   margin-top: 15px;
   margin-left: -5px;
 }
+
 h4 {
-  color: #3A6AAC;
-  background-color: #FFFDFD;
+  color: #3a6aac;
+  background-color: #fffdfd;
   font-size: 18px;
   padding: 4px 4px 4px 6px;
   margin: 15px 4px 10px 4px;
   border: 1px solid #bbb;
 }
+
 h5 {
-  color: #3A6AAC;
+  color: #3a6aac;
   font-size: 16px;
   font-weight: bold;
   padding: 0px 4px 0px 6px;
 }
+
 h6 {
   font-style: italic;
-  color: #3A6AAC;
+  color: #3a6aac;
   font-size: 14px;
   padding: 0px 4px 0px 6px;
 }
+
 text {
   white-space: pre-wrap;
 }
+
 .success_icon {
 }
+
 .example {
 }
+
 .success {
 }
+
 .failure {
 }
+
 .error {
 }
+
 .skipped {
 }
 
@@ -99,7 +116,8 @@ ul {
   list-style-type: disc;
 }
 
-ul, ol {
+ul,
+ol {
   margin-top: 0;
   margin-bottom: 0px;
 }
@@ -108,35 +126,42 @@ li.example.success {
   list-style-image: url(../images/icon_success_sml.gif);
   padding-left: 5px;
 }
+
 li.example.failure {
   list-style-image: url(../images/icon_failure_sml.gif);
   padding-left: 5px;
 }
+
 li.example.error {
   list-style-image: url(../images/icon_error_sml.gif);
   padding-left: 5px;
 }
+
 li.example.skipped {
   list-style-image: url(../images/icon_skipped_sml.gif);
   padding-left: 5px;
 }
+
 li.example.pending {
   list-style-image: url(../images/icon_pending_sml.gif);
   padding-left: 5px;
 }
+
 li.example.info {
   list-style-image: url(../images/icon_info_sml.gif);
   padding-left: 5px;
 }
+
 li.toggle {
   list-style-image: url(../images/collapsed.gif);
   padding-left: 10px;
-  padding-right: 0px
+  padding-right: 0px;
 }
+
 li.notoggle {
   list-style-type: none;
   padding-left: 12px;
-  padding-right: 0px
+  padding-right: 0px;
 }
 
 li.step.error {
@@ -148,28 +173,31 @@ span.success {
   content: url(../images/icon_success_sml.gif);
   padding-right: 5px;
 }
+
 span.failure {
   content: url(../images/icon_failure_sml.gif);
   padding-right: 5px;
 }
+
 span.error {
   content: url(../images/icon_error_sml.gif);
   padding-right: 5px;
 }
+
 span.skipped {
   content: url(../images/icon_skipped_sml.gif);
   padding-right: 5px;
 }
+
 span.pending {
   content: url(../images/icon_pending_sml.gif);
   padding-right: 5px;
 }
+
 span.info {
   content: url(../images/icon_info_sml.gif);
   padding-right: 5px;
 }
-
-
 
 table {
   table-layout: auto;
@@ -179,61 +207,75 @@ table {
   margin: 20px 5px 20px 5px;
   padding: 0px;
 
-  border: solid #AAAAAA;
+  border: solid #aaaaaa;
   border-width: 1px 0px 0px 1px;
 
   border-radius: 5px;
-  box-shadow: 2px 2px 2px rgba(0,0,0,.65);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.65);
 
   font-size: 0.9em;
 }
+
 table thead {
-  background: #EEEEEE;
+  background: #eeeeee;
 }
+
 table tbody {
   background: white;
 }
+
 table th {
-  background: #EEEEEE;
-  border: solid #AAAAAA;
+  background: #eeeeee;
+  border: solid #aaaaaa;
   border-width: 1px 1px 1px 1px;
   padding: 2px 6px 2px 6px;
 }
+
 table th .header {
-  background: #EEEEEE;
-  border: solid #AAAAAA;
+  background: #eeeeee;
+  border: solid #aaaaaa;
   border-width: 1px 1px 1px 1px;
   padding: 2px 6px 2px 6px;
 }
+
 table td {
-  border: solid #AAAAAA;
+  border: solid #aaaaaa;
   border-width: 1px 1px 1px 1px;
   padding: 5px 5px 5px 5px;
 }
+
 table .success {
-  background-color: #CCFFCC;
+  background-color: #ccffcc;
 }
+
 table .failure {
-  background-color: #FFFF99;
+  background-color: #ffff99;
 }
+
 table .error {
-  background-color: #FF9999;
+  background-color: #ff9999;
 }
+
 table .skipped {
-  background-color: #DDDDDD;
+  background-color: #dddddd;
 }
+
 table .info {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
+
 table .success {
-  background-color: #CCFFCC;
+  background-color: #ccffcc;
 }
+
 table tr.even {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
+
 table tr.odd {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
+
 table td .none {
   background-color: white;
   padding: 5px 5px 5px 5px;
@@ -248,8 +290,6 @@ pre {
   margin-bottom: 10px;
 }
 
-
-
 #tipue_search_content {
   padding-top: 15px;
   margin: 0;
@@ -260,28 +300,35 @@ pre {
   overflow: scroll;
   border-right: 1px solid #ddd;
 }
+
 #tree ul {
   list-style: none;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
+
 #tree ul ul {
-  margin-left: 2em;
-  padding:0;
+  margin-left: 1.2em;
+  padding: 0;
 }
 
 #tree li:not([id]) > a::before {
-  content: "🔸 "
+  content: "🔸 ";
 }
+
 #tree li[id] > a::before {
-  content: "📄 "
+  content: "📄 ";
 }
+
 #tree li a {
   display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 li.active > a {
   color: #666 !important;
   background: #fff3ee;
-  font-weight: bold
+  font-weight: bold;
 }
