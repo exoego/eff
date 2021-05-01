@@ -3,28 +3,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>eff - エフェクトスタックを変換する</title>
-    <link href="./images/s2.ico" type="image/x-icon" rel="specs2 icon"/>
 
     <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-
     <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-
     <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
 
-
-    <script src="./javascript/jquery.js" type="text/javascript"></script>
-    <script src="./javascript/jquery.jstree.js" type="text/javascript"></script>
-
-
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+            integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-
-
 </head>
 <body>
 
 <div class="container">
-    <div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
+    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
         <h1>Transform stacks</h1>
         <div id="tipue_search_content"></div>
 
@@ -77,7 +69,6 @@ type S = FxAppend[Fx1[T1], Fx3[T2, T3, T4]]
 
 runT1(runT4(runT2(runT3(Eff.send[T3, S, Int](???)))))</code></pre>
         <h3 id="transform-an-effect-to-another">Transform an effect to another</h3>
-        <h4 id="change-the-effect">Change the effect</h4>
         <p>A typical use case for this is to transform a stack having a <code class="prettyprint">Reader[S, *]</code>
             effect to a stack having a <code class="prettyprint">Reader[B, *]</code> effect where <code
                     class="prettyprint">S</code> is “contained” in <code class="prettyprint">B</code> (meaning that
@@ -324,7 +315,7 @@ val action = for {
         </p>
     </div>
 
-    <div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
+    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
     </div>
 </div>
 

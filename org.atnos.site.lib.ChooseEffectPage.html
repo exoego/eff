@@ -1,42 +1,38 @@
 <!doctype html>
 <html lang="ja">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>eff - Choose エフェクト</title>
-    <link href="./images/s2.ico"                                   type="image/x-icon" rel="specs2 icon"/>
+    <link href="./images/s2.ico" type="image/x-icon" rel="specs2 icon"/>
 
-    <link href="./css/bootstrap.min.css"                           type="text/css"     rel="stylesheet" />
-    <link href="./css/font-awesome.min.css"                        type="text/css"     rel="stylesheet" />
-    <link href="./css/prettify.css"                                type="text/css"     rel="stylesheet" />
-    <link href="./css/tabber.css"                                  type="text/css"     rel="stylesheet" />
-    <link href="./css/specs2.css"                                  type="text/css"     rel="stylesheet" />
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
 
-
-    <script src="./javascript/jquery.js"                           type="text/javascript"></script>
-    <script src="./javascript/jquery.jstree.js"                    type="text/javascript"></script>
-    <script src="./javascript/tabber.js"                           type="text/javascript"></script>
-    <script src="./javascript/tabber_start.js"                     type="text/javascript"></script>
-    <script src="./javascript/prettify.js"                         type="text/javascript"></script>
-    <script src="./javascript/specs2.js"                           type="text/javascript"></script>
-
-
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+            integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <script src="./javascript/prettify.js" type="text/javascript"></script>
+    <script src="./javascript/specs2.js" type="text/javascript"></script>
 </head>
 <body>
 
 <div class="container">
 
-<div class="col-md-10 col-sm-9 col-xs-9 col-md-push-2 ol-sm-push-3 col-xs-push-3">
-<h1>Choose</h1>
-<div id="tipue_search_content"></div>
+    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+        <h1>Choose</h1>
+        <div id="tipue_search_content"></div>
 
-<p><code class="prettyprint">Choose</code> エフェクトは非決定性計算のために使われる。<code class="prettyprint">Choose</code> エフェクトにより、次のどちらかになる計算をモデル化できる。</p>
-<ul>
-    <li>結果をまったく返さない</li>
-    <li>２つの異なる結果からどちらか選ぶ</li>
-</ul>
-<p><code class="prettyprint">Choose</code> は、実質的には <code class="prettyprint">List</code> を一般化したものだ。すべての分岐を「探索」する代わりに、いくつかを「無視」する。このふるまいは、<code class="prettyprint">Choose</code> エフェクトを実行するときに使う <code class="prettyprint">Alternative[F]</code> インスタンスにより管理されている。</p>
-<p>たとえば以前と同じような例を実行するために <code class="prettyprint">List</code> を受け取るとしたら、許されるペアすべてのリストが得られる。</p>
-<pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
+        <p><code class="prettyprint">Choose</code> エフェクトは非決定性計算のために使われる。<code class="prettyprint">Choose</code>
+            エフェクトにより、次のどちらかになる計算をモデル化できる。</p>
+        <ul>
+            <li>結果をまったく返さない</li>
+            <li>２つの異なる結果からどちらか選ぶ</li>
+        </ul>
+        <p><code class="prettyprint">Choose</code> は、実質的には <code class="prettyprint">List</code>
+            を一般化したものだ。すべての分岐を「探索」する代わりに、いくつかを「無視」する。このふるまいは、<code class="prettyprint">Choose</code> エフェクトを実行するときに使う
+            <code class="prettyprint">Alternative[F]</code> インスタンスにより管理されている。</p>
+        <p>たとえば以前と同じような例を実行するために <code class="prettyprint">List</code> を受け取るとしたら、許されるペアすべてのリストが得られる。</p>
+        <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
 type S = Fx.fx1[Choose]
 
@@ -51,11 +47,10 @@ else           zero
 import cats.instances.list._
 
 pairsBiggerThan[S](List(1, 2, 3, 4), 5).runChoose.run</code></pre>
-<p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
-</div>
-<div class="col-md-2 col-sm-3 col-xs-3 col-md-pull-10 ol-sm-pull-9 col-xs-pull-9 sidebar-outer">
-</div>
-
+        <p><code class="prettyprint">&gt; List((2,4), (3,3), (3,4), (4,2), (4,3), (4,4))</code></p>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+    </div>
 
 
 </div>

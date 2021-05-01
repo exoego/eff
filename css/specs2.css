@@ -11,7 +11,7 @@ body {
 }
 .fixed {
   margin-top: 10px;
-  margin-left: -80px;
+  margin-left: 0px;
 }
 .spec {
   margin: 30px 5px 0 10px;
@@ -242,14 +242,6 @@ table td .none {
   box-shadow: none;
   font-size: 14px;
 }
-div .tabbertab table {
-  border: 0;
-  border-width: 0;
-  border-radius: 0;
-  border-color: none;
-  border-style: none;
-  box-shadow: none;
-}
 
 pre {
   border: 0px;
@@ -261,4 +253,26 @@ pre {
 #tipue_search_content {
   padding-top: 15px;
   margin: 0;
+}
+
+#tree {
+  max-height: 100vh;
+  overflow: scroll;
+  border-right: 1px solid #ddd
+}
+#tree ul {
+  list-style: none;
+  margin:0;
+  padding:0;
+}
+#tree ul ul {
+  margin-left: 2em;
+  padding:0;
+}
+
+#tree li:not([id])::before {
+  content: "🔸 "
+}
+#tree li[id]::before {
+  content: "📄 "
 }
