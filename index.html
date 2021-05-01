@@ -1,67 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta name="twitter:image:src" content="https://www.exoego.net/eff/images/ogp.png"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="eff ドキュメント日本語訳"/>
-    <meta name="twitter:description" content="Scala で Extensible Effects を実現するライブラリ eff のドキュメント日本語訳"/>
-    <meta property="og:image" content="https://www.exoego.net/eff/images/ogp.png"/>
-    <meta property="og:image:width" content="1200"/>
-    <meta property="og:image:height" content="600"/>
-    <meta property="og:type" content="object"/>
-    <meta property="og:title" content="eff ドキュメント日本語訳"/>
-    <meta property="og:description" content="Scala で Extensible Effects を実現するライブラリ eff のドキュメント日本語訳"/>
-    <meta property="og:url" content="exoego/eff"/>
+    <meta
+      name="twitter:image:src"
+      content="https://www.exoego.net/eff/images/ogp.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="eff ドキュメント日本語訳" />
+    <meta
+      name="twitter:description"
+      content="Scala で Extensible Effects を実現するライブラリ eff のドキュメント日本語訳"
+    />
+    <meta
+      property="og:image"
+      content="https://www.exoego.net/eff/images/ogp.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:type" content="object" />
+    <meta property="og:title" content="eff ドキュメント日本語訳" />
+    <meta
+      property="og:description"
+      content="Scala で Extensible Effects を実現するライブラリ eff のドキュメント日本語訳"
+    />
+    <meta property="og:url" content="exoego/eff" />
 
     <title>eff（日本語訳）</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>eff（日本語訳）</h1>
         <div id="tipue_search_content"></div>
 
-        <p>Extensible effects は、モナドトランスフォーマーに代わるもののひとつで、エフェクト（effects、作用）のある計算を関数的な方法で行うためのものだ。このライブラリは、Oleg Kiselyov
-            の論文 <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer monads, more extensible effects</a>
-            で述べられた、"free-er" モナドと "open union" のエフェクトに基づく。</p>
-        <p>以下の章で詳しく学べる。<code class="prettyprint">eff</code> について何もかも初めてなら、順番に読んでいくことを推奨する。</p>
+        <p>
+          Extensible effects
+          は、モナドトランスフォーマーに代わるもののひとつで、エフェクト（effects、作用）のある計算を関数的な方法で行うためのものだ。このライブラリは、Oleg
+          Kiselyov の論文
+          <a href="http://okmij.org/ftp/Haskell/extensible/more.pdf"
+            >Freer monads, more extensible effects</a
+          >
+          で述べられた、"free-er" モナドと "open union" のエフェクトに基づく。
+        </p>
+        <p>
+          以下の章で詳しく学べる。<code class="prettyprint">eff</code>
+          について何もかも初めてなら、順番に読んでいくことを推奨する。
+        </p>
         <ol type="1">
-            <li><a href="org.atnos.site.Installation.html" class="ok">インストールとインポート</a></li>
-            <li><a href="org.atnos.site.Introduction.html" class="ok">初めてのエフェクト</a></li>
-            <li><a href="org.atnos.site.OutOfTheBox.html" class="ok">eff における一般的なエフェクト</a>: <code class="prettyprint">Reader</code>,
-                <code class="prettyprint">Writer</code>, <code class="prettyprint">Eval</code>, <code
-                        class="prettyprint">State</code>,…
-            </li>
-            <li><a href="org.atnos.site.Tutorial.html" class="ok">チュートリアル</a></li>
-            <li><a href="org.atnos.site.CreateEffects.html" class="ok">自分のエフェクトを作ってみる</a></li>
-            <li><a href="org.atnos.site.TransformStack.html" class="ok">エフェクトのスタックを解釈し、処理する</a></li>
-            <li><a href="org.atnos.site.MemberImplicits.html" class="ok">Member implicits を使う</a></li>
-            <li><a href="org.atnos.site.ApplicativeEvaluation.html" class="ok">アプリカティブ評価を使う</a></li>
-            <li><a href="org.atnos.site.Cookbook.html" class="ok">ヒントとコツ</a></li>
-            <li><a href="org.atnos.site.CommunityResources.html" class="ok">コミュニティのリソース</a></li>
+          <li>
+            <a href="org.atnos.site.Installation.html" class="ok"
+              >インストールとインポート</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.Introduction.html" class="ok"
+              >初めてのエフェクト</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.OutOfTheBox.html" class="ok"
+              >eff における一般的なエフェクト</a
+            >: <code class="prettyprint">Reader</code>,
+            <code class="prettyprint">Writer</code>,
+            <code class="prettyprint">Eval</code>,
+            <code class="prettyprint">State</code>,…
+          </li>
+          <li>
+            <a href="org.atnos.site.Tutorial.html" class="ok">チュートリアル</a>
+          </li>
+          <li>
+            <a href="org.atnos.site.CreateEffects.html" class="ok"
+              >自分のエフェクトを作ってみる</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.TransformStack.html" class="ok"
+              >エフェクトのスタックを解釈し、処理する</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.MemberImplicits.html" class="ok"
+              >Member implicits を使う</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.ApplicativeEvaluation.html" class="ok"
+              >アプリカティブ評価を使う</a
+            >
+          </li>
+          <li>
+            <a href="org.atnos.site.Cookbook.html" class="ok">ヒントとコツ</a>
+          </li>
+          <li>
+            <a href="org.atnos.site.CommunityResources.html" class="ok"
+              >コミュニティのリソース</a
+            >
+          </li>
         </ol>
         <h3 id="contributing">貢献</h3>
-        <p><code class="prettyprint">eff</code> は <a href="https://typelevel.org">Typelevel</a>
-            のプロジェクトだ。これの意味するところは、われわれは、純粋で、型に満ち、関数型のプログラミングをわれわれは採用する。<a href="https://www.scala-lang.org/conduct/">Scala
-                Code of Conduct（行動憲章）</a>にあるように、教育・学習・貢献のための安全で友好的な環境を提供する。</p>
-        <p>何かバグに気づいたり、機能についてアイデアがあったり、コードについて質問があったりしたら、自由にイシューを開いてほしい。プルリクエストも喜んで受けいれられる。</p>
-        <p>訳注）この日本語訳に対するイシューやプルリクエストは <a href="https://github.com/exoego/eff">exoego/eff</a> まで送って欲しい。</p>
-    </div>
+        <p>
+          <code class="prettyprint">eff</code> は
+          <a href="https://typelevel.org">Typelevel</a>
+          のプロジェクトだ。これの意味するところは、われわれは、純粋で、型に満ち、関数型のプログラミングをわれわれは採用する。<a
+            href="https://www.scala-lang.org/conduct/"
+            >Scala Code of Conduct（行動憲章）</a
+          >にあるように、教育・学習・貢献のための安全で友好的な環境を提供する。
+        </p>
+        <p>
+          何かバグに気づいたり、機能についてアイデアがあったり、コードについて質問があったりしたら、自由にイシューを開いてほしい。プルリクエストも喜んで受けいれられる。
+        </p>
+        <p>
+          訳注）この日本語訳に対するイシューやプルリクエストは
+          <a href="https://github.com/exoego/eff">exoego/eff</a>
+          まで送って欲しい。
+        </p>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

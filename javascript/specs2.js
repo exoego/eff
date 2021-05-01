@@ -1,5 +1,5 @@
 (() => {
-    const sidebarHtml = `
+  const sidebarHtml = `
         <!-- search box -->
         <div class="search-box">
         </div>
@@ -118,43 +118,43 @@
 </div>
     `;
 
-    const filepath = location.pathname.replace(/^\/eff\//, "");
-    const englishUrl = `https://atnos-org.github.io/eff/${filepath}`;
-    const editUrl = `https://github.com/exoego/eff/edit/gh-pages/${filepath}`;
+  const filepath = location.pathname.replace(/^\/eff\//, "");
+  const englishUrl = `https://atnos-org.github.io/eff/${filepath}`;
+  const editUrl = `https://github.com/exoego/eff/edit/gh-pages/${filepath}`;
 
-    const footerHtml = `
+  const footerHtml = `
         <hr>
         <p><a href="${editUrl}">このページを修正</a> | <a href="${englishUrl}">原文</a> | 翻訳に関する貢献は <a href="https://github.com/exoego/eff">exoego/eff</a> まで</p>
         <p>Licensed under <a href="http://opensource.org/licenses/mit-license.html">MIT License</a></p>
         <p></p>
     `;
 
-    window.addEventListener("DOMContentLoaded", function (event) {
-        prettyPrint();
+  window.addEventListener("DOMContentLoaded", function (event) {
+    prettyPrint();
 
-        const footer = document.createElement("div");
-        footer.className = "container-xl";
-        footer.innerHTML = footerHtml;
-        document.body.appendChild(footer);
+    const footer = document.createElement("div");
+    footer.className = "container-fluid";
+    footer.innerHTML = footerHtml;
+    document.body.appendChild(footer);
 
-        const sidebar = document.createElement("div");
-        sidebar.className = "fixed";
-        sidebar.innerHTML = sidebarHtml;
-        const sidebarOut = document.querySelector(".sidebar-outer");
-        sidebarOut.appendChild(sidebar);
+    const sidebar = document.createElement("div");
+    sidebar.className = "fixed";
+    sidebar.innerHTML = sidebarHtml;
+    const sidebarOut = document.querySelector(".sidebar-outer");
+    sidebarOut.appendChild(sidebar);
 
-        const activeLinkId = location.pathname
-            .replace(/\/eff\/|\.html/g, "")
-            .replaceAll(".", "-")
-            .toLowerCase();
-        const activeLink = document.getElementById(activeLinkId);
-        if (activeLink) {
-            activeLink.className += "active";
-            const parentNode = document.getElementById("tree");
-            parentNode.scrollTop = Math.max(
-                activeLink.offsetTop - parentNode.offsetTop - 50,
-                0
-            );
-        }
-    });
+    const activeLinkId = location.pathname
+      .replace(/\/eff\/|\.html/g, "")
+      .replaceAll(".", "-")
+      .toLowerCase();
+    const activeLink = document.getElementById(activeLinkId);
+    if (activeLink) {
+      activeLink.className += "active";
+      const parentNode = document.getElementById("tree");
+      parentNode.scrollTop = Math.max(
+        activeLink.offsetTop - parentNode.offsetTop - 50,
+        0
+      );
+    }
+  });
 })();

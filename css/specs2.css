@@ -1,7 +1,7 @@
 body {
   margin: 0 5px 0 5px;
   font-family: "Open Sans", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   color: #3d3b3b;
 }
@@ -39,7 +39,6 @@ h1 {
   margin-bottom: 5px;
   margin-left: -10px;
   border-radius: 5px;
-  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.65);
   border: 2px solid rgb(178, 189, 183);
   background-color: #f5f5f5;
 }
@@ -295,8 +294,14 @@ pre {
   margin: 0;
 }
 
+.sidebar-outer {
+  margin: 0;
+  padding: 0;
+}
+
 #tree {
   max-height: 100vh;
+  font-size: 14px;
   overflow: scroll;
   border-right: 1px solid #ddd;
 }
@@ -331,4 +336,8 @@ li.active > a {
   color: #666 !important;
   background: #fff3ee;
   font-weight: bold;
+}
+
+.container-fluid {
+  max-width: 1150px !important;
 }

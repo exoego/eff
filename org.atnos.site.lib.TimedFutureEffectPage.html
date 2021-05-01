@@ -1,31 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - TimedFuture エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>TimedFuture</h1>
         <div id="tipue_search_content"></div>
 
-        <p><code class="prettyprint">TimedFuture</code> エフェクトは Scala の <code class="prettyprint">Future</code>
-            の薄いラッパーだ。唯一追加された機能は組み込みのタイムアウトであり、<code class="prettyprint">ScheduledExecutionContext</code>
-            に渡されることでサポートされる。注意することとして、<code class="prettyprint">Future</code> はすでに実行されている計算を表しているので、<code
-                    class="prettyprint">TimedFuture</code> は <code class="prettyprint">Future</code> を返す関数である。つまり、<code
-                    class="prettyprint">Future</code> を Eff にわたす前に計算を始めたいなら、その <code class="prettyprint">Future</code>
-            がいつ始まっているかは予測がしにくくなる。</p>
-        <p>Now, let’s create some <code class="prettyprint">TimedFuture</code> effects:</p>
+        <p>
+          <code class="prettyprint">TimedFuture</code> エフェクトは Scala の
+          <code class="prettyprint">Future</code>
+          の薄いラッパーだ。唯一追加された機能は組み込みのタイムアウトであり、<code
+            class="prettyprint"
+            >ScheduledExecutionContext</code
+          >
+          に渡されることでサポートされる。注意することとして、<code
+            class="prettyprint"
+            >Future</code
+          >
+          はすでに実行されている計算を表しているので、<code class="prettyprint"
+            >TimedFuture</code
+          >
+          は
+          <code class="prettyprint">Future</code>
+          を返す関数である。つまり、<code class="prettyprint">Future</code> を
+          Eff にわたす前に計算を始めたいなら、その
+          <code class="prettyprint">Future</code>
+          がいつ始まっているかは予測がしにくくなる。
+        </p>
+        <p>
+          Now, let’s create some
+          <code class="prettyprint">TimedFuture</code> effects:
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.future._
 import org.atnos.eff.syntax.all._
@@ -45,42 +64,88 @@ val action: Eff[R, Int] =
   } yield b
 
 </code></pre>
-        <p>次に、計算を始めるために、<code class="prettyprint">Scheduler</code> と <code class="prettyprint">ExecutionContext</code>
-            を渡す必要がある。</p>
+        <p>
+          次に、計算を始めるために、<code class="prettyprint">Scheduler</code>
+          と
+          <code class="prettyprint">ExecutionContext</code> を渡す必要がある。
+        </p>
         <pre><code class="prettyprint">
 implicit val scheduler = ExecutorServices.schedulerFromGlobalExecutionContext
 import org.atnos.eff.syntax.future._
 
 Await.result(action.runOption.runSequential, 1 second)</code></pre>
         <p><code class="prettyprint">&gt; Some(1)</code></p>
-        <p>他の <code class="prettyprint">Future</code> or <code class="prettyprint">Task</code> エフェクトを使うこともできる。</p>
+        <p>
+          他の <code class="prettyprint">Future</code> or
+          <code class="prettyprint">Task</code> エフェクトを使うこともできる。
+        </p>
         <ul>
-            <li><code class="prettyprint">twitter</code> Future を使うなら依存関係に <code class="prettyprint">eff-twitter</code>
-                を追加し、<code class="prettyprint">org.atnos.eff.addon.twitter.future._</code> をインポートする
-            </li>
-            <li><code class="prettyprint">scalaz</code> Task を使うなら依存関係に <code class="prettyprint">eff-scalaz</code>
-                を追加し、<code class="prettyprint">org.atnos.eff.addon.scalaz.task._</code> をインポートする
-            </li>
-            <li><code class="prettyprint">monix</code> Task を使うなら依存関係に <code class="prettyprint">eff-monix</code>
-                を追加し、<code class="prettyprint">org.atnos.eff.addon.monix.task._</code> をインポートする
-            </li>
+          <li>
+            <code class="prettyprint">twitter</code> Future を使うなら依存関係に
+            <code class="prettyprint">eff-twitter</code> を追加し、<code
+              class="prettyprint"
+              >org.atnos.eff.addon.twitter.future._</code
+            >
+            をインポートする
+          </li>
+          <li>
+            <code class="prettyprint">scalaz</code> Task を使うなら依存関係に
+            <code class="prettyprint">eff-scalaz</code> を追加し、<code
+              class="prettyprint"
+              >org.atnos.eff.addon.scalaz.task._</code
+            >
+            をインポートする
+          </li>
+          <li>
+            <code class="prettyprint">monix</code> Task を使うなら依存関係に
+            <code class="prettyprint">eff-monix</code> を追加し、<code
+              class="prettyprint"
+              >org.atnos.eff.addon.monix.task._</code
+            >
+            をインポートする
+          </li>
         </ul>
-        <p><code class="prettyprint">runAsync</code> メソッドを呼ぶための対応するシンタックスのインポートもある。</p>
+        <p>
+          <code class="prettyprint">runAsync</code>
+          メソッドを呼ぶための対応するシンタックスのインポートもある。
+        </p>
         <ul>
-            <li><code class="prettyprint">twitter</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.twitter.future._</code>
-            </li>
-            <li><code class="prettyprint">scalaz</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.scalaz.task._</code>
-            </li>
-            <li><code class="prettyprint">monix</code>: <code class="prettyprint">org.atnos.eff.syntax.addon.monix.task._</code>
-            </li>
+          <li>
+            <code class="prettyprint">twitter</code>:
+            <code class="prettyprint"
+              >org.atnos.eff.syntax.addon.twitter.future._</code
+            >
+          </li>
+          <li>
+            <code class="prettyprint">scalaz</code>:
+            <code class="prettyprint"
+              >org.atnos.eff.syntax.addon.scalaz.task._</code
+            >
+          </li>
+          <li>
+            <code class="prettyprint">monix</code>:
+            <code class="prettyprint"
+              >org.atnos.eff.syntax.addon.monix.task._</code
+            >
+          </li>
         </ul>
-        <p><code class="prettyprint">Future</code> と <code class="prettyprint">Task</code>
-            の計算はメモ化しておいて、コストの高い計算が何度も実行されるのを避けることもできる。それぞれこうする。r</p>
+        <p>
+          <code class="prettyprint">Future</code> と
+          <code class="prettyprint">Task</code>
+          の計算はメモ化しておいて、コストの高い計算が何度も実行されるのを避けることもできる。それぞれこうする。r
+        </p>
         <ul>
-            <li><code class="prettyprint">futureMemo/taskMemo</code> オペレーターを（ミュータブルな）キャッシュと使う</li>
-            <li><code class="prettyprint">futureMemoized/taskMemoized</code> オペレーターを <code
-                    class="prettyprint">Memoized</code> エフェクトと使う（キャッシュをあとで提供する必要がある）
-                <p/></li>
+          <li>
+            <code class="prettyprint">futureMemo/taskMemo</code>
+            オペレーターを（ミュータブルな）キャッシュと使う
+          </li>
+          <li>
+            <code class="prettyprint">futureMemoized/taskMemoized</code>
+            オペレーターを
+            <code class="prettyprint">Memoized</code>
+            エフェクトと使う（キャッシュをあとで提供する必要がある）
+            <p />
+          </li>
         </ul>
         <pre><code class="prettyprint">import cats.implicits._
 import org.atnos.eff._, future._, all._
@@ -104,12 +169,16 @@ val futureMemo: Future[Int] =
 Await.result(futureMemo, 1.second)
 
 &quot;there is only one invocation&quot; &lt;==&gt; (i === 1)</code></pre>
-        <p><code class="prettyprint">&gt; there is only one invocation &lt;=&gt; true</code></p>
-    </div>
+        <p>
+          <code class="prettyprint"
+            >&gt; there is only one invocation &lt;=&gt; true</code
+          >
+        </p>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

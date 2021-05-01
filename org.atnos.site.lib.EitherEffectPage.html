@@ -1,26 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - Either エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Either</h1>
         <div id="tipue_search_content"></div>
 
-        <p><code class="prettyprint">Either</code> エフェクトは <code class="prettyprint">Option</code>
-            エフェクトに似ているが、計算が止まった理由を含める能力を追加している。</p>
+        <p>
+          <code class="prettyprint">Either</code> エフェクトは
+          <code class="prettyprint">Option</code>
+          エフェクトに似ているが、計算が止まった理由を含める能力を追加している。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
   /**
@@ -39,8 +43,15 @@
   } yield a + b
 
   (addKeys(&quot;key1&quot;, &quot;key2&quot;).runEither.run, addKeys(&quot;key1&quot;, &quot;missing&quot;).runEither.run)</code></pre>
-        <p><code class="prettyprint">&gt; (Right(30),Left('missing' not found))</code></p>
-        <p><code class="prettyprint">catchLeft</code> メソッドは、エラーを傍受して場合により復旧させるために使うことができる。</p>
+        <p>
+          <code class="prettyprint"
+            >&gt; (Right(30),Left('missing' not found))</code
+          >
+        </p>
+        <p>
+          <code class="prettyprint">catchLeft</code>
+          メソッドは、エラーを傍受して場合により復旧させるために使うことができる。
+        </p>
         <pre><code class="prettyprint">  case class TooBig(value: Int)
   type E = Fx.fx1[Either[TooBig, *]]
 
@@ -56,14 +67,18 @@
   }
 
   action.runEither.run ==== Right(7)</code></pre>
-        <p><em>備考</em>: <code class="prettyprint">left</code> と <code class="prettyprint">right</code>
-            の型アノテーションは、スコープ内宣言を追加することで避けられる。詳しくは <a href="org.atnos.site.MemberImplicits.html" class="ok">Implicits</a>
-            セクションで学べる。</p>
-    </div>
+        <p>
+          <em>備考</em>: <code class="prettyprint">left</code> と
+          <code class="prettyprint">right</code>
+          の型アノテーションは、スコープ内宣言を追加することで避けられる。詳しくは
+          <a href="org.atnos.site.MemberImplicits.html" class="ok">Implicits</a>
+          セクションで学べる。
+        </p>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

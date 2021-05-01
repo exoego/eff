@@ -1,47 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - チュートリアル</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>チュートリアル</h1>
         <div id="tipue_search_content"></div>
 
-        <p>このチュートリアルは意図して <a href="https://typelevel.org/cats/datatypes/freemonad.html">Free monad tutorial for cats</a>
-            と同じように構造化している。そのため両者のアプローチを並べて比較できる。</p>
+        <p>
+          このチュートリアルは意図して
+          <a href="https://typelevel.org/cats/datatypes/freemonad.html"
+            >Free monad tutorial for cats</a
+          >
+          と同じように構造化している。そのため両者のアプローチを並べて比較できる。
+        </p>
         <h3 id="study-your-topic">自分のテーマを深く知る</h3>
-        <p>キーバリューストアのための DSL を作りたいとしよう。キーを使って３つのことができるようにしたい。</p>
+        <p>
+          キーバリューストアのための DSL
+          を作りたいとしよう。キーを使って３つのことができるようにしたい。
+        </p>
         <ul>
-            <li>キーとひもづけて、ストアに値を入れる。</li>
-            <li>キーを与えてストアから値を得る。</li>
-            <li>キーを与えてストから値を削除する</li>
+          <li>キーとひもづけて、ストアに値を入れる。</li>
+          <li>キーを与えてストアから値を得る。</li>
+          <li>キーを与えてストから値を削除する</li>
         </ul>
-        <br/>
-        <p>考えとしては、組み込み DSL でこれら一連の操作を「プログラム」として書き、その「プログラム」を解釈し、そして最後に実際のキーバリューストアと作用させるように「プログラム」を実行したい。</p>
+        <br />
+        <p>
+          考えとしては、組み込み DSL
+          でこれら一連の操作を「プログラム」として書き、その「プログラム」を解釈し、そして最後に実際のキーバリューストアと作用させるように「プログラム」を実行したい。
+        </p>
         <p>例えば、</p>
         <pre><code class="prettyprint"> put(&quot;toto&quot;, 3)
  get(&quot;toto&quot;) // 3 が返る
  delete(&quot;toto&quot;)</code></pre>
         <p>だが欲しいのは、</p>
         <ul>
-            <li>純粋（pure）で不変（immutable）な値として表現される計算</li>
-            <li>プログラムの作成と実行の区別</li>
-            <li>異なる実行方法がサポートできること</li>
+          <li>純粋（pure）で不変（immutable）な値として表現される計算</li>
+          <li>プログラムの作成と実行の区別</li>
+          <li>異なる実行方法がサポートできること</li>
         </ul>
-        <h3 id="create-an-adt-representing-your-grammar">自分の文法を表す ADT を作る</h3>
-        <p>ADT とは代数的データ型（Algebraic Data Type）を表す。今回の文脈では、複合的で再帰的な値を構築するために組み合わせて使える、型の閉じた集合のことだ。</p>
+        <h3 id="create-an-adt-representing-your-grammar">
+          自分の文法を表す ADT を作る
+        </h3>
+        <p>
+          ADT とは代数的データ型（Algebraic Data
+          Type）を表す。今回の文脈では、複合的で再帰的な値を構築するために組み合わせて使える、型の閉じた集合のことだ。
+        </p>
         <p>私たちのキーバリュー操作を表す ADT を作る必要がある。</p>
         <pre><code class="prettyprint">// 型パラメーター A は操作が返す値の型として読める
 sealed trait KVStore[+A]
@@ -53,17 +70,26 @@ case class Delete(key: String) extends KVStore[Unit]
         <h3 id="free-your-adt">ADT を自由にする</h3>
         <p>ADT を「自由にする」には４つの基本ステップがある。</p>
         <ol type="1">
-            <li><code class="prettyprint">Eff.send</code> を使うことで、<code class="prettyprint">KVStore[_]</code>
-                用のスマートコンストラクタを作る
-            </li>
-            <li>キーバリュー DSL 操作用のプログラムを作る</li>
-            <li>DSL 操作のプログラム用のインタープリターを作る</li>
-            <li>インタープリターが解釈したプログラムを実行する</li>
-            <li>[任意] インタープリター用のシンタックスを追加する</li>
+          <li>
+            <code class="prettyprint">Eff.send</code> を使うことで、<code
+              class="prettyprint"
+              >KVStore[_]</code
+            >
+            用のスマートコンストラクタを作る
+          </li>
+          <li>キーバリュー DSL 操作用のプログラムを作る</li>
+          <li>DSL 操作のプログラム用のインタープリターを作る</li>
+          <li>インタープリターが解釈したプログラムを実行する</li>
+          <li>[任意] インタープリター用のシンタックスを追加する</li>
         </ol>
-        <h3 id="create-smart-constructors-using-eff.send"><code class="prettyprint">Eff.send</code> を使ってスマートコンストラクタを作る
+        <h3 id="create-smart-constructors-using-eff.send">
+          <code class="prettyprint">Eff.send</code>
+          を使ってスマートコンストラクタを作る
         </h3>
-        <p>これらのメソッドで、キーバリューストア「エフェクト」用に <code class="prettyprint">Eff</code> の値を作ることができる。</p>
+        <p>
+          これらのメソッドで、キーバリューストア「エフェクト」用に
+          <code class="prettyprint">Eff</code> の値を作ることができる。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
 // T |= R は MemberIn[T, R] のエイリアスであり、
@@ -90,12 +116,23 @@ def update[T, R :_kvstore](key: String, f: T =&gt; T): Eff[R, Unit] =
     _  &lt;- ot.map(t =&gt; store[T, R](key, f(t))).getOrElse(Eff.pure(()))
   } yield ()
 </code></pre>
-        <p>それぞれのメソッドは <code class="prettyprint">KVStore</code> エフェクトが「エフェクトスタック」 <code class="prettyprint">R</code>
-            のメンバーであることを要求し、戻り値は <code class="prettyprint">Eff[R, A]</code> 型だ。ここで <code class="prettyprint">R</code>
-            はエフェクトのスタックであり、キーバリューストア操作以外のエフェクトを含んでいるかもしれず、型 <code class="prettyprint">A</code> の値を生成する。</p>
+        <p>
+          それぞれのメソッドは
+          <code class="prettyprint">KVStore</code>
+          エフェクトが「エフェクトスタック」
+          <code class="prettyprint">R</code>
+          のメンバーであることを要求し、戻り値は
+          <code class="prettyprint">Eff[R, A]</code> 型だ。ここで
+          <code class="prettyprint">R</code>
+          はエフェクトのスタックであり、キーバリューストア操作以外のエフェクトを含んでいるかもしれず、型
+          <code class="prettyprint">A</code> の値を生成する。
+        </p>
         <h3 id="build-a-program">プログラムを作る</h3>
-        <p>これでNow that we can construct values with <code class="prettyprint">KVStore</code> エフェクトで値を生成でき、for
-            内包表記を使うことで「プログラム」を書くための DSL が使える。</p>
+        <p>
+          これでNow that we can construct values with
+          <code class="prettyprint">KVStore</code> エフェクトで値を生成でき、for
+          内包表記を使うことで「プログラム」を書くための DSL が使える。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
 def program[R :_kvstore]: Eff[R, Option[Int]] =
@@ -107,13 +144,29 @@ def program[R :_kvstore]: Eff[R, Option[Int]] =
     _ &lt;- delete(&quot;tame-cats&quot;)
   } yield n
 </code></pre>
-        <p>これはモナドの流れのように見える。だが、一連の操作を表す再帰的なデータ構造を組み立てているだけだ。</p>
-        <h3 id="write-an-interpreter-for-your-program">プログラム用のインタープリターを書く</h3>
-        <p>もう理解できたとだろうが、<code class="prettyprint">Eff</code> は埋め込み DSL を使うために使える。それ単独では、この DSL
-            は（再帰的データ構造で定義された）一連の操作を表現するだけだ。何も生成しない。</p>
-        <p><code class="prettyprint">Eff</code> はプログラミング言語内のプログラミング言語なのだ！</p>
-        <p>なので、他のプログラミング言語と同様に、われわれの抽象的な言語を具体的な値へと解釈する必要がある。</p>
-        <p>これをするためには、単純なミュータブルなマップを使って <code class="prettyprint">KVStore</code> エフェクトを変換するインタープリターを使う。</p>
+        <p>
+          これはモナドの流れのように見える。だが、一連の操作を表す再帰的なデータ構造を組み立てているだけだ。
+        </p>
+        <h3 id="write-an-interpreter-for-your-program">
+          プログラム用のインタープリターを書く
+        </h3>
+        <p>
+          もう理解できたとだろうが、<code class="prettyprint">Eff</code>
+          は埋め込み DSL を使うために使える。それ単独では、この DSL
+          は（再帰的データ構造で定義された）一連の操作を表現するだけだ。何も生成しない。
+        </p>
+        <p>
+          <code class="prettyprint">Eff</code>
+          はプログラミング言語内のプログラミング言語なのだ！
+        </p>
+        <p>
+          なので、他のプログラミング言語と同様に、われわれの抽象的な言語を具体的な値へと解釈する必要がある。
+        </p>
+        <p>
+          これをするためには、単純なミュータブルなマップを使って
+          <code class="prettyprint">KVStore</code>
+          エフェクトを変換するインタープリターを使う。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, interpret._
 import cats.Traverse
 import cats.implicits._
@@ -165,16 +218,30 @@ def runKVStoreUnsafe[R, A](effects: Eff[R, A])(implicit m: KVStore &lt;= R): Eff
 
 }
 </code></pre>
-        <p>このインタープリターは純粋でないことに注意してほしい。<code class="prettyprint">kvs</code> を変化させており、<code
-                class="prettyprint">println</code>
-            を使ってログ出力を生成している。関数プログラミングの新の目的は副作用を防ぐことではない。よく知られた、管理された方法で、副作用を、あなたのシステムと外部の境界に副作用を追いやることなのだ。</p>
-        <p>違う方法で <code class="prettyprint">KVStore</code> エフェクトを解釈し、同じスタックの他のエフェクトに結果を委託することもできる。</p>
+        <p>
+          このインタープリターは純粋でないことに注意してほしい。<code
+            class="prettyprint"
+            >kvs</code
+          >
+          を変化させており、<code class="prettyprint">println</code>
+          を使ってログ出力を生成している。関数プログラミングの新の目的は副作用を防ぐことではない。よく知られた、管理された方法で、副作用を、あなたのシステムと外部の境界に副作用を追いやることなのだ。
+        </p>
+        <p>
+          違う方法で
+          <code class="prettyprint">KVStore</code>
+          エフェクトを解釈し、同じスタックの他のエフェクトに結果を委託することもできる。
+        </p>
         <ul>
-            <li><code class="prettyprint">State</code> は値のマップ構造を保持するため</li>
-            <li><code class="prettyprint">Writer</code> はログのため</li>
-            <li><code class="prettyprint">Either[E, *]</code> は型エラーのため</li>
+          <li>
+            <code class="prettyprint">State</code>
+            は値のマップ構造を保持するため
+          </li>
+          <li><code class="prettyprint">Writer</code> はログのため</li>
+          <li>
+            <code class="prettyprint">Either[E, *]</code> は型エラーのため
+          </li>
         </ul>
-        <br/>
+        <br />
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.either._
 import org.atnos.eff.writer._
@@ -246,37 +313,83 @@ def runKVStore[R, U, A](effects: Eff[R, A])
   })
 }
 </code></pre>
-        <p><code class="prettyprint">Eff</code> はただの再帰的な構造であり、副作用があるかもしれない、他の操作を生成する操作の連続としてとらえることができる。この場合、<code
-                class="prettyprint">List</code> の畳み込みと似ている。われわれはよくリストから１つの値を得るために畳み込み（例えば <code class="prettyprint">foldRight</code>）を使う。これは構造を再帰的に処理し、中身を結合していく。
+        <p>
+          <code class="prettyprint">Eff</code>
+          はただの再帰的な構造であり、副作用があるかもしれない、他の操作を生成する操作の連続としてとらえることができる。この場合、<code
+            class="prettyprint"
+            >List</code
+          >
+          の畳み込みと似ている。われわれはよくリストから１つの値を得るために畳み込み（例えば
+          <code class="prettyprint">foldRight</code
+          >）を使う。これは構造を再帰的に処理し、中身を結合していく。
         </p>
-        <p><code class="prettyprint">Eff</code> インタープリターの背景にある考え方はまったく同じだ。次の操作で再帰的構造を「畳み込む」。</p>
+        <p>
+          <code class="prettyprint">Eff</code>
+          インタープリターの背景にある考え方はまったく同じだ。次の操作で再帰的構造を「畳み込む」。
+        </p>
         <ul>
-            <li>それぞれの操作を消費する</li>
-            <li>操作をターゲット言語のためにコンパイルする</li>
-            <li>次の操作を計算する</li>
+          <li>それぞれの操作を消費する</li>
+          <li>操作をターゲット言語のためにコンパイルする</li>
+          <li>次の操作を計算する</li>
         </ul>
-        <br>
-        <p>インタープリターの重要な特徴はスタック安全であることだ。インタープリターはスタック上の計算の各ステップを評価してから、他のステップを評価するために自分自身を呼び出す。<code class="prettyprint">org.atnos.eff.interpreter</code>
-            オブジェクトはスタック安全なインタープリターを書くのを助けてくれる色々なメソッドを提供している。</p>
+        <br />
+        <p>
+          インタープリターの重要な特徴はスタック安全であることだ。インタープリターはスタック上の計算の各ステップを評価してから、他のステップを評価するために自分自身を呼び出す。<code
+            class="prettyprint"
+            >org.atnos.eff.interpreter</code
+          >
+          オブジェクトはスタック安全なインタープリターを書くのを助けてくれる色々なメソッドを提供している。
+        </p>
         <ul>
-            <li><p><code class="prettyprint">interpretUnsafe</code> を使うには <code class="prettyprint">SideEffect</code>
-                trait を実装し、エフェクト <code class="prettyprint">T[X]</code> から値 <code class="prettyprint">X</code> を返させる</p>
-            </li>
-            <li><p><code class="prettyprint">translate</code> を使うには <code class="prettyprint">Translate</code> trait
-                を実装し、エフェクトを同じスタックの他のエフェクトに変換させる</p></li>
-            <li><p>どちらも <code class="prettyprint">interpret1</code> の特別版である。それを使うには <code
-                    class="prettyprint">Recurse</code> trait を実装し、エフェクトから値 <code class="prettyprint">X</code> を返すか、または他の
-                <code class="prettyprint">Eff</code> の計算を生成させる</p></li>
+          <li>
+            <p>
+              <code class="prettyprint">interpretUnsafe</code> を使うには
+              <code class="prettyprint">SideEffect</code> trait
+              を実装し、エフェクト <code class="prettyprint">T[X]</code> から値
+              <code class="prettyprint">X</code> を返させる
+            </p>
+          </li>
+          <li>
+            <p>
+              <code class="prettyprint">translate</code> を使うには
+              <code class="prettyprint">Translate</code> trait
+              を実装し、エフェクトを同じスタックの他のエフェクトに変換させる
+            </p>
+          </li>
+          <li>
+            <p>
+              どちらも
+              <code class="prettyprint">interpret1</code>
+              の特別版である。それを使うには
+              <code class="prettyprint">Recurse</code> trait
+              を実装し、エフェクトから値
+              <code class="prettyprint">X</code> を返すか、または他の
+              <code class="prettyprint">Eff</code> の計算を生成させる
+            </p>
+          </li>
         </ul>
         <h3 id="run-your-program">プログラムを実行する</h3>
-        <p>最後のステップは当然、他の <code class="prettyprint">Eff</code> の値にひもづけてプログラムを解釈してから、プログラムを実行することだ。やるべきことは、</p>
+        <p>
+          最後のステップは当然、他の
+          <code class="prettyprint">Eff</code>
+          の値にひもづけてプログラムを解釈してから、プログラムを実行することだ。やるべきことは、
+        </p>
         <ul>
-            <li>specify a concrete stack of effects containing the effect we want to 解釈したいエフェクト <code
-                    class="prettyprint">Fx.fx1[KVStore]</code>（今回のスタックではエフェクトは１つだけ）を含んでいるエフェクトの具体的なスタックを指定する
-            </li>
-            <li><code class="prettyprint">Eff[NoFx, A]</code> 値を取得するインタープリターを呼ぶ</li>
-            <li><code class="prettyprint">A</code> の値を得るために最後に <code class="prettyprint">run</code> を実行する
-                <p/></li>
+          <li>
+            specify a concrete stack of effects containing the effect we want to
+            解釈したいエフェクト
+            <code class="prettyprint">Fx.fx1[KVStore]</code
+            >（今回のスタックではエフェクトは１つだけ）を含んでいるエフェクトの具体的なスタックを指定する
+          </li>
+          <li>
+            <code class="prettyprint">Eff[NoFx, A]</code>
+            値を取得するインタープリターを呼ぶ
+          </li>
+          <li>
+            <code class="prettyprint">A</code> の値を得るために最後に
+            <code class="prettyprint">run</code> を実行する
+            <p />
+          </li>
         </ul>
         <p>こんな感じだ。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, syntax.all._
@@ -286,11 +399,14 @@ runKVStoreUnsafe(program[Fx.fx1[KVStore]]).run</code></pre>
         <p><code class="prettyprint">&gt; Some(14)</code></p>
         <p>安全なインタープリターを使うと、プロセスは同様でやるべきことは、</p>
         <ul>
-            <li>すべてのエフェクトを含むエフェクトスタックの定義を指定する</li>
-            <li>“safe” インタープリターを呼ぶ</li>
-            <li>残りのエフェクト全部のインタープリターを読んでいく。最後は <code class="prettyprint">NoFx</code> エフェクトの <code
-                    class="prettyprint">run</code>
-                <p/></li>
+          <li>すべてのエフェクトを含むエフェクトスタックの定義を指定する</li>
+          <li>“safe” インタープリターを呼ぶ</li>
+          <li>
+            残りのエフェクト全部のインタープリターを読んでいく。最後は
+            <code class="prettyprint">NoFx</code> エフェクトの
+            <code class="prettyprint">run</code>
+            <p />
+          </li>
         </ul>
         <p>こんな感じだ。</p>
         <pre><code class="prettyprint">import org.atnos.eff._, syntax.all._
@@ -311,7 +427,11 @@ put(tame-cats, 5)
 get(wild-cats)
 delete(tame-cats)</code></pre>
         <h3 id="add-some-syntax">シンタックスを追加する</h3>
-        <p>すばらしいことに、シンタックス用の次の追加コードで <code class="prettyprint">run</code> メソッドをチェーン（数珠つなぎ）していけるのだ。</p>
+        <p>
+          すばらしいことに、シンタックス用の次の追加コードで
+          <code class="prettyprint">run</code>
+          メソッドをチェーン（数珠つなぎ）していけるのだ。
+        </p>
         <pre><code class="prettyprint">implicit class KVStoreOps[R, A](effects: Eff[R, A]) {
   def runStore[U](implicit m: Member.Aux[KVStore, R, U],
                   throwable:_throwableEither[U],
@@ -331,10 +451,24 @@ put(wild-cats, 14)
 put(tame-cats, 5)
 get(wild-cats)
 delete(tame-cats)</code></pre>
-        <h3 id="composing-adts-with-the-eff-monad">Eff モナドで ADTs を合成する</h3>
-        <p>現実世界のアプリケーションは異なる代数をしばしば合成する。<code class="prettyprint">Eff[R, A]</code> におけるエフェクトの型レベル集合 <code
-                class="prettyprint">R</code> のおかげで、 <code class="prettyprint">Eff</code> のコンテキストで異なる代数を合成できる。</p>
-        <p>無関係の ADT が合成されてより複雑なプログラムを形成している、ちょっとした例を見てみよう。まず ADT をスマートコンストラクタで定義する。</p>
+        <h3 id="composing-adts-with-the-eff-monad">
+          Eff モナドで ADTs を合成する
+        </h3>
+        <p>
+          現実世界のアプリケーションは異なる代数をしばしば合成する。<code
+            class="prettyprint"
+            >Eff[R, A]</code
+          >
+          におけるエフェクトの型レベル集合
+          <code class="prettyprint">R</code> のおかげで、
+          <code class="prettyprint">Eff</code>
+          のコンテキストで異なる代数を合成できる。
+        </p>
+        <p>
+          無関係の ADT
+          が合成されてより複雑なプログラムを形成している、ちょっとした例を見てみよう。まず
+          ADT をスマートコンストラクタで定義する。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._
 
 sealed trait Interact[A]
@@ -364,7 +498,11 @@ def getAllCats[R :_dataOp]: Eff[R, List[String]] =
   send(GetAllCats())
 
 </code></pre>
-        <p>それから、これらエフェクトについてプログラム上で <code class="prettyprint">MemberIn</code> インスタンスを用意する必要がある。</p>
+        <p>
+          それから、これらエフェクトについてプログラム上で
+          <code class="prettyprint">MemberIn</code>
+          インスタンスを用意する必要がある。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
 def program[R :_interact :_dataOp]: Eff[R, Unit] =
@@ -427,17 +565,20 @@ def runDataOp[R, A](effect: Eff[R, A])(implicit m: DataOp &lt;= R): Eff[m.Out, A
 
 }
 </code></pre>
-        <p>両方のエフェクトを合成したスタックを使ってプログラムを実行し、入力指示に "snuggles" と入力したら、こんな結果を見るだろう。</p>
+        <p>
+          両方のエフェクトを合成したスタックを使ってプログラムを実行し、入力指示に
+          "snuggles" と入力したら、こんな結果を見るだろう。
+        </p>
         <pre><code class="prettyprint">type Stack = Fx.fx2[Interact, DataOp]
 
 runInteract(runDataOp(program[Stack]))</code></pre>
         <pre><code class="prettyprint">What&#39;s the kitty&#39;s name?
 Current cats: snuggles</code></pre>
-    </div>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

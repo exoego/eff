@@ -1,29 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>eff - Applicative</title>
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Applicative</h1>
         <div id="tipue_search_content"></div>
 
         <h3 id="concurrent-evaluation">Concurrent evaluation</h3>
-        <p>The default interpretation of <code class="prettyprint">Eff</code> values is “monadic” meaning that effectful
-            values are being evaluated in order. This becomes clear when traversing a list of values with the <code
-                    class="prettyprint">FutureEffect</code>:</p>
+        <p>
+          The default interpretation of
+          <code class="prettyprint">Eff</code> values is “monadic” meaning that
+          effectful values are being evaluated in order. This becomes clear when
+          traversing a list of values with the
+          <code class="prettyprint">FutureEffect</code>:
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, future._, syntax.all._
 import cats.Eval
 import cats.data.Writer
@@ -51,19 +55,27 @@ val action: Eff[S, List[Int]] =
 
 Await.result(action.runEval.runWriterLog.runSequential, 2.seconds)</code></pre>
         <p><code class="prettyprint">&gt; List(1000, 500, 50)</code></p>
-        <p>We can however run all those computations concurrently using the applicative execution for <code
-                class="prettyprint">Eff</code>:</p>
+        <p>
+          We can however run all those computations concurrently using the
+          applicative execution for <code class="prettyprint">Eff</code>:
+        </p>
         <pre><code class="prettyprint">val action: Eff[S, List[Int]] =
   List(1000, 500, 50).traverseA(execute[S])
 
 Await.result(Eff.detachA(action.runEval.runWriterLog[String])(TimedFuture.MonadTimedFuture, TimedFuture.ApplicativeTimedFuture).runNow(scheduler, global), 2.seconds)</code></pre>
         <p><code class="prettyprint">&gt; List(1000, 500, 50)</code></p>
-        <p>This uses now <code class="prettyprint">traverseA</code> (instead of <code
-                class="prettyprint">traverse</code>) to do an applicative traversal and execute futures concurrently and
-            the fastest actions finish first.</p>
+        <p>
+          This uses now <code class="prettyprint">traverseA</code> (instead of
+          <code class="prettyprint">traverse</code>) to do an applicative
+          traversal and execute futures concurrently and the fastest actions
+          finish first.
+        </p>
         <h3 id="batching">Batching</h3>
-        <p>Another advantage of applicative effects is that we can intercept them individual requests and “batch” them
-            into one single request. For example:</p>
+        <p>
+          Another advantage of applicative effects is that we can intercept them
+          individual requests and “batch” them into one single request. For
+          example:
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.implicits._
 
@@ -101,8 +113,12 @@ def runDsl[A](eff: Eff[Fx1[UserDsl], A]): (A, Vector[String]) = {
 }
 
 </code></pre>
-        <p>We can also optimise a <code class="prettyprint">UserDsl</code> program by providing a <code
-                class="prettyprint">Batchable</code> instance describing how to “batch” 2 calls into 1:</p>
+        <p>
+          We can also optimise a
+          <code class="prettyprint">UserDsl</code> program by providing a
+          <code class="prettyprint">Batchable</code> instance describing how to
+          “batch” 2 calls into 1:
+        </p>
         <pre><code class="prettyprint">implicit def BatchableUserDsl: Batchable[UserDsl] = new Batchable[UserDsl] {
   type Z = List[User]
   type E = User
@@ -120,8 +136,11 @@ def runDsl[A](eff: Eff[Fx1[UserDsl], A]): (A, Vector[String]) = {
 }
 
 </code></pre>
-        <p>Now let’s create a program using the <code class="prettyprint">User</code> DSL with applicative calls which
-            can be optimised:</p>
+        <p>
+          Now let’s create a program using the
+          <code class="prettyprint">User</code> DSL with applicative calls which
+          can be optimised:
+        </p>
         <pre><code class="prettyprint">def program[R :_userDsl]: Eff[R, List[User]] =
   Eff.traverseA(List(1, 2, 3))(i =&gt; getUser(i))
 
@@ -131,20 +150,21 @@ def runDsl[A](eff: Eff[Fx1[UserDsl], A]): (A, Vector[String]) = {
   program.batch
 
 </code></pre>
-        <p>Running the optimised and non-optimised version of the program must yield the same results:</p>
+        <p>
+          Running the optimised and non-optimised version of the program must
+          yield the same results:
+        </p>
         <pre><code class="prettyprint">show(runDsl(program[Fx1[UserDsl]]), runDsl(optimised[Fx1[UserDsl]]))</code></pre>
         <pre><code class="prettyprint">original:  User(1), User(2), User(3)
   trace: getWebUser, getWebUser, getWebUser
 
 optimised: User(1), User(2), User(3)
   trace: getWebUsers</code></pre>
+      </div>
+
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
-    </div>
-
-
-</div>
-
-</body>
+  </body>
 </html>
