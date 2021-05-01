@@ -241,12 +241,13 @@
         const sidebarOut = document.querySelector(".sidebar-outer");
         sidebarOut.appendChild(sidebar);
 
-        const activeLink = sidebarOut.dataset.active || '';
-        document.getElementById(activeLink).className += "active"
-
-        const target = document.getElementById(activeLink);
-        const parentNode = document.getElementById("tree")
-        parentNode.scrollTop = target.offsetTop - parentNode.offsetTop;
+        const activeLinkId = location.pathname.replace(/\/eff\/|\.html/g, "").replaceAll(".", "-").toLowerCase();
+        const activeLink = document.getElementById(activeLinkId);
+        if (activeLink) {
+            activeLink.className += "active";
+            const parentNode = document.getElementById("tree")
+            parentNode.scrollTop = Math.max(activeLink.offsetTop - parentNode.offsetTop - 50, 0);
+        }
     });
 })();
 
