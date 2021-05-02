@@ -1,26 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - Option エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Option</h1>
         <div id="tipue_search_content"></div>
 
-        <p><code class="prettyprint">Option</code> をエフェクトに追加することで、必要なときに計算を止めることができる。<code
-                class="prettyprint">some(a)</code> で値を作ったらこの値は下流で使われるが、<code class="prettyprint">none</code>
-            を使ったら残りの計算が停止する。</p>
+        <p>
+          <code class="prettyprint">Option</code>
+          をエフェクトに追加することで、必要なときに計算を止めることができる。<code
+            class="prettyprint"
+            >some(a)</code
+          >
+          で値を作ったらこの値は下流で使われるが、<code class="prettyprint"
+            >none</code
+          >
+          を使ったら残りの計算が停止する。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
 /**
@@ -40,11 +50,11 @@ def addKeys(key1: String, key2: String): Eff[S, Int] = for {
 
 (addKeys(&quot;key1&quot;, &quot;key2&quot;).runOption.run, addKeys(&quot;key1&quot;, &quot;missing&quot;).runOption.run)</code></pre>
         <p><code class="prettyprint">&gt; (Some(30),None)</code></p>
-    </div>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

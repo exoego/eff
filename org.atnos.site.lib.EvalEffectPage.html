@@ -1,39 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - Eval エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Eval</h1>
         <div id="tipue_search_content"></div>
 
-        <p>このエフェクトはとても単純なものだ。計算の遅延実行できるように、ある意味で包括的な <code class="prettyprint">IO</code> エフェクトとして働く。</p>
+        <p>
+          このエフェクトはとても単純なものだ。計算の遅延実行できるように、ある意味で包括的な
+          <code class="prettyprint">IO</code> エフェクトとして働く。
+        </p>
         <p>このエフェクトを実行するために２つのメソッドが利用できる。</p>
         <ul>
-            <li><p><code class="prettyprint">runEval: Eff[U, A]</code> は計算を単純に実行する</p></li>
-            <li><p><code class="prettyprint">attemptEval: Eff[U, Either[Throwable, A]]</code> は計算を実行し、発生するかもしれない <code
-                    class="prettyprint">Throwable</code> をキャッチすることもできる</p></li>
+          <li>
+            <p>
+              <code class="prettyprint">runEval: Eff[U, A]</code>
+              は計算を単純に実行する
+            </p>
+          </li>
+          <li>
+            <p>
+              <code class="prettyprint"
+                >attemptEval: Eff[U, Either[Throwable, A]]</code
+              >
+              は計算を実行し、発生するかもしれない
+              <code class="prettyprint">Throwable</code>
+              をキャッチすることもできる
+            </p>
+          </li>
         </ul>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 
   delay(1 + 1).runEval.run</code></pre>
         <p><code class="prettyprint">&gt; 2</code></p>
-    </div>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

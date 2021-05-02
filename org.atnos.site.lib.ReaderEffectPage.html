@@ -1,27 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - Reader エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Reader</h1>
         <div id="tipue_search_content"></div>
 
-        <p><code class="prettyprint">Reader</code> エフェクトは「環境」に値を要求するのに使う。主なメソッドは <code class="prettyprint">ask</code>
-            であり、現在の環境（またはそう見なすのがお好みなら「設定」）を取得する。それから <code class="prettyprint">runReader</code> メソッドに環境を表す値を提供することで
-            <code class="prettyprint">Reader</code> エフェクトを含んだエフェクトスタックを実行することができる。</p>
-        <p>「局所的」なリーダーを「より大きな」リーダーに注入することもできる。</p>
+        <p>
+          <code class="prettyprint">Reader</code>
+          エフェクトは「環境」に値を要求するのに使う。主なメソッドは
+          <code class="prettyprint">ask</code>
+          であり、現在の環境（またはそう見なすのがお好みなら「設定」）を取得する。それから
+          <code class="prettyprint">runReader</code>
+          メソッドに環境を表す値を提供することで
+          <code class="prettyprint">Reader</code>
+          エフェクトを含んだエフェクトスタックを実行することができる。
+        </p>
+        <p>
+          「局所的」なリーダーを「より大きな」リーダーに注入することもできる。
+        </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.data._
 
@@ -38,11 +49,11 @@ def getPort[R](implicit r: Reader[Int, *] |= R): Eff[R, String] = for {
 
 getPort[S].translateReader((_: Conf).port).runReader(Conf(&quot;prod&quot;, 80)).run</code></pre>
         <p><code class="prettyprint">&gt; the port is 80</code></p>
-    </div>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

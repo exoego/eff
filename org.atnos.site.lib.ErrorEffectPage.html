@@ -1,50 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>eff - Error エフェクト</title>
 
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/prettify.css" type="text/css" rel="stylesheet"/>
-    <link href="./css/specs2.css" type="text/css" rel="stylesheet"/>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
 
     <script src="./javascript/prettify.js" type="text/javascript"></script>
     <script src="./javascript/specs2.js" type="text/javascript"></script>
-</head>
-<body>
-
-<div class="container">
-    <div class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div
+        class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
+      >
         <h1>Error</h1>
         <div id="tipue_search_content"></div>
 
-        <p><code class="prettyprint">Error</code> エフェクトは、<code class="prettyprint">Eval</code> エフェクトと <code
-                class="prettyprint">Either</code> エフェクトを合わせたもので、「左」側を <code class="prettyprint">Either[Throwable,
-            F]</code> としている。その狙いは、例外、または任意の失敗を表す任意の型の、どちらかでも失敗できる計算を表現することだ。できることは、</p>
+        <p>
+          <code class="prettyprint">Error</code> エフェクトは、<code
+            class="prettyprint"
+            >Eval</code
+          >
+          エフェクトと
+          <code class="prettyprint">Either</code>
+          エフェクトを合わせたもので、「左」側を
+          <code class="prettyprint">Either[Throwable, F]</code>
+          としている。その狙いは、例外、または任意の失敗を表す任意の型の、どちらかでも失敗できる計算を表現することだ。できることは、
+        </p>
         <ul>
-            <li><p><code class="prettyprint">ok</code> で遅延された計算を作る</p></li>
-            <li><p><code class="prettyprint">fail(f: F)</code> で失敗させる。ここで <code class="prettyprint">F</code> は失敗を表す型だ
-            </p></li>
-            <li><p><code class="prettyprint">exception</code> で例外を投げる</p></li>
+          <li>
+            <p><code class="prettyprint">ok</code> で遅延された計算を作る</p>
+          </li>
+          <li>
+            <p>
+              <code class="prettyprint">fail(f: F)</code> で失敗させる。ここで
+              <code class="prettyprint">F</code> は失敗を表す型だ
+            </p>
+          </li>
+          <li>
+            <p><code class="prettyprint">exception</code> で例外を投げる</p>
+          </li>
         </ul>
         <p>他にも便利なコンビネーターが利用できる。</p>
         <ul>
-            <li><p><code class="prettyprint">andFinally(last)</code> は例外や失敗が発生したときでも実行されるアクションを登録する。</p></li>
-            <li><p><code class="prettyprint">orElse</code> はアクションを実行し、それが成功しなかったときに別のアクションを実行させる。</p></li>
-            <li><p><code class="prettyprint">whenFailed</code> は <code class="prettyprint">orElse</code> と同様だが、but uses
-                the error for <code class="prettyprint">action1</code> のエラーを使って次に実行するアクションを決められる。</p></li>
+          <li>
+            <p>
+              <code class="prettyprint">andFinally(last)</code>
+              は例外や失敗が発生したときでも実行されるアクションを登録する。
+            </p>
+          </li>
+          <li>
+            <p>
+              <code class="prettyprint">orElse</code>
+              はアクションを実行し、それが成功しなかったときに別のアクションを実行させる。
+            </p>
+          </li>
+          <li>
+            <p>
+              <code class="prettyprint">whenFailed</code> は
+              <code class="prettyprint">orElse</code> と同様だが、but uses the
+              error for
+              <code class="prettyprint">action1</code>
+              のエラーを使って次に実行するアクションを決められる。
+            </p>
+          </li>
         </ul>
-        <p><code class="prettyprint">Error</code> エフェクトを実行すると <code class="prettyprint">Either[Error, A]</code>
-            が返ってくる。ここで <code class="prettyprint">Error</code> は <code class="prettyprint">Either[Throwable,
-                Failure]</code> のエイリアスだ。</p>
-        <p><code class="prettyprint">Error</code> オブジェクトはこのエフェクトを <code class="prettyprint">String</code> を <code
-                class="prettyprint">Failure</code> 型として実装してはいるが、自分たちの失敗データ型を作り、<code class="prettyprint">Error[MyFailureDatatype]</code>
-            トレイトを実装することを推奨する。</p>
-    </div>
+        <p>
+          <code class="prettyprint">Error</code> エフェクトを実行すると
+          <code class="prettyprint">Either[Error, A]</code> が返ってくる。ここで
+          <code class="prettyprint">Error</code> は
+          <code class="prettyprint">Either[Throwable, Failure]</code>
+          のエイリアスだ。
+        </p>
+        <p>
+          <code class="prettyprint">Error</code> オブジェクトはこのエフェクトを
+          <code class="prettyprint">String</code> を
+          <code class="prettyprint">Failure</code>
+          型として実装してはいるが、自分たちの失敗データ型を作り、<code
+            class="prettyprint"
+            >Error[MyFailureDatatype]</code
+          >
+          トレイトを実装することを推奨する。
+        </p>
+      </div>
 
-    <div class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer">
+      <div
+        class="col-md-3 col-sm-3 col-xs-3 col-md-pull-9 col-sm-pull-9 col-xs-pull-9 sidebar-outer"
+      ></div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>
