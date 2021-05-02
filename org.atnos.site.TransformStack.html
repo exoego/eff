@@ -17,60 +17,57 @@
       <div
         class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
       >
-        <h1>Transform stacks</h1>
+        <h1>エフェクトスタックを変換する</h1>
         <div id="tipue_search_content"></div>
 
-        <h3 id="what-is-an-effect-stack">What is an “effect stack”?</h3>
+        <h3 id="what-is-an-effect-stack">エフェクトスタックとは？</h3>
         <p>
-          There is an abuse of language here. The name “stack” comes from “monad
-          stack” used when talking about monad transformers. With
-          <code class="prettyprint">Eff</code> though, effects are modelled
-          differently, as a tree of effects.
+          ここには言葉の誤用がある。「スタック」という名前はモナドトランスフォーマーについて話すときに使われる「モナドスタック」から来ている。しかしながら
+          <code class="prettyprint">Eff</code>
+          ではスタックではなく、エフェクトはエフェクトのツリーとしてモデル化されている,
         </p>
         <p>
-          For example the type level representation of four effects
-          <code class="prettyprint">T1, T2, T3, T4</code> is represented as:
+          例えば4つのエフェクト<code class="prettyprint">T1, T2, T3, T4</code>
+          の型レベル表現は次のように表される。
         </p>
         <pre><code class="prettyprint">Fx.fx4[T1, T2, T3, T4]
 
-// or
+// または
 
 FxAppend[
   Fx1[T1],
   Fx3[T2, T3, T4]
 ]</code></pre>
         <p>
-          So every-time we manipulate effects at the type level we modify a tree
-          of effects. For example, interpreting the effect
-          <code class="prettyprint">T3</code> would leave us with the tree:
+          なので、型レベルでエフェクトを操作するときは毎回、エフェクトのツリーを操作する。例えば、
+          エフェクト
+          <code class="prettyprint">T3</code> を解釈すると次のツリーが残される。
         </p>
         <pre><code class="prettyprint">FxAppend[
   Fx1[T1],
   Fx2[T2, T4]
 ]</code></pre>
-        <p>This code should prove it:</p>
-        <pre><code class="prettyprint">// for now the following implicit summoning crashes the compiler
-  //val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]] =
-  //  implicitly[Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]]]</code></pre>
+        <p>このコードは次のことを示している。</p>
+        <pre><code class="prettyprint">// 今はまだ次の implicit の召喚はコンパイラーをクラッシュさせる
+// val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]] =
+//  implicitly[Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]]]</code></pre>
         <p>
-          Unfortunately the compiler has some difficulties with it, so you can
-          either get the member value by using the implicit definitions
-          “manually” or you can just summon the member instance without the
-          <code class="prettyprint">Aux</code> part:
+          残念ながらコンパイラがこの型を取り扱うのは少しむずかしいので、メンバー値を取得するには、implicit
+          変換を使って「手動」でやるか、あるいは
+          <code class="prettyprint">Aux</code>
+          の部分なしでメンバーインスタンスを召喚すればできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
-// so you need to explicitly define the implicit
+// implicit を明示的に定義する必要がある
 val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]] =
   Member.MemberAppendR(Member.Member3M)
 
-// but this works
+// これでも動く
 val member: Member[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]]] =
   implicitly[Member[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]]]]</code></pre>
         <p>
-          More importantly the compiler is still able to track the right types
-          resulting of the interpretation of a given effect so the following
-          compiles ok:
+          より重要なことは、上記の難しさがあるにも関わらず、コンパイラーは与えられたエフェクトの解釈の結果として生じる右側の方を把握できる。このため、次のコードはコンパイルできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
@@ -83,16 +80,21 @@ type S = FxAppend[Fx1[T1], Fx3[T2, T3, T4]]
 
 runT1(runT4(runT2(runT3(Eff.send[T3, S, Int](???)))))</code></pre>
         <h3 id="transform-an-effect-to-another">
-          Transform an effect to another
+          エフェクトを他のエフェクトに変換する
         </h3>
         <p>
-          A typical use case for this is to transform a stack having a
-          <code class="prettyprint">Reader[S, *]</code> effect to a stack having
-          a <code class="prettyprint">Reader[B, *]</code> effect where
-          <code class="prettyprint">S</code> is “contained” in
-          <code class="prettyprint">B</code> (meaning that there is a mapping
-          from <code class="prettyprint">B</code>, “big”, to
-          <code class="prettyprint">S</code>, “small”). Here is an example:
+          エフェクトの変換の典型的なユースケースは、<code class="prettyprint"
+            >Reader[S, *]</code
+          >
+          エフェクトを持つスタックを
+          <code class="prettyprint">Reader[B, *]</code>
+          エフェクトを持つスタックに変換することだ。ここで
+          <code class="prettyprint">S</code> は
+          <code class="prettyprint">B</code> に「含まれる」（<code
+            class="prettyprint"
+            >B</code
+          >ig から <code class="prettyprint">S</code>mall
+          へのマッピングが存在する）。例を示す。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._
 import org.atnos.eff.syntax.all._
@@ -135,43 +137,46 @@ val action: Eff[SS, String] = for {
 action.runReader(Conf(&quot;www.me.com&quot;, 8080)).runOption.run</code></pre>
         <p><code class="prettyprint">&gt; Some(hello world)</code></p>
         <p>
-          There are also specialized versions of
-          <code class="prettyprint">transform</code> for
-          <code class="prettyprint">Reader</code> and
-          <code class="prettyprint">State</code>:
+          <code class="prettyprint">Reader</code> と
+          <code class="prettyprint">State</code> には 特別版の
+          <code class="prettyprint">transform</code> が存在する。
         </p>
         <ul>
           <li>
-            <code class="prettyprint">ReaderEffect.localReader</code> takes a
-            “getter” <code class="prettyprint">B =&gt; A</code> to transform a
-            stack with a <code class="prettyprint">Reader[A, *]</code> into a
-            stack with a <code class="prettyprint">Reader[B, *]</code>
+            <code class="prettyprint">ReaderEffect.localReader</code>
+            は「ゲッター」
+            <code class="prettyprint">B =&gt; A</code> を受け取り、
+            <code class="prettyprint">Reader[A, *]</code> を含むスタックを
+            <code class="prettyprint">Reader[B, *]</code>
+            を含むスタックに変換する
           </li>
           <li>
-            <code class="prettyprint">StateEffect.lensState</code> takes a
-            “getter” <code class="prettyprint">S =&gt; T</code> and a “setter”
-            <code class="prettyprint">(S, T) =&gt; S</code> to to transform a
-            stack with a <code class="prettyprint">State[T, *]</code> into a
-            stack with a <code class="prettyprint">State[S, *]</code>
+            <code class="prettyprint">StateEffect.lensState</code> は
+            「ゲッター」
+            <code class="prettyprint">S =&gt; T</code> と「セッター」
+            <code class="prettyprint">(S, T) =&gt; S</code> を受け取り、
+            <code class="prettyprint">State[T, *]</code> を含むスタックを
+            <code class="prettyprint">State[S, *]</code>
+            を含むスタックに変換する
           </li>
         </ul>
         <h3 id="translate-an-effect-into-multiple-others">
-          Translate an effect into multiple others
+          エフェクトを複数のエフェクトに変換する
         </h3>
         <p>
-          A common thing to do is to translate effects (a webservice DSL for
-          example) into multiple others (<code class="prettyprint"
+          よくやることになることは、エフェクト（例えば Web サービス
+          DSL）を複数の他のエフェクト (<code class="prettyprint"
             >TimedFuture</code
-          >, <code class="prettyprint">Eval</code>,
-          <code class="prettyprint">Either</code>, etc…).
+          >、<code class="prettyprint">Eval</code>、
+          <code class="prettyprint">Either</code>、etc……）に変換することだ。
         </p>
-        <p>For example you might have this stack:</p>
+        <p>たとえばこんなスタックがあるとする。</p>
         <pre><code class="prettyprint">type S = Fx.fx3[Authenticated, TimedFuture, Either[AuthError, *]]</code></pre>
         <p>
-          And you want to write an interpreter which will translate
-          authentication actions into
-          <code class="prettyprint">TimedFuture</code> and
-          <code class="prettyprint">Either</code>:
+          そして認証アクションを
+          <code class="prettyprint">TimedFuture</code> と
+          <code class="prettyprint">Either</code>
+          に翻訳するインタープリターを書きたいとする
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.syntax.eff._
@@ -179,13 +184,13 @@ import org.atnos.eff.future._
 import org.atnos.eff.interpret._
 import scala.concurrent.Future
 
-// list of access rights for a valid token
+// valid なトークンに対してアクセス権をリストにする
 case class AccessRights(rights: List[String])
 
-// authentication error
+// 認証エラー
 case class AuthError(message: String)
 
-// DSL for authenticating users
+// ユーザー認証の DSL
 sealed trait Authenticated[A]
 case class Authenticate(token: String) extends Authenticated[AccessRights]
 type _authenticate[U] = Authenticated |= U
@@ -194,8 +199,8 @@ type AuthErroEither[A] = Either[AuthError, A]
 type _error[U] = AuthErroEither |= U
 
 /**
- * The order of implicit parameters is really important for type inference!
- * see below
+ * implicit パラメーターの順序は型推論のために本当に重要！
+ * 下を見てほしい
  */
 def runAuth[R, U, A](e: Eff[R, A])(implicit
   authenticated: Member.Aux[Authenticated, R, U],
@@ -206,14 +211,14 @@ def runAuth[R, U, A](e: Eff[R, A])(implicit
      def apply[X](ax: Authenticated[X]): Eff[U, X] =
        ax match {
          case Authenticate(token) =&gt;
-           // send the TimedFuture effect in the stack U
+           // スタック U の TimedFuture エフェクトを送る
            fromFuture(authenticateImpl(token)).
-           // send the Either value in the stack U
+           // スタック U の Either 値を送る
            collapse
        }
     })
 
-// call to a service to authenticate tokens
+// トークンを認証するためにサービスを呼び出す
 def authenticateImpl(token: String): Future[Either[AuthError, AccessRights]] =
   Future.successful[Either[AuthError, AccessRights]] { Left(AuthError(&quot;token invalid!&quot;)) }
 
@@ -224,38 +229,41 @@ type R1 = Fx.fx2[Either[AuthError, *], TimedFuture]
 
 val result: Eff[R1, AccessRights] = runAuth(authenticate[S1](&quot;faketoken&quot;))</code></pre>
         <p>
-          The call to <code class="prettyprint">send</code> above needs to send
-          an <code class="prettyprint">TimedFuture</code> value in the stack
-          <code class="prettyprint">U</code>. This is possible because
-          <code class="prettyprint">TimedFuture</code> is an effect in
-          <code class="prettyprint">U</code> as evidenced by
-          <code class="prettyprint">future</code>.
+          上記の <code class="prettyprint">send</code> 呼出はスタック
+          <code class="prettyprint">U</code> の
+          <code class="prettyprint">TimedFuture</code>
+          値を送る必要がある。これが可能なのは implicit 引数
+          <code class="prettyprint">future</code> によって示されているように
+          <code class="prettyprint">TimedFuture</code> が
+          <code class="prettyprint">U</code> 内のエフェクトだからだ。
         </p>
         <p>
-          Furthermore, <code class="prettyprint">authenticate</code> returns an
-          <code class="prettyprint">Either[AuthError, *]</code> value. We can
-          “collapse” it into <code class="prettyprint">U</code> because
-          <code class="prettyprint">Either[AuthError, *]</code> is an effect of
-          <code class="prettyprint">U</code> as evidenced by
-          <code class="prettyprint">either</code>.
+          さらに、<code class="prettyprint">authenticate</code> は
+          <code class="prettyprint">Either[AuthError, *]</code>
+          値を返す。これを<code class="prettyprint">U</code>
+          に「つぶす」こともできる。なぜなら
+          <code class="prettyprint">Either[AuthError, *]</code> は
+          <code class="prettyprint">either</code> によって示されているように
+          <code class="prettyprint">U</code> 内のエフェクトだからだ。
         </p>
         <p>
-          You might wonder why we don’t use a more direct type signature like:
+          次のようなもっと直接的な型シグネチャーを使わないことが不思議かもしれない。
         </p>
         <pre><code class="prettyprint">def runAuth2[R, U :_future :_error, A](e: Eff[R, A])(
   implicit authenticated: Member.Aux[Authenticated, R, U]): Eff[U, A]</code></pre>
-        <p>The reason is that scalac desugars this to:</p>
+        <p>その理由は scalac がこの糖衣構文を次のように変換するからだ。</p>
         <pre><code class="prettyprint">def runAuth2[R, U, A](e: Eff[R, A])(
   implicit future:        _future[U],
            either:        _error[U],
            authenticated: Member.Aux[Authenticated, R, U]): Eff[U, A] =</code></pre>
         <p>
-          And then <code class="prettyprint">authenticated</code> is last in the
-          list of implicits parameters and can not be used to guide type
-          inference.
+          そして <code class="prettyprint">authenticated</code> は implicit
+          パラメーターのリストの最後にあるので、型推論を導くのには使えないのだ。
         </p>
-        <h3 id="interpret-an-effect-locally">Interpret an effect “locally”</h3>
-        <p>Let’s say you have a method to run database queries</p>
+        <h3 id="interpret-an-effect-locally">
+          エフェクトを「局所的に」解釈する
+        </h3>
+        <p>データベースのクエリーを実行するメソッドがあるとしよう。</p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.all._
 import cats.data._
@@ -268,27 +276,25 @@ def runDb[R, U, A](queries: Eff[R, A])(
            eval:   _eval[U],
            writer: _writerString[U]): Eff[U, A] = ???</code></pre>
         <p>
-          The database queries (the <code class="prettyprint">Db</code> effect)
-          are being executed by the
-          <code class="prettyprint">runDb</code> method inside the
-          <code class="prettyprint">Eval</code> effect, and they use a
-          <code class="prettyprint">WriterString</code> effect to log what is
-          being executed.
+          データベースクエリー（<code class="prettyprint">Db</code>
+          エフェクト）は <code class="prettyprint">Eval</code> エフェクト内部の
+          <code class="prettyprint">runDb</code
+          >　メソッドによって実行されている。そして何を実行しているかをログ出力するために
+          <code class="prettyprint">WriterString</code> エフェクトを使う。
         </p>
         <p>
-          However you know that some clients of your component don’t care about
-          the logs and they don’t want to have the
-          <code class="prettyprint">WriterString</code> effect. that they
-          consider an implementation detail.
+          けれども、このコンポーネントのクライアントのいくつかはは、実装の詳細であるログには関心がなく
+          <code class="prettyprint">WriterString</code>
+          エフェクトを持ちたくないとする。
         </p>
-        <p>So you’d like to provide this additional method:</p>
+        <p>そんなときはこの追加メソッドを提供したいだろう。</p>
         <pre><code class="prettyprint">def executeOnDb[R, U, A](queries: Eff[R, A])(
   implicit db:   Member.Aux[Db, R, U],
            eval: _eval[U]): Eff[U, A] = ???</code></pre>
         <p>
-          How can you implement
-          <code class="prettyprint">executeOnDb</code> with
-          <code class="prettyprint">runDb</code>?
+          どうすれば
+          <code class="prettyprint">runDb</code> を使って
+          <code class="prettyprint">executeOnDb</code> を実装できるだろうか？
         </p>
         <pre><code class="prettyprint">import org.atnos.eff.all._
 import org.atnos.eff.syntax.all._
@@ -297,24 +303,27 @@ def executeOnDb[R, U, A](queries: Eff[R, A])(
   implicit db:   Member.Aux[Db, R, U],
            eval: _eval[U]): Eff[U, A] = {
 
-type S = Fx.prepend[WriterString, R]
+  type S = Fx.prepend[WriterString, R]
   runDb(queries.into[S]).runWriterNoLog[String]
 
 }</code></pre>
         <p>
-          You create a “local” stack containing the
-          <code class="prettyprint">WriterString</code> effect using the
-          <code class="prettyprint">prepend</code> method. You now run the
-          <code class="prettyprint">Db</code> effect and discard the logs to
-          finally return only <code class="prettyprint">Eff[U, A]</code>.
+          <code class="prettyprint">prepend</code> メソッドを使って
+          <code class="prettyprint">WriterString</code>
+          エフェクトを含んだ「局所的な（local）」スタックを作る。 それから
+          <code class="prettyprint">Db</code>
+          エフェクトを実行し、ログを捨てて、最終的に
+          <code class="prettyprint">Eff[U, A]</code> を返す。
         </p>
-        <h3 id="merge-stacks">Merge stacks</h3>
+        <h3 id="merge-stacks">スタックをマージする</h3>
         <p>
-          We can create effects for a given effect stack, for example to
-          interact with a
-          <a href="https://hadoop.apache.org">Hadoop</a> cluster. We can also
-          define another stack, for storing and retrieving data on
-          <a href="https://aws.amazon.com/s3">S3</a>.
+          与えられたエフェクトスタック用にエフェクトを作ることができる。 例えば
+          <a href="https://hadoop.apache.org">Hadoop</a>
+          クラスタとやりとりするために、あるいは、<a
+            href="https://aws.amazon.com/s3"
+            >AWS S3</a
+          >
+          にデータを保存・読出するために。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._
 import cats.data._
@@ -359,35 +368,37 @@ object S3Stack {
 }
 </code></pre>
         <p>
-          So what happens when you want to both use S3 and Hadoop? As you can
-          see from the definition above those 2 stacks share some common
-          effects, so the resulting stack we want to work with is:
+          では、S3 と Hadoop の両方を使いたいときはどうするのだろう？
+          上記の定義から分かるようにこれら2つのスタックにはいくつか共通のスタックがあるので、その結果として生じる、扱いたいスタックは次のようになる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
-  import cats.Eval
-  import HadoopStack._
-  import S3Stack.{WriterString=&gt;_,_}
+import cats.Eval
+import HadoopStack._
+import S3Stack.{WriterString=&gt;_,_}
 
-  type HadoopS3 = Fx.fx4[S3Reader, HadoopReader, WriterString, Eval]</code></pre>
+type HadoopS3 = Fx.fx4[S3Reader, HadoopReader, WriterString, Eval]</code></pre>
         <p>
-          Then we can use the <code class="prettyprint">into</code> method to
-          inject effects from each stack into this common stack:
+          そして、この共通のスタックにそれぞれのスタックからエフェクトを注入するために、<code
+            class="prettyprint"
+            >into</code
+          >
+          メソッドが使える。
         </p>
         <pre><code class="prettyprint">import S3Stack._
 import HadoopStack._
-// this imports the `into` and runXXX syntax
+// これは `into` と runXXX シンタックスをインポートする
 import org.atnos.eff.syntax.all._
 
 val action = for {
-  // read a file from hadoop
+  // Hadoop からファイルを読み取る
   s &lt;- readFile(&quot;/tmp/data&quot;).into[HadoopS3]
 
-  // write a file on S3
+  // S3 にファイルを書き込む
   _ &lt;- writeFile(&quot;key&quot;, s)  .into[HadoopS3]
 } yield ()
 
-  // and we can run the composite action
-  action.runReader(S3Conf(&quot;bucket&quot;)).runReader(HadoopConf(10)).runWriter.runEval.run</code></pre>
+// そして合成されたアクションを実行する
+action.runReader(S3Conf(&quot;bucket&quot;)).runReader(HadoopConf(10)).runWriter.runEval.run</code></pre>
         <p>
           <code class="prettyprint"
             >&gt; ((),List(Reading from /tmp/data, Writing to bucket bucket:
@@ -395,9 +406,12 @@ val action = for {
           >
         </p>
         <p>
-          You can find a fully working example of this approach in
-          <code class="prettyprint">src/test/org/atnos/example/StacksSpec</code
-          >.
+          このアプローチの完全な実例は
+          <a
+            href="https://github.com/atnos-org/eff/blob/master/shared/src/test/scala/org/atnos/example/StacksSpec.scala"
+            >shared/src/test/org/atnos/example/StacksSpec</a
+          >
+          で見つけられる。
         </p>
       </div>
 

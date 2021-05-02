@@ -57,7 +57,7 @@
                 <li><a href="org.atnos.site.Tutorial.html#study-your-topic">自分のテーマを深く知る</a></li>
                 <li><a href="org.atnos.site.Tutorial.html#create-an-adt-representing-your-grammar">文法を表す ADT を作る</a></li>
                 <li><a href="org.atnos.site.Tutorial.html#free-your-adt">ADT を自由にする</a></li>
-                <li><a href="org.atnos.site.Tutorial.html#create-smart-constructors-using-eff.send">Eff.send を使ってスマートコンストラカクタを作る</a></li>
+                <li><a href="org.atnos.site.Tutorial.html#create-smart-constructors-using-eff.send">Eff.send でスマートコンストラクタを作る</a></li>
                 <li><a href="org.atnos.site.Tutorial.html#build-a-program">プログラムを作る</a></li>
                 <li><a href="org.atnos.site.Tutorial.html#write-an-interpreter-for-your-program">インタープリターを書く</a></li>
                 <li><a href="org.atnos.site.Tutorial.html#run-your-program">プログラムを実行する</a></li>
@@ -75,13 +75,13 @@
         </li>
 
         <li id="org-atnos-site-transformstack">
-            <a href="org.atnos.site.TransformStack.html">Transform stacks</a>
+            <a href="org.atnos.site.TransformStack.html">エフェクトスタックを変換する</a>
             <ul>
-                <li><a href="org.atnos.site.TransformStack.html#what-is-an-effect-stack">What is an “eff...</a></li>
-                <li><a href="org.atnos.site.TransformStack.html#transform-an-effect-to-another">Transform an ef...</a></li>
-                <li><a href="org.atnos.site.TransformStack.html#translate-an-effect-into-multiple-others">Translate an ef...</a></li>
-                <li><a href="org.atnos.site.TransformStack.html#interpret-an-effect-locally">Interpret an ef...</a></li>
-                <li><a href="org.atnos.site.TransformStack.html#merge-stacks">Merge stacks</a></li>
+                <li><a href="org.atnos.site.TransformStack.html#what-is-an-effect-stack">エフェクトスタックとは？</a></li>
+                <li><a href="org.atnos.site.TransformStack.html#transform-an-effect-to-another">他のエフェクトに変換する</a></li>
+                <li><a href="org.atnos.site.TransformStack.html#translate-an-effect-into-multiple-others">複数のエフェクトに変換する</a></li>
+                <li><a href="org.atnos.site.TransformStack.html#interpret-an-effect-locally">エフェクトを局所的に解釈する</a></li>
+                <li><a href="org.atnos.site.TransformStack.html#merge-stacks">スタックをマージする</a></li>
             </ul>
         </li>
         <li id="org-atnos-site-memberimplicits">
