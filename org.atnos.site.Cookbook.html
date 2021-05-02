@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>eff - Cookbook</title>
+    <title>eff - レシピ集</title>
 
     <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
@@ -18,42 +18,40 @@
       <div
         class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
       >
-        <h1>Cookbook</h1>
+        <h1>レシピ集</h1>
         <div id="tipue_search_content"></div>
 
+        <p>Eff を使った特定の問題の解き方の例のコレクション。</p>
+        <h3 id="partial-interpretation">部分的な解釈</h3>
         <p>
-          A collection of examples of how to solve particular problems with Eff
+          プログラムの異なる場面で異なるエフェクトを使いたいのはよくあることだ。いくつかのエフェクト、たとえばエラー処理やロギングは、プログラムの全体に広がる。しかし、さらなるエフェクト、たとえば状態を、全体の一部として組み込みたいことがある。
         </p>
-        <h3 id="partial-interpretation">Partial Interpretation</h3>
-        <p>
-          It’s common to want to use different effects in different parts of a
-          program. Some effects, like error handling or logging, may extend
-          through the whole of our program. However we may want to include
-          additional effects, like state, within one part.
-        </p>
-        <p>The example below shows how we can do this</p>
+        <p>以下の例は、これをどうできるかを示している。</p>
         <ul>
           <li>
             <p>
-              the <code class="prettyprint">incrementNTimes</code> methods uses
-              an additional <code class="prettyprint">State</code> effect for
-              its implementation (necessary to call
-              <code class="prettyprint">incrementCounter</code>)
+              <code class="prettyprint">incrementNTimes</code>
+              メソッドは、追加の
+              <code class="prettyprint">State</code> エフェクトを内部実装（
+              <code class="prettyprint">incrementCounter</code>
+              を呼ぶために必要）で使う。
             </p>
           </li>
           <li>
             <p>
-              the additional <code class="prettyprint">State</code> effect is
-              added to <code class="prettyprint">R</code> with the
-              <code class="prettyprint">prepend</code> method:
+              追加の <code class="prettyprint">State</code> エフェクトは、<code
+                class="prettyprint"
+                >prepend</code
+              >
+              メソッドを使って <code class="prettyprint">R</code> に追加される：
               <code class="prettyprint">Fx.prepend[StateInt, R]</code>
             </p>
           </li>
           <li>
             <p>
-              <code class="prettyprint">runState</code> is called within
-              <code class="prettyprint">incrementNTimes</code> to finally
-              interpret that effect
+              <code class="prettyprint">runState</code>
+              は、最終的にエフェクトを解釈するために、
+              <code class="prettyprint">incrementNTimes</code> 内部で呼ばれる。
             </p>
           </li>
         </ul>
@@ -63,7 +61,7 @@ import org.atnos.eff._
 import org.atnos.eff.all._
 import org.atnos.eff.syntax.all._
 
-// Some type definitions for the effects we will use
+// 使う予定のエフェクトのための型定義
 type EitherString[A] = Either[String, A]
 type WriterString[A] = Writer[String, A]
 type StateInt[A]     = State[Int, A]
@@ -72,20 +70,21 @@ type _err[R] = EitherString |= R
 type _log[R] = WriterString |= R
 type _count[R] = StateInt |= R
 
+
 /**
- * In module 1, some utility methods
+ * モジュール1：いくつかの便利メソッド
  */
 
-// repeat a side-effect n times
+// 副作用を n 回繰り返す
 def repeatM[M[_] : Monad](n: Int, computation: M[Unit]): M[Unit] =
   if (n &lt;= 0) computation
   else computation &gt;&gt; repeatM(n - 1, computation)
 
-// check a condition and abort computations with a message if the condition is false
+// 条件をチェックし、条件が false なら計算を停止してメッセージを出す
 def assert[R :_err](condition: Boolean, msg: String): Eff[R, Unit] =
   if (!condition) left(msg) else right(())
 
-// increment a counter and log the new value
+// カウンター値を増加し、新しい値をログ出力する
 def incrementCounter[R :_log :_count]: Eff[R, Unit] = for {
   c &lt;- get
   c2 = c + 1
@@ -93,22 +92,24 @@ def incrementCounter[R :_log :_count]: Eff[R, Unit] = for {
   _ &lt;- put(c2)
 } yield ()
 
+
 /**
- * In module 2 your &quot;business&quot; logic
+ * モジュール2：「ビジネス」ロジック
  */
 
-// increment a value n times (n need to be positive)
+// 値を n 回増加させる（n は正の必要がある）
 def incrementNTimes[R :_err :_log](start: Int, times: Int): Eff[R, Int] = for {
-  // this call uses the stack R
+  // この呼出はスタック R を使う
   _ &lt;- assert(times &gt;= 0, s&quot;$times is negative&quot;)
 
-  // the call uses the stack R plus an additional StateInt effect which is interpreted right away.
-  // The other effects remain
+  // 次の呼出はスタック R と、すぐに解釈される追加の StateInt エフェクトを使う
+  // その他のエフェクトは残る
   result &lt;- repeatM(times, incrementCounter[Fx.prepend[StateInt, R]]).execState(start)
 } yield result
 
+
 /**
- * A top-level call
+ * トップレベルの呼出
  */
 
 type Stack = Fx.fx2[EitherString, WriterString]

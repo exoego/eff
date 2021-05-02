@@ -101,9 +101,9 @@
             </ul>
         </li>
         <li id="org-atnos-site-cookbook">
-            <a href="org.atnos.site.Cookbook.html">Cookbook</a>
+            <a href="org.atnos.site.Cookbook.html">レシピ集</a>
             <ul>
-                <li><a href="org.atnos.site.Cookbook.html#partial-interpretation">Partial Interpr...</a>
+                <li><a href="org.atnos.site.Cookbook.html#partial-interpretation">部分的な解釈</a>
                 </li>
             </ul>
         </li>
