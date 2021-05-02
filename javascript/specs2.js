@@ -108,10 +108,10 @@
             </ul>
         </li>
         <li id="org-atnos-site-communityresources">
-            <a href="org.atnos.site.CommunityResources.html">Community resou...</a>
+            <a href="org.atnos.site.CommunityResources.html">コミュニティリソース</a>
             <ul>
-                <li><a href="org.atnos.site.CommunityResources.html#blog-posts">Blog posts</a></li>
-                <li><a href="org.atnos.site.CommunityResources.html#tutorials-examples">Tutorials &amp; Exa...</a></li>
+                <li><a href="org.atnos.site.CommunityResources.html#blog-posts">ブログ記事</a></li>
+                <li><a href="org.atnos.site.CommunityResources.html#tutorials-examples">チュートリアルと実例</a></li>
             </ul>
         </li>
     </ul>
