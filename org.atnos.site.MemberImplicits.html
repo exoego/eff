@@ -17,22 +17,23 @@
       <div
         class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
       >
-        <h1>Member implicits</h1>
+        <h1>メンバー implicits</h1>
         <div id="tipue_search_content"></div>
 
         <p>
-          Type inference with the Eff monad can be a bit tricky to get right if
-          we want to avoid type annotations. Here are some tips to help you.
+          型注釈を避けたいのであれば、 Eff
+          モナドを扱うときの型推論をちゃんと理解するのは少しトリッキーになる。助けとなる
+          TIPS がいくつかある。
         </p>
         <h3 id="running-effects-with-several-type-parameters">
-          Running effects with several type parameters
+          型パラメータが複数あるエフェクトを実行する
         </h3>
         <p>
-          Some effects use 2 type variables, like
-          <code class="prettyprint">Reader</code> or
-          <code class="prettyprint">Writer</code>. If you want to use those
-          effects in an effect stack you need to make sure you have the
-          following <code class="prettyprint">scalac</code> option:
+          <code class="prettyprint">Reader</code> や
+          <code class="prettyprint">Writer</code>
+          のように、エフェクトによっては2つの型パラメータを使う。エフェクトスタックでこれらのエフェクトを追加痛ければ、次の
+          <code class="prettyprint">scalac</code>
+          オプションを有効にしておく必要がある。
         </p>
         <div class="sourceCode" id="cb1">
           <pre
@@ -43,12 +44,13 @@
                     class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre>
         </div>
         <h3 id="use-context-bounds-and-type-aliases">
-          Use context bounds and type aliases
+          context bound と型エイリアスを使う
         </h3>
         <p>
-          When creating effects you can always “require” a stack containing the
-          right effects with the
-          <code class="prettyprint">MemberIn</code> typeclass:
+          エフェクトを作るときはいつも、<code class="prettyprint"
+            >MemberIn</code
+          >
+          型クラスと正しいエフェクトを含んだスタックが「必要」となる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.all._
@@ -56,16 +58,21 @@ import org.atnos.eff.all._
 type StateInt[A] = State[Int, A]
 type WriterString[A] = Writer[String, A]
 
-// for creating state effects
+// State エフェクトを作成するため
 def putAndTell[R](i: Int)(implicit s: StateInt |= R, w: WriterString |= R): Eff[R, Int] =
   for {
-    // no type annotations needed!
+    // 型注釈は必要ない！！
     _ &lt;- put(i)
     _ &lt;- tell(&quot;stored &quot; + i)
   } yield i</code></pre>
         <p>
-          You can even use context bounds to make the declaration of
-          <code class="prettyprint">putAndTell</code> more concise:
+          <code class="prettyprint">putAndTell</code>
+          の定義をより簡潔にするために
+          <a
+            href="https://docs.scala-lang.org/tutorials/FAQ/context-bounds.html"
+            >context bound</a
+          >
+          を使うこともできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff.all._
 
@@ -78,86 +85,104 @@ def putAndTell[R :_stateInt :_writerString](i: Int): Eff[R, Int] =
     _ &lt;- tell(&quot;stored &quot; + i)
   } yield i</code></pre>
         <h3 id="know-your-member-typeclasses">
-          Know your <code class="prettyprint">Member</code> typeclasses
+          <code class="prettyprint">Member</code> 型クラスを知る
         </h3>
         <p>
-          There are 3 different ways to declare that an effect is part of an
-          effect stack with 3 typeclasses:
+          エフェクトスタックを構成するエフェクトを宣言するには３つの異なる方法、型クラスがある。
         </p>
         <table>
-          <colgroup>
-            <col style="width: 16%" />
-            <col style="width: 7%" />
-            <col style="width: 29%" />
-            <col style="width: 47%" />
-          </colgroup>
           <thead>
             <tr class="header">
-              <th>Typeclass</th>
-              <th>Alias</th>
-              <th>Meaning</th>
-              <th>When to use it</th>
+              <th>型クラス</th>
+              <th style="white-space: nowrap">エイリアス</th>
+              <th>意味</th>
+              <th>利用場面</th>
             </tr>
           </thead>
           <tbody>
             <tr class="odd">
-              <td><code class="prettyprint">MemberIn[M, R]</code></td>
-              <td><code class="prettyprint">M |= R</code></td>
               <td>
-                “<code class="prettyprint">M</code> is part of
-                <code class="prettyprint">R</code>”
+                <code class="prettyprint" style="white-space: nowrap"
+                  >MemberIn[M, R]</code
+                >
               </td>
               <td>
-                to create <code class="prettyprint">M</code> effects in
-                <code class="prettyprint">R</code>
+                <code class="prettyprint" style="white-space: nowrap"
+                  >M |= R</code
+                >
+              </td>
+              <td>
+                <code class="prettyprint">M</code> は
+                <code class="prettyprint">R</code> の一部
+              </td>
+              <td>
+                <code class="prettyprint">R</code> に含まれる<code
+                  class="prettyprint"
+                  >M</code
+                >
+                エフェクトを作るとき
               </td>
             </tr>
             <tr class="even">
-              <td><code class="prettyprint">MemberInOut[M, R]</code></td>
-              <td><code class="prettyprint">M /= R</code></td>
               <td>
-                “<code class="prettyprint">M</code> is part of
-                <code class="prettyprint">R</code> and can be extracted from it”
+                <code class="prettyprint" style="white-space: nowrap"
+                  >MemberInOut[M, R]</code
+                >
               </td>
               <td>
-                to intercept the effect <code class="prettyprint">M</code> (see
-                <code class="prettyprint">Interpreter.scala</code>) and
-                transform it while staying in the same stack. For example to
-                <code class="prettyprint">handleError</code>
-                for an Error effect
+                <code class="prettyprint" style="white-space: nowrap"
+                  >M /= R</code
+                >
+              </td>
+              <td>
+                <code class="prettyprint">M</code> は
+                <code class="prettyprint">R</code>
+                の一部であり、そこから取り出せる
+              </td>
+              <td>
+                エフェクト <code class="prettyprint">M</code>（
+                <a
+                  href="https://github.com/atnos-org/eff/blob/master/shared/src/main/scala/org/atnos/eff/Interpret.scala#L174"
+                  >Interpreter.scala</a
+                >
+                を参照）をインターセプトし、同じスタックにとどまりながら変換するとき。例えば
+                Error エフェクトを
+                <code class="prettyprint">handleError</code> するとき。
               </td>
             </tr>
             <tr class="odd">
-              <td><code class="prettyprint">Member[M, R]</code></td>
-              <td><code class="prettyprint">M &lt;= R</code></td>
               <td>
-                “<code class="prettyprint">M</code> is part of
-                <code class="prettyprint">R</code>, can be extracted from it,
-                and the resulting stack is
-                <code class="prettyprint">m.Out</code>”
+                <code class="prettyprint" style="white-space: nowrap"
+                  >Member[M, R]</code
+                >
               </td>
               <td>
-                to interpret the effect in terms of special values or other
-                effects and remove the effect from the stack
+                <code class="prettyprint" style="white-space: nowrap"
+                  >M &lt;= R</code
+                >
+              </td>
+              <td>
+                <code class="prettyprint">M</code> が
+                <code class="prettyprint">R</code>
+                の一部であり、そこから取り出せて、 その結果生じるスタックは
+                <code class="prettyprint">m.Out</code> となる
+              </td>
+              <td>
+                特別な値または他のエフェクトについてエフェクトを解釈し、そのスタックからエフェクトを取り除くとき
               </td>
             </tr>
           </tbody>
         </table>
-        <h3 id="packing-member-instances">“Packing” member instances</h3>
+        <h3 id="packing-member-instances">Member インスタンスを圧縮する</h3>
         <p>
-          Some function signatures can be repetitive when they always require
-          the same list of effects:
+          複数の関数が同じエフェクトリストを必要するときは、関数のシグネチャがくどくなることがある。
         </p>
+        <pre><code class="prettyprint">def foo1[R :_foo :_bar :_baz]: Eff[R, Int]
+def foo2[R :_foo :_bar :_baz]: Eff[R, Int]
+def foo3[R :_foo :_bar :_baz]: Eff[R, Int]</code></pre>
         <p>
-          def foo1<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int] def
-          foo2<a href="i:%20Int">R :_foo :_bar :_baz</a>: Eff[R, Int] def foo3<a
-            href="i:%20Int"
-            >R :_foo :_bar :_baz</a
-          >: Eff[R, Int]
-        </p>
-        <p>
-          It is possible to “pack” them with the following
-          <code class="prettyprint">_effects</code> type definition:
+          <code class="prettyprint">_effects</code>
+          型を定義することで、これらを「圧縮」できる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff.Members.{&amp;:, &amp;&amp;:}
 
@@ -170,7 +195,7 @@ type _foo[R] = Foo |= R
 type _bar[R] = Bar |= R
 type _baz[R] = Baz |= R
 
-// Note the last &amp;&amp;:, you can write instead: _foo[R] &amp;: _bar[R] &amp;: _baz[R] &amp;: NoMember
+// 最後の &amp;&amp;: の代わりに、_foo[R] &amp;: _bar[R] &amp;: _baz[R] &amp;: NoMember と書くこともできる
 type _effects[R] = _foo[R] &amp;: _bar[R] &amp;&amp;: _baz[R]
 
 def getFoo[R :_foo :_bar]: Eff[R, Int] = Eff.pure(1)
@@ -188,20 +213,19 @@ object t {
 
 }
 
-// Then call foo with a concrete stack
+// 具体的なスタックで foo を呼び出す
 type S = Fx.fx3[Foo, Bar, Baz]
 type U = Fx.fx4[Foo, Bar, Baz, Boo]
 
 t.foo[S](1)
 t.foo[U](1)</code></pre>
         <p>
-          The implicit definition
-          <code class="prettyprint">extractMember</code> in the
-          <code class="prettyprint">Members</code> object will take care of
-          “unpacking” the member instances where required. Note that this
-          implicit must <em>not</em> be in scope when calling the methods
-          requiring the “packed” implicits otherwise it will trigger a divergent
-          implicit search.
+          <code class="prettyprint">Members</code> オブジェクト内の implicit
+          定義 <code class="prettyprint">extractMember</code> は、必要時に
+          Member インスタンスを「展開」を引き受ける。「圧縮」された implicits
+          を必要とするメソッドを呼び出すときに、この implicit
+          がスコープ内に<strong>存在してはならない</strong>。
+          さもないと、間違った implicit 探索を引き起こしてしまう。
         </p>
       </div>
 

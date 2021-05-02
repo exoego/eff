@@ -85,12 +85,12 @@
             </ul>
         </li>
         <li id="org-atnos-site-memberimplicits">
-            <a href="org.atnos.site.MemberImplicits.html">Member implicits</a>
+            <a href="org.atnos.site.MemberImplicits.html">メンバー implicits</a>
             <ul>
-                <li><a href="org.atnos.site.MemberImplicits.html#running-effects-with-several-type-parameters">Running effects...</a></li>
-                <li><a href="org.atnos.site.MemberImplicits.html#use-context-bounds-and-type-aliases">Use context bou...</a></li>
-                <li><a href="org.atnos.site.MemberImplicits.html#know-your-member-typeclasses">Know your Membe...</a></li>
-                <li><a href="org.atnos.site.MemberImplicits.html#“packing”-member-instances">“Packing” membe...</a></li>
+                <li><a href="org.atnos.site.MemberImplicits.html#running-effects-with-several-type-parameters">型パラメータが複数あるエフェクトを実行する</a></li>
+                <li><a href="org.atnos.site.MemberImplicits.html#use-context-bounds-and-type-aliases">context bound と型エイリアスを使う</a></li>
+                <li><a href="org.atnos.site.MemberImplicits.html#know-your-member-typeclasses">Member 型クラスを知る</a></li>
+                <li><a href="org.atnos.site.MemberImplicits.html#packing-member-instances">Member インスタンスを圧縮する</a></li>
             </ul>
         </li>
         <li id="org-atnos-site-applicativeevaluation">
