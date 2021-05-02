@@ -94,10 +94,10 @@
             </ul>
         </li>
         <li id="org-atnos-site-applicativeevaluation">
-            <a href="org.atnos.site.ApplicativeEvaluation.html">Applicative</a>
+            <a href="org.atnos.site.ApplicativeEvaluation.html">「応用」編</a>
             <ul>
-                <li><a href="org.atnos.site.ApplicativeEvaluation.html#concurrent-evaluation">Concurrent eval...</a></li>
-                <li><a href="org.atnos.site.ApplicativeEvaluation.html#batching">Batching</a></li>
+                <li><a href="org.atnos.site.ApplicativeEvaluation.html#concurrent-evaluation">並列評価</a></li>
+                <li><a href="org.atnos.site.ApplicativeEvaluation.html#batching">一括処理</a></li>
             </ul>
         </li>
         <li id="org-atnos-site-cookbook">
