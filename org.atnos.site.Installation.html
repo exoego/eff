@@ -25,11 +25,11 @@
         </p>
         <div class="sourceCode" id="cb1">
           <pre class="sourceCode scala"><code class="sourceCode scala"><span
-                id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>libraryDependencies += <span
+                id="cb1-1">libraryDependencies += <span
                 class="st">&quot;org.atnos&quot;</span> %% <span class="st">&quot;eff&quot;</span> % <span class="st">&quot;5.16.0-SNAPSHOT&quot;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">//（任意）Reader[String, *] のように型を書きたければ</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">addCompilerPlugin</span>(<span
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="co">//（任意）Reader[String, *] のように型を書きたければ</span></span>
+<span id="cb1-4"><span class="fu">addCompilerPlugin</span>(<span
         class="st">&quot;org.typelevel&quot;</span> %% <span class="st">&quot;kind-projector&quot;</span> % <span
         class="st">&quot;0.11.3&quot;</span> cross CrossVersion.<span class="fu">full</span>)</span></code></pre>
         </div>
@@ -40,9 +40,7 @@
         <div class="sourceCode" id="cb2">
           <pre
             class="sourceCode scala"
-          ><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1"
-                                                                                             aria-hidden="true"
-                                                                                             tabindex="-1"></a>scalacOptions += <span
+          ><code class="sourceCode scala"><span id="cb2-1">scalacOptions += <span
                     class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre>
         </div>
         <h5 id="additional-dependencies">さらなる依存関係</h5>
@@ -119,9 +117,7 @@
         <div class="sourceCode" id="cb3">
           <pre
             class="sourceCode scala"
-          ><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1"
-                                                                                             aria-hidden="true"
-                                                                                             tabindex="-1"></a><span
+          ><code class="sourceCode scala"><span id="cb3-1"><span
                     class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span
                     class="fu">_</span></span></code></pre>
         </div>
@@ -140,9 +136,7 @@
         <div class="sourceCode" id="cb4">
           <pre
             class="sourceCode scala"
-          ><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1"
-                                                                                             aria-hidden="true"
-                                                                                             tabindex="-1"></a><span
+          ><code class="sourceCode scala"><span id="cb4-1"><span
                     class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span
                     class="fu">eval</span>.<span class="fu">_</span></span></code></pre>
         </div>
@@ -150,9 +144,7 @@
         <div class="sourceCode" id="cb5">
           <pre
             class="sourceCode scala"
-          ><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1"
-                                                                                             aria-hidden="true"
-                                                                                             tabindex="-1"></a><span
+          ><code class="sourceCode scala"><span id="cb5-1"><span
                     class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span
                     class="fu">all</span>.<span class="fu">_</span></span></code></pre>
         </div>
@@ -193,27 +185,25 @@
         </p>
         <div class="sourceCode" id="cb6">
           <pre class="sourceCode scala"><code class="sourceCode scala"><span
-                id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// エフェクトを作成するため</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org.<span
+                id="cb6-1"><span class="co">// エフェクトを作成するため</span></span>
+<span id="cb6-2"><span class="kw">import</span> org.<span
         class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">option</span>.<span
         class="fu">_</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span
+<span id="cb6-3"></span>
+<span id="cb6-4"><span
         class="co">// runOption メソッドにアクセスするため</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org.<span
+<span id="cb6-5"><span class="kw">import</span> org.<span
         class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">syntax</span>.<span
         class="fu">option</span>.<span class="fu">_</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fromOption</span>(Option(<span
+<span id="cb6-6"></span>
+<span id="cb6-7"><span class="fu">fromOption</span>(Option(<span
         class="dv">1</span>)).<span class="fu">runOption</span></span></code></pre>
         </div>
         <p>すべてのシンタックスに一度にアクセスすることもできる。</p>
         <div class="sourceCode" id="cb7">
           <pre
             class="sourceCode scala"
-          ><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1"
-                                                                                             aria-hidden="true"
-                                                                                             tabindex="-1"></a><span
+          ><code class="sourceCode scala"><span id="cb7-1"><span
                     class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span
                     class="fu">syntax</span>.<span class="fu">all</span>.<span class="fu">_</span></span></code></pre>
         </div>
@@ -226,11 +216,11 @@
         </p>
         <div class="sourceCode" id="cb8">
           <pre class="sourceCode scala"><code class="sourceCode scala"><span
-                id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span
+                id="cb8-1"><span
                 class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">addon</span>.<span
                 class="fu">scalaz</span>.<span class="fu">either</span>.<span class="fu">_</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fromDisjunction</span>(\/-(<span
+<span id="cb8-2"></span>
+<span id="cb8-3"><span class="fu">fromDisjunction</span>(\/-(<span
         class="dv">1</span>))</span></code></pre>
         </div>
         <p>
@@ -239,11 +229,11 @@
         </p>
         <div class="sourceCode" id="cb9">
           <pre class="sourceCode scala"><code class="sourceCode scala"><span
-                id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span
+                id="cb9-1"><span
                 class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">addon</span>.<span
                 class="fu">scalaz</span>.<span class="fu">all</span>.<span class="fu">_</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fromDisjunction</span>(\/-(<span
+<span id="cb9-2"></span>
+<span id="cb9-3"><span class="fu">fromDisjunction</span>(\/-(<span
         class="dv">1</span>))</span></code></pre>
         </div>
         <p>
@@ -251,14 +241,14 @@
         </p>
         <div class="sourceCode" id="cb10">
           <pre class="sourceCode scala"><code class="sourceCode scala"><span
-                id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span
+                id="cb10-1"><span
                 class="kw">import</span> org.<span class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">addon</span>.<span
                 class="fu">scalaz</span>.<span class="fu">either</span>.<span class="fu">_</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org.<span
+<span id="cb10-2"><span class="kw">import</span> org.<span
         class="fu">atnos</span>.<span class="fu">eff</span>.<span class="fu">addon</span>.<span class="fu">scalaz</span>.<span
         class="fu">syntax</span>.<span class="fu">either</span>.<span class="fu">_</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span
+<span id="cb10-3"></span>
+<span id="cb10-4"><span
         class="fu">fromDisjunction</span>(\/-(<span class="dv">1</span>)).<span class="fu">runDisjunction</span></span></code></pre>
         </div>
       </div>
