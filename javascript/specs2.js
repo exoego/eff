@@ -168,13 +168,13 @@
       if (prevLink) {
         const prevButton = prevLink.cloneNode(true);
         prevButton.className = "btn btn-default";
-        prevButton.prepend("⬅️ ️️");
+        prevButton.prepend("◀ ️️");
         main.append(prevButton);
       }
       if (nextLink) {
         const nextButton = nextLink.cloneNode(true);
         nextButton.className = "btn btn-primary pull-right";
-        nextButton.append(" ➡️");
+        nextButton.append(" ▶");
         main.append(nextButton);
       }
     }
