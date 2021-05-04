@@ -147,7 +147,11 @@
       .replace(/\/eff\/|\.html/g, "")
       .replaceAll(".", "-")
       .toLowerCase();
-    const activeLink = document.getElementById(activeLinkId);
+
+    const links = [...document.body.querySelectorAll("#tree [id]").values()];
+    const activeIndex = links.map((e) => e.id).indexOf(activeLinkId);
+
+    const activeLink = links[activeIndex];
     if (activeLink) {
       activeLink.className += "active";
       const parentNode = document.getElementById("tree");
@@ -155,6 +159,24 @@
         activeLink.offsetTop - parentNode.offsetTop - 50,
         0
       );
+
+      const main = document.body.querySelector(".container-fluid > .col-md-9");
+      const [prevLink, nextLink] = [
+        links[activeIndex - 1]?.querySelector("a"),
+        links[activeIndex + 1]?.querySelector("a"),
+      ];
+      if (prevLink) {
+        const prevButton = prevLink.cloneNode(true);
+        prevButton.className = "btn btn-default";
+        prevButton.prepend("⬅️ ️️");
+        main.append(prevButton);
+      }
+      if (nextLink) {
+        const nextButton = nextLink.cloneNode(true);
+        nextButton.className = "btn btn-primary pull-right";
+        nextButton.append(" ➡️");
+        main.append(nextButton);
+      }
     }
   });
 })();
