@@ -35,7 +35,6 @@
         <li id="org-atnos-site-outofthebox">
             <a href="org.atnos.site.OutOfTheBox.html">すぐ使えるエフェクト</a>
             <ul>
-                <li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?">次にすることは？</a></li>
                 <li id="org-atnos-site-lib-evaleffectpage"><a href="org.atnos.site.lib.EvalEffectPage.html">Eval</a></li>
                 <li id="org-atnos-site-lib-optioneffectpage"><a href="org.atnos.site.lib.OptionEffectPage.html">Option</a></li>
                 <li id="org-atnos-site-lib-eithereffectpage"><a href="org.atnos.site.lib.EitherEffectPage.html">Either</a></li>
@@ -50,6 +49,7 @@
                 <li id="org-atnos-site-lib-timedfutureeffectpage"><a href="org.atnos.site.lib.TimedFutureEffectPage.html">TimedFuture</a></li>
                 <li id="org-atnos-site-lib-taskeffectpage"><a href="org.atnos.site.lib.TaskEffectPage.html">Task</a></li>
                 <li id="org-atnos-site-lib-safeeffectpage"><a href="org.atnos.site.lib.SafeEffectPage.html">Safe</a></li>
+                <li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?">次にすることは？</a></li>
             </ul>
         </li>
         <li id="org-atnos-site-tutorial"><a href="org.atnos.site.Tutorial.html">チュートリアル</a>
