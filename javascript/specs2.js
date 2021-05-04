@@ -19,9 +19,9 @@
                 <li><a href="org.atnos.site.Installation.html#imports">インポート</a>
                     <ul>
                         <li><a href="org.atnos.site.Installation.html#main-types">主要な型</a></li>
-                        <li><a href="org.atnos.site.Installation.html#creating-effects">エフェクトの作成</a></li>
-                        <li><a href="org.atnos.site.Installation.html#interpreting-effects">エフェクトの解釈</a></li>
-                        <li><a href="org.atnos.site.Installation.html#with-scalaz">Scalaz と使う</a></li>
+                        <li><a href="org.atnos.site.Installation.html#creating-effects">エフェクトを作成する</a></li>
+                        <li><a href="org.atnos.site.Installation.html#interpreting-effects">エフェクトを解釈する</a></li>
+                        <li><a href="org.atnos.site.Installation.html#with-scalaz">Scalaz と一緒に使う</a></li>
                     </ul>
                 </li>
             </ul>
@@ -94,7 +94,7 @@
             </ul>
         </li>
         <li id="org-atnos-site-applicativeevaluation">
-            <a href="org.atnos.site.ApplicativeEvaluation.html">「応用」編</a>
+            <a href="org.atnos.site.ApplicativeEvaluation.html">アプリカティブ評価</a>
             <ul>
                 <li><a href="org.atnos.site.ApplicativeEvaluation.html#concurrent-evaluation">並列評価</a></li>
                 <li><a href="org.atnos.site.ApplicativeEvaluation.html#batching">一括処理</a></li>

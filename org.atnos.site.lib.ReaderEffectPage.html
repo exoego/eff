@@ -22,16 +22,20 @@
 
         <p>
           <code class="prettyprint">Reader</code>
-          エフェクトは「環境」に値を要求するのに使う。主なメソッドは
+          エフェクトは「環境」に値を要求するために使う。主なメソッドは
           <code class="prettyprint">ask</code>
-          であり、現在の環境（またはそう見なすのがお好みなら「設定」）を取得する。それから
+          であり、現在の環境（または、そう見なすのがお好みなら「設定」）を取得する。それから
           <code class="prettyprint">runReader</code>
           メソッドに環境を表す値を提供することで
           <code class="prettyprint">Reader</code>
           エフェクトを含んだエフェクトスタックを実行することができる。
         </p>
         <p>
-          「局所的」なリーダーを「より大きな」リーダーに注入することもできる。
+          「局所的」な
+          <code class="prettyprint">Reader</code> を「より大きな」<code
+            class="prettyprint"
+            >Reader</code
+          >に注入することもできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._, all._, syntax.all._
 import cats.data._

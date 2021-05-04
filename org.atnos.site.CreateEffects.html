@@ -137,18 +137,31 @@ object MaybeEffect {
         </p>
         <h3 id="interpreter">インタープリター</h3>
         <p>
-          通常、与えられたエフェクトを解釈（interpret）するということは、型
+          通常、与えられたエフェクトを「<ruby
+            >解釈
+            <rp>（</rp>
+            <rt>interpret</rt>
+            <rp>）</rp></ruby
+          >」するということは、型
           <code class="prettyprint">M[X]</code>
           の値に対してすべきことが分かっているということを意味する。 ここで
           <code class="prettyprint">M</code>
-          はエフェクトだ。もしインタープリターがエフェクトを「実行（execute）」できるのなら、つまりログを出力したり（<code
-            class="prettyprint"
+          はエフェクトだ。もしインタープリターがエフェクトを「<ruby
+            >実行
+            <rp>（</rp>
+            <rt>execute</rt>
+            <rp>）</rp></ruby
+          >」できるのなら、つまりログを出力したり（<code class="prettyprint"
             >Writer</code
           >）、非同期に計算したり（<code class="prettyprint">Future</code
           >）、値をチェックしたり（<code class="prettyprint">Either</code
           >）できるなら、<code class="prettyprint">X</code>
-          を取り出して、そして次のエフェクトを取得して同じ用に解釈できるように継続（continuation
-          ）を呼び出すことができる。
+          を取り出して、そして次のエフェクトを取得して同じ用に解釈できるように<ruby
+            >継続
+            <rp>（</rp>
+            <rt>continuation</rt>
+            <rp>）</rp></ruby
+          >を呼び出すことができる。
         </p>
         <p>
           <code class="prettyprint">org.atnos.eff.interpret</code>

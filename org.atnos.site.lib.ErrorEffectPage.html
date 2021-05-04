@@ -29,7 +29,7 @@
           <code class="prettyprint">Either</code>
           エフェクトを合わせたもので、「左」側を
           <code class="prettyprint">Either[Throwable, F]</code>
-          としている。その狙いは、例外、または任意の失敗を表す任意の型の、どちらかでも失敗できる計算を表現することだ。できることは、
+          としている。その狙いは、例外ないしは失敗を表す任意の型どちらかを使って失敗できる計算を表現することだ。できることは、
         </p>
         <ul>
           <li>
@@ -50,13 +50,13 @@
           <li>
             <p>
               <code class="prettyprint">andFinally(last)</code>
-              は例外や失敗が発生したときでも実行されるアクションを登録する。
+              は例外や失敗が発生したときでも実行されるアクションを登録する
             </p>
           </li>
           <li>
             <p>
               <code class="prettyprint">orElse</code>
-              はアクションを実行し、それが成功しなかったときに別のアクションを実行させる。
+              はアクションを実行し、それが成功しなかったときに別のアクションを実行させる
             </p>
           </li>
           <li>
@@ -65,7 +65,7 @@
               <code class="prettyprint">orElse</code> と同様だが、but uses the
               error for
               <code class="prettyprint">action1</code>
-              のエラーを使って次に実行するアクションを決められる。
+              のエラーを使って次に実行するアクションを決められる
             </p>
           </li>
         </ul>
