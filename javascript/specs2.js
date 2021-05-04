@@ -19,9 +19,9 @@
                 <li><a href="org.atnos.site.Installation.html#imports">インポート</a>
                     <ul>
                         <li><a href="org.atnos.site.Installation.html#main-types">主要な型</a></li>
-                        <li><a href="org.atnos.site.Installation.html#creating-effects">エフェクトの作成</a></li>
-                        <li><a href="org.atnos.site.Installation.html#interpreting-effects">エフェクトの解釈</a></li>
-                        <li><a href="org.atnos.site.Installation.html#with-scalaz">Scalaz と使う</a></li>
+                        <li><a href="org.atnos.site.Installation.html#creating-effects">エフェクトを作成する</a></li>
+                        <li><a href="org.atnos.site.Installation.html#interpreting-effects">エフェクトを解釈する</a></li>
+                        <li><a href="org.atnos.site.Installation.html#with-scalaz">Scalaz と一緒に使う</a></li>
                     </ul>
                 </li>
             </ul>
@@ -35,7 +35,6 @@
         <li id="org-atnos-site-outofthebox">
             <a href="org.atnos.site.OutOfTheBox.html">すぐ使えるエフェクト</a>
             <ul>
-                <li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?">次にすることは？</a></li>
                 <li id="org-atnos-site-lib-evaleffectpage"><a href="org.atnos.site.lib.EvalEffectPage.html">Eval</a></li>
                 <li id="org-atnos-site-lib-optioneffectpage"><a href="org.atnos.site.lib.OptionEffectPage.html">Option</a></li>
                 <li id="org-atnos-site-lib-eithereffectpage"><a href="org.atnos.site.lib.EitherEffectPage.html">Either</a></li>
@@ -50,6 +49,7 @@
                 <li id="org-atnos-site-lib-timedfutureeffectpage"><a href="org.atnos.site.lib.TimedFutureEffectPage.html">TimedFuture</a></li>
                 <li id="org-atnos-site-lib-taskeffectpage"><a href="org.atnos.site.lib.TaskEffectPage.html">Task</a></li>
                 <li id="org-atnos-site-lib-safeeffectpage"><a href="org.atnos.site.lib.SafeEffectPage.html">Safe</a></li>
+                <li><a href="org.atnos.site.OutOfTheBox.html#what’s-next?">次にすることは？</a></li>
             </ul>
         </li>
         <li id="org-atnos-site-tutorial"><a href="org.atnos.site.Tutorial.html">チュートリアル</a>
@@ -94,7 +94,7 @@
             </ul>
         </li>
         <li id="org-atnos-site-applicativeevaluation">
-            <a href="org.atnos.site.ApplicativeEvaluation.html">「応用」編</a>
+            <a href="org.atnos.site.ApplicativeEvaluation.html">アプリカティブ評価</a>
             <ul>
                 <li><a href="org.atnos.site.ApplicativeEvaluation.html#concurrent-evaluation">並列評価</a></li>
                 <li><a href="org.atnos.site.ApplicativeEvaluation.html#batching">一括処理</a></li>
@@ -147,7 +147,11 @@
       .replace(/\/eff\/|\.html/g, "")
       .replaceAll(".", "-")
       .toLowerCase();
-    const activeLink = document.getElementById(activeLinkId);
+
+    const links = [...document.body.querySelectorAll("#tree [id]").values()];
+    const activeIndex = links.map((e) => e.id).indexOf(activeLinkId);
+
+    const activeLink = links[activeIndex];
     if (activeLink) {
       activeLink.className += "active";
       const parentNode = document.getElementById("tree");
@@ -155,6 +159,24 @@
         activeLink.offsetTop - parentNode.offsetTop - 50,
         0
       );
+
+      const main = document.body.querySelector(".container-fluid > .col-md-9");
+      const [prevLink, nextLink] = [
+        links[activeIndex - 1]?.querySelector("a"),
+        links[activeIndex + 1]?.querySelector("a"),
+      ];
+      if (prevLink) {
+        const prevButton = prevLink.cloneNode(true);
+        prevButton.className = "btn btn-default";
+        prevButton.prepend("⬅️ ️️");
+        main.append(prevButton);
+      }
+      if (nextLink) {
+        const nextButton = nextLink.cloneNode(true);
+        nextButton.className = "btn btn-primary pull-right";
+        nextButton.append(" ➡️");
+        main.append(nextButton);
+      }
     }
   });
 })();

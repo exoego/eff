@@ -43,7 +43,7 @@
           ><code class="sourceCode scala"><span id="cb2-1">scalacOptions += <span
                     class="st">&quot;-Ypartial-unification&quot;</span></span></code></pre>
         </div>
-        <h5 id="additional-dependencies">さらなる依存関係</h5>
+        <h3 id="additional-dependencies">さらなる依存関係</h3>
         <p>この表はその他に利用できる eff モジュールを記載している。</p>
         <table>
           <colgroup>
@@ -124,10 +124,10 @@
         <p>
           多くの他のエフェクトも
           <a href="org.atnos.site.OutOfTheBox.html" class="ok"
-            >デフォルト設定で</a
-          >利用できる.
+            >コアライブラリに組み込みなのですぐに利用</a
+          >できる.
         </p>
-        <h4 id="creating-effects">エフェクトの作成</h4>
+        <h4 id="creating-effects">エフェクトを作成する</h4>
         <p>
           エフェクトを作成するのに使われる関数は、エフェクトの型にちなんだ様々なオブジェクトのもとでグループ化されている。例えば
           <code class="prettyprint">Eval</code>
@@ -149,13 +149,13 @@
                     class="fu">all</span>.<span class="fu">_</span></span></code></pre>
         </div>
         <p>
-          １つ前のインポートで含まれていないエフェクトとその理由はこれだけだ。
+          １つ前のインポートに含まれていないエフェクトとその理由は次のとおり。
         </p>
         <ul>
           <li>
             <p>
               <code class="prettyprint">Error</code>
-              エフェクト。このエフェクトは「失敗」の型を表す型パラメーターを必要としており、ライブラリのユーザーによって提供されなければならない。
+              エフェクト。このエフェクトは「失敗」を表す型をパラメーターとして必要であり、ライブラリのユーザーが指定しなければならない。
             </p>
           </li>
           <li>
@@ -173,7 +173,7 @@
             </p>
           </li>
         </ul>
-        <h4 id="interpreting-effects">エフェクトを解釈</h4>
+        <h4 id="interpreting-effects">エフェクトを解釈する</h4>
         <p>
           エフェクトを解釈するには通常、与えられたエフェクトを
           <b>run</b
@@ -209,7 +209,7 @@
         </div>
         <!-- この課題は現在解消済みのため翻訳せずにコメントアウトする <h4 id="intellij-support">Intellij サポート</h4>
         <p>Intellij のエラーハイライト機能は implicit  doesn’t support implicit-directed type inference yet, check https://youtrack.jetbrains.com/issue/SCL-11140 or https://youtrack.jetbrains.com/issue/SCL-10753 for progress.</p>-->
-        <h4 id="with-scalaz">Scalaz と使う</h4>
+        <h4 id="with-scalaz">Scalaz と一緒に使う</h4>
         <p>
           関数型プログラミングライブラリとして Scalaz を使うなら、Scalaz
           に固有の作成メソッドを使うために追加のインポートが必要になるだろう。例えば、

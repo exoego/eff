@@ -24,7 +24,7 @@
         <p>
           ここには言葉の誤用がある。「スタック」という名前はモナドトランスフォーマーについて話すときに使われる「モナドスタック」から来ている。しかしながら
           <code class="prettyprint">Eff</code>
-          ではスタックではなく、エフェクトはエフェクトのツリーとしてモデル化されている,
+          では、エフェクトはスタックではなく、エフェクトのツリーとしてモデル化されている,
         </p>
         <p>
           例えば4つのエフェクト<code class="prettyprint">T1, T2, T3, T4</code>
@@ -49,13 +49,13 @@ FxAppend[
 ]</code></pre>
         <p>このコードは次のことを示している。</p>
         <pre><code class="prettyprint">// 今はまだ次の implicit の召喚はコンパイラーをクラッシュさせる
-// val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]] =
-//  implicitly[Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]]]</code></pre>
+ val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]] =
+  implicitly[Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1], Fx2[T2, T4]]]]</code></pre>
         <p>
           残念ながらコンパイラがこの型を取り扱うのは少しむずかしいので、メンバー値を取得するには、implicit
           変換を使って「手動」でやるか、あるいは
           <code class="prettyprint">Aux</code>
-          の部分なしでメンバーインスタンスを召喚すればできる。
+          の部分をなくしてメンバーインスタンスを召喚すればできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
@@ -164,11 +164,11 @@ action.runReader(Conf(&quot;www.me.com&quot;, 8080)).runOption.run</code></pre>
           エフェクトを複数のエフェクトに変換する
         </h3>
         <p>
-          よくやることになることは、エフェクト（例えば Web サービス
+          Eff でよくやることは、エフェクト（例えば Web サービス
           DSL）を複数の他のエフェクト (<code class="prettyprint"
             >TimedFuture</code
           >、<code class="prettyprint">Eval</code>、
-          <code class="prettyprint">Either</code>、etc……）に変換することだ。
+          <code class="prettyprint">Either</code> など）に変換することだ。
         </p>
         <p>たとえばこんなスタックがあるとする。</p>
         <pre><code class="prettyprint">type S = Fx.fx3[Authenticated, TimedFuture, Either[AuthError, *]]</code></pre>
@@ -176,7 +176,7 @@ action.runReader(Conf(&quot;www.me.com&quot;, 8080)).runOption.run</code></pre>
           そして認証アクションを
           <code class="prettyprint">TimedFuture</code> と
           <code class="prettyprint">Either</code>
-          に翻訳するインタープリターを書きたいとする
+          に翻訳するインタープリターを書きたいとする。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 import org.atnos.eff.syntax.eff._
@@ -283,7 +283,7 @@ def runDb[R, U, A](queries: Eff[R, A])(
           <code class="prettyprint">WriterString</code> エフェクトを使う。
         </p>
         <p>
-          けれども、このコンポーネントのクライアントのいくつかはは、実装の詳細であるログには関心がなく
+          けれども、このコンポーネントのクライアントのいくつかは、実装の詳細であるログには関心がなく
           <code class="prettyprint">WriterString</code>
           エフェクトを持ちたくないとする。
         </p>
@@ -310,7 +310,12 @@ def executeOnDb[R, U, A](queries: Eff[R, A])(
         <p>
           <code class="prettyprint">prepend</code> メソッドを使って
           <code class="prettyprint">WriterString</code>
-          エフェクトを含んだ「局所的な（local）」スタックを作る。 それから
+          エフェクトを含んだ<ruby
+            >局所的
+            <rp>（</rp>
+            <rt>local</rt>
+            <rp>）</rp> </ruby
+          >なスタックを作る。 それから
           <code class="prettyprint">Db</code>
           エフェクトを実行し、ログを捨てて、最終的に
           <code class="prettyprint">Eff[U, A]</code> を返す。

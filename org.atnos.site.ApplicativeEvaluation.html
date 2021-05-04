@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>eff - 「応用」編</title>
+    <title>eff - アプリカティブ評価</title>
     <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <link href="./css/prettify.css" type="text/css" rel="stylesheet" />
     <link href="./css/specs2.css" type="text/css" rel="stylesheet" />
@@ -17,19 +17,14 @@
       <div
         class="col-md-9 col-sm-9 col-xs-9 col-md-push-3 col-sm-push-3 col-xs-push-3"
       >
-        <h1>「応用」編</h1>
+        <h1>アプリカティブ評価</h1>
         <div id="tipue_search_content"></div>
-        <p>
-          訳注）原題の Applicative を意訳した。ここでの Applicative
-          は、関数プログラミング文脈の Applicative（Monad
-          より制限がゆるい）と、「応用的な」という一般形容詞としての、ダブルミーニングと考えた。
-        </p>
 
         <h3 id="concurrent-evaluation">並列実行</h3>
         <p>
-          <code class="prettyprint">Eff</code> 値のデフォルトの解釈は「<ruby
+          <code class="prettyprint">Eff</code> 値のデフォルトの解釈は<ruby
             >モナド的<rp>(</rp><rt>monadic</rt><rp>)</rp></ruby
-          >」である。つまり、エフェクトのある値は順番に評価されていく。これは
+          >である。つまり、エフェクトのある値は順番に評価されていく。これは
           <code class="prettyprint">FutureEffect</code>
           を含む値のリストをトラバース処理すると明らかになる。
         </p>
@@ -63,7 +58,7 @@ Await.result(action.runEval.runWriterLog.runSequential, 2.seconds)</code></pre>
         <p>
           また一方で、 <code class="prettyprint">Eff</code> に<ruby
             >アプリカティブ<rp>(</rp><rt>applicative</rt><rp>)</rp></ruby
-          >実行を使うことで、これらの計算を同時に走らせることもできる。
+          >評価を使うことで、これらの計算を同時に走らせることもできる。
         </p>
         <pre><code class="prettyprint">val action: Eff[S, List[Int]] =
   List(1000, 500, 50).traverseA(execute[S])
