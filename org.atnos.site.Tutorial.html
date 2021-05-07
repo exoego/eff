@@ -35,7 +35,7 @@
         <ul>
           <li>キーとひもづけて、ストアに値を入れる。</li>
           <li>キーを与えてストアから値を得る。</li>
-          <li>キーを与えてストから値を削除する</li>
+          <li>キーを与えてストアから値を削除する</li>
         </ul>
         <br />
         <p>
@@ -134,8 +134,7 @@ def update[T, R :_kvstore](key: String, f: T =&gt; T): Eff[R, Unit] =
         </p>
         <h3 id="build-a-program">プログラムを作る</h3>
         <p>
-          これでNow that we can construct values with
-          <code class="prettyprint">KVStore</code> エフェクトで値を生成でき、for
+          これで <code class="prettyprint">KVStore</code> エフェクトで値を生成でき、for
           内包表記を使うことで「プログラム」を書くための DSL が使える。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
@@ -156,7 +155,7 @@ def program[R :_kvstore]: Eff[R, Option[Int]] =
           プログラム用のインタープリターを書く
         </h3>
         <p>
-          もう理解できたとだろうが、<code class="prettyprint">Eff</code>
+          もう理解できただろうが、<code class="prettyprint">Eff</code>
           は埋め込み DSL を使うために使える。それ単独では、この DSL
           は（再帰的データ構造で定義された）一連の操作を表現するだけだ。何も生成しない。
         </p>
@@ -181,7 +180,7 @@ import scala.collection.mutable._
 /**
  * KVStore エフェクトの安全でないインタープリター
  *
- * 間違った方が指定されたらプログラムはクラッシュするだろう。
+ * 間違った型が指定されたらプログラムはクラッシュするだろう。
  *
  * このインタープリターは KVStore エフェクトが R の「メンバーである（<=）」ことを要求する。
  * つまり、R から KVStore を取り除いたら結果の型が m.Out であると静的に知ることができる。
@@ -229,7 +228,7 @@ def runKVStoreUnsafe[R, A](effects: Eff[R, A])(implicit m: KVStore &lt;= R): Eff
             >kvs</code
           >
           を変化させており、<code class="prettyprint">println</code>
-          を使ってログ出力を生成している。関数プログラミングの新の目的は副作用を防ぐことではない。よく知られた、管理された方法で、副作用を、あなたのシステムと外部の境界に副作用を追いやることなのだ。
+          を使ってログ出力を生成している。関数プログラミングの真の目的は副作用を防ぐことではない。よく知られた、管理された方法で、副作用を、あなたのシステムと外部の境界に追いやることなのだ。
         </p>
         <p>
           違う方法で
@@ -381,7 +380,6 @@ def runKVStore[R, U, A](effects: Eff[R, A])
         </p>
         <ul>
           <li>
-            specify a concrete stack of effects containing the effect we want to
             解釈したいエフェクト
             <code class="prettyprint">Fx.fx1[KVStore]</code
             >（今回のスタックではエフェクトは１つだけ）を含んでいるエフェクトの具体的なスタックを指定する
