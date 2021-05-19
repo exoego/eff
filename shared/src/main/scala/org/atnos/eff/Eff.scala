@@ -44,12 +44,12 @@ trait EffImplicits {
     def ap[A, B](ff: Eff[AnyRef, A => B])(fa: Eff[AnyRef, A]): Eff[AnyRef, B] =
       fa match {
         case Pure(a, last) => ???
-          ff match {
-            case Pure(f, last1)                   => Pure(f(a), last1 *> last)
-            case Impure(NoEffect(f), c, last1)    => Impure(NoEffect[AnyRef, Any](f), c.append(f1 => pure(f1(a))), c.onNone).addLast(last1 *> last)
-            case Impure(u: Union[_, _], c, last1) => ImpureAp(Unions(u, Vector.empty), c.dimapEff((_:Vector[Any]).head)(_.map(_(a))), last1 *> last)
-            case ImpureAp(u, c, last1)            => ImpureAp(u, c.map(_(a)), last1 *> last)
-          }
+//          ff match {
+//            case Pure(f, last1)                   => Pure(f(a), last1 *> last)
+//            case Impure(NoEffect(f), c, last1)    => Impure(NoEffect[AnyRef, Any](f), c.append(f1 => pure(f1(a))), c.onNone).addLast(last1 *> last)
+//            case Impure(u: Union[_, _], c, last1) => ImpureAp(Unions(u, Vector.empty), c.dimapEff((_:Vector[Any]).head)(_.map(_(a))), last1 *> last)
+//            case ImpureAp(u, c, last1)            => ImpureAp(u, c.map(_(a)), last1 *> last)
+//          }
 
         case Impure(NoEffect(a), c, last) =>
           ap(ff)(c(a).addLast(last))
