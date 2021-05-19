@@ -67,7 +67,7 @@ val member_ : Member.Aux[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]], FxAppend[Fx1[T1
 val member: Member[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]]] =
   implicitly[Member[T3, FxAppend[Fx1[T1], Fx3[T2, T3, T4]]]]</code></pre>
         <p>
-          より重要なことは、上記の難しさがあるにも関わらず、コンパイラーは与えられたエフェクトの解釈の結果として生じる右側の方を把握できる。このため、次のコードはコンパイルできる。
+          より重要なことは、上記の難しさがあるにも関わらず、コンパイラーは与えられたエフェクトの解釈の結果として生じる右側の型を把握できる。このため、次のコードはコンパイルできる。
         </p>
         <pre><code class="prettyprint">import org.atnos.eff._
 
