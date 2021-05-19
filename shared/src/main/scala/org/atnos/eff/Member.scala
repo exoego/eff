@@ -17,7 +17,7 @@ trait MemberIn[T[_], R] { outer =>
 }
 
 final case class TaggedMemberIn[T[_], R](tag: Int) extends MemberIn[T, R] {
-  def inject[V](tv: T[V]): Union[R, V] = UnionTagged(tv, tag)
+  def inject[V](tv: T[V]): Union[R, V] = ???
 }
 
 final case class AppendMemberIn[T[_], L, R, X](isRight: Boolean, member: MemberIn[T, X]) extends MemberIn[T, FxAppend[L, R]] {
@@ -101,27 +101,13 @@ trait MemberInOut[T[_], R] extends MemberIn[T, R] { outer =>
 }
 
 final case class TaggedMemberInOut[T[_], R](tag: Int) extends MemberInOut[T, R] {
-  def extract[V](union: Union[R, V]): Option[T[V]] = {
-    val tagged = union.tagged
-    if (tagged.index == tag) Some(tagged.valueUnsafe.asInstanceOf[T[V]])
-    else None
-  }
-
-  def inject[V](tv: T[V]): Union[R, V] =
-    UnionTagged(tv, tag)
+  def extract[V](union: Union[R, V]): Option[T[V]] = ???
+  def inject[V](tv: T[V]): Union[R, V] = ???
 }
 
 final case class AppendMemberInOut[T[_], L, R, X](isRight: Boolean, append: MemberInOut[T, X]) extends MemberInOut[T, FxAppend[L, R]] {
-  def extract[V](union: Union[FxAppend[L, R], V]): Option[T[V]] =
-    union match {
-      case UnionAppendR(r) if isRight => append.extract(r.asInstanceOf[Union[X, V]])
-      case UnionAppendL(l) if !isRight => append.extract(l.asInstanceOf[Union[X, V]])
-      case _ => None
-    }
-
-  def inject[V](tv: T[V]): Union[FxAppend[L, R], V] =
-    if (isRight) UnionAppendR(append.inject(tv)).asInstanceOf[Union[FxAppend[L, R], V]]
-    else UnionAppendL(append.inject(tv)).asInstanceOf[Union[FxAppend[L, R], V]]
+  def extract[V](union: Union[FxAppend[L, R], V]): Option[T[V]] = ???
+  def inject[V](tv: T[V]): Union[FxAppend[L, R], V] = ???
 }
 
 object MemberInOut extends MemberInOutLower1 {
