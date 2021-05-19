@@ -1,21 +1,5 @@
 package org.atnos.eff
 
-/**
- * Union represents one effect T[_] embedded in a tree of possible effects R
- *
- * The effect tree is represented by four possible cases:
- *   - fx1[T]
- *   - fx2[T1, T2]
- *   - fx3[T1, T2, T3]
- *   - FxAppend[L, R]
- *
- *  The union type has three concrete constructors:
- *   - `UnionAppendL(nested: Union[L]): Union[FxAppend[L, R]]`
- *   - `UnionAppendR(nested: Union[R]): Union[FxAppend[L, R]]`
- *   - `UnionTagged(valueUnsafe: Any, index: Int): Union[R] (for R in fx1, fx2, fx3...)`
- *  In that respect UnionTagged behaves similarly to a tagged union in C or C++.
- *
- */
 sealed trait Effect[R, A] {
   type X = A
 }
