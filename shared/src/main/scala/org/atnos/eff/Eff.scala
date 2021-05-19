@@ -217,7 +217,46 @@ trait EffImplicits {
     override def product[A, B](fa: Eff[AnyRef, A], fb: Eff[AnyRef, B]): Eff[AnyRef, (A, B)] =
       ap(map(fb)(b => (a: A) => (a, b)))(fa)
 
-    def ap[A, B](ff: Eff[AnyRef, A => B])(fa: Eff[AnyRef, A]): Eff[AnyRef, B] = ???
+    def ap[A, B](ff: Eff[AnyRef, A => B])(fa: Eff[AnyRef, A]): Eff[AnyRef, B] =
+      fa match {
+        case Pure(a, last) =>
+          ff match {
+            case Pure(f, last1)                   => Pure(f(a), last1 *> last)
+            case Impure(NoEffect(f), c, last1)    => Impure(NoEffect[AnyRef, Any](f), c.append(f1 => pure(f1(a))), c.onNone).addLast(last1 *> last)
+            case Impure(u: Union[_, _], c, last1) => ImpureAp(Unions(u, Vector.empty), c.dimapEff((_:Vector[Any]).head)(_.map(_(a))), last1 *> last)
+            case ImpureAp(u, c, last1)            => ImpureAp(u, c.map(_(a)), last1 *> last)
+          }
+
+        case Impure(NoEffect(a), c, last) =>
+          ap(ff)(c(a).addLast(last))
+
+        case Impure(u: Union[_, _], c, last) =>
+          ff match {
+            case Pure(f, last1)                     => ImpureAp(Unions(u, Vector.empty), c.contramap((_:Vector[Any]).head).map(f), last1 *> last)
+            case Impure(NoEffect(f), c1, last1)     => Impure(u, c.append(x => c1(f).map(_(x)))).addLast(last1 *> last)
+            case Impure(u1: Union[_, _], c1, last1) => ImpureAp(Unions(u, Vector(u1)),  Continuation.lift(ls => ap(c1(ls(1)))(c(ls.head)), c.onNone), last1 *> last)
+            case ImpureAp(u1, c1, last1)            => ImpureAp(Unions(u, u1.unions), Continuation.lift(ls => ap(c1(ls.drop(1)))(c(ls.head)), c.onNone), last1 *> last)
+          }
+
+        case ImpureAp(unions, c, last) =>
+          ff match {
+            case Pure(f, last1)                    => ImpureAp(unions, c map f, last1 *> last)
+            case Impure(NoEffect(f), c1, last1)    => ImpureAp(unions, c.append(x => c1(f).map(_(x)))).addLast(last1 *> last)
+            case Impure(u: Union[_, _], c1, last1) => ImpureAp(Unions(unions.first, unions.rest :+ u), Continuation.lift(ls => ap(c1(ls.last))(c(ls.dropRight(1))), c.onNone), last1 *> last)
+            case ImpureAp(u, c1, last1)            => ImpureAp(u append unions, Continuation.lift({ xs =>
+              val usize = u.size
+              val (taken, dropped) = xs.splitAt(usize)
+              // don't recurse if the number of effects is too large
+              // this will ensure stack-safety on large traversals
+              // and keep enough concurrency on smaller traversals
+              if (xs.size > 10)
+                Eff.impure(taken, Continuation.lift((xs1: Vector[Any]) => ap(c1(xs1))(c(dropped)), c1.onNone))
+              else
+                ap(c1(taken))(c(dropped))
+            }, c.onNone), last1 *> last)
+          }
+
+      }
   }
 
   implicit final def EffMonad[R]: Monad[Eff[R, *]] = effMonadUnsafeImpl.asInstanceOf[Monad[Eff[R, *]]]
@@ -414,29 +453,6 @@ trait EffInterpretation {
   def effInto[R, U, A](e: Eff[R, A])(implicit f: IntoPoly[R, U]): Eff[U, A] =
     f(e)
 
-
-  /**
-   * Memoize an effect using a cache
-   *
-   * all the consecutive effects M[X] leading to the computation of Eff[R, A]
-   * will be cached in the cache and retrieved from there if the Eff[R, A] computation is
-   * executed again
-   */
-  def memoizeEffect[R, M[_], A](e: Eff[R, A], cache: Cache, key: AnyRef)(implicit member: M /= R, cached: SequenceCached[M]): Eff[R, A] =
-    send[M, R, Option[A]](cached.get(cache, key)).
-      flatMap(_.
-        map(Eff.pure[R, A]).
-        getOrElse(memoizeEffectSequence(e, cache, key).map(a => { cache.put(key, a); a })))
-
-  private def memoizeEffectSequence[R, M[_], A](e: Eff[R, A], cache: Cache, key: AnyRef)(implicit member: M /= R, cached: SequenceCached[M]): Eff[R, A] = {
-    var seqKey = 0
-    def incrementSeqKey = { val s = seqKey; seqKey += 1; s }
-
-    interpret.interceptNat[R, M, A](e)(new (M ~> M) {
-      def apply[X](fa: M[X]): M[X] = cached.apply(cache, key, incrementSeqKey, fa)
-    })
-
-  }
 
 }
 
