@@ -12,12 +12,11 @@ object Last {
 
 sealed trait Effect[R, A]
 sealed trait Union[R, A] extends Effect[R, A]
+case class Unions[R, A](first: Union[R, A], rest: Vector[Union[R, Any]])
 
 case class Continuation[R, A, B](functions: Vector[Any => Eff[R, Any]], onNone: Last[R] = Last.none[R]) {
   def dimapEff[C, D](f: C => A)(g: Eff[R, B] => Eff[R, D]): Continuation[R, C, D] = ???
 }
-
-case class Unions[R, A](first: Union[R, A], rest: Vector[Union[R, Any]])
 
 sealed trait Eff[R, A]
 case class Pure[R, A](value: A, last: Last[R] = Last.none[R]) extends Eff[R, A]
@@ -28,12 +27,8 @@ trait EffImplicits {
   final def EffApplicative[R]: Applicative[Eff[R, *]] = effApplicativeUnsafeImpl.asInstanceOf[Applicative[Eff[R, *]]]
 
   private[this] final val effApplicativeUnsafeImpl: Applicative[Eff[AnyRef, *]] = new Applicative[Eff[AnyRef, *]] {
-
-    def pure[A](a: A): Eff[AnyRef, A] =
-      Pure[AnyRef, A](a)
-
-    override def product[A, B](fa: Eff[AnyRef, A], fb: Eff[AnyRef, B]): Eff[AnyRef, (A, B)] =
-      ap(map(fb)(b => (a: A) => (a, b)))(fa)
+    def pure[A](a: A): Eff[AnyRef, A] = ???
+    override def product[A, B](fa: Eff[AnyRef, A], fb: Eff[AnyRef, B]): Eff[AnyRef, (A, B)] = ???
 
     def ap[A, B](ff: Eff[AnyRef, A => B])(fa: Eff[AnyRef, A]): Eff[AnyRef, B] =
       fa match {
