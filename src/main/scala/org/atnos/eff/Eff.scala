@@ -15,6 +15,7 @@ sealed trait Union[R, A] extends Effect[R, A]
 case class Unions[R, A](first: Union[R, A], rest: Vector[Union[R, Any]])
 
 case class Continuation[R, A, B](functions: Vector[Any => Eff[R, Any]], onNone: Last[R] = Last.none[R]) {
+  def map[C](f: B => C): Continuation[R, A, C] = ???
   def dimapEff[C, D](f: C => A)(g: Eff[R, B] => Eff[R, D]): Continuation[R, C, D] = ???
 }
 
@@ -33,12 +34,13 @@ trait EffImplicits {
     def ap[A, B](ff: Eff[AnyRef, A => B])(fa: Eff[AnyRef, A]): Eff[AnyRef, B] =
       fa match {
         case Pure(a, last) =>
-          ???
-//          ff match {
-//            case Pure(f, last1)                   => Pure(f(a), last1 *> last)
-//            case Impure(u: Union[_, _], c, last1) => ImpureAp(Unions(u, Vector.empty), c.dimapEff((_:Vector[Any]).head)(_.map(_(a))), last1 *> last)
-//            case ImpureAp(u, c, last1)            => ImpureAp(u, c.map(_(a)), last1 *> last)
-//          }
+          ff match {
+            case Pure(f, last1)                   => Pure(f(a), last1 *> last)
+            case Impure(u: Union[_, _], c, last1) =>
+              // NOTE) StackOverFlowError is gone if the below line is replaced with ???
+              ImpureAp(Unions(u, Vector.empty), c.dimapEff((_:Vector[Any]).head)(_.map(_(a))), last1 *> last)
+            case ImpureAp(u, c, last1)            => ImpureAp(u, c.map(_(a)), last1 *> last)
+          }
         case Impure(u: Union[_, _], c, last) => ???
         case ImpureAp(unions, c, last) => ???
       }
