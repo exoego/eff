@@ -1,6 +1,0 @@
-Scala JS build!
-
-Improvements:
-
- * build: Scala.js support via crossbuild. Specs and benchmark only runs in jvm project [#3](https://github.com/atnos-org/eff/issues/3)
- 
