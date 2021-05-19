@@ -5,11 +5,11 @@ import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
-
 case class Continuation[R, A, B](functions: Vector[Any => Eff[R, Any]], onNone: Last[R] = Last.none[R]) {
   def dimapEff[C, D](f: C => A)(g: Eff[R, B] => Eff[R, D]): Continuation[R, C, D] = ???
 }
 
+case class Unions[R, A](first: Union[R, A], rest: Vector[Union[R, Any]])
 
 sealed trait Eff[R, A]
 case class Pure[R, A](value: A, last: Last[R] = Last.none[R]) extends Eff[R, A]
