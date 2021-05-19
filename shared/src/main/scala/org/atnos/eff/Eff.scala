@@ -5,6 +5,13 @@ import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
+case class Last[R](value: Option[Eval[Eff[R, Unit]]]) {
+  def *>(other: Last[R]): Last[R] = ???
+}
+object Last {
+  def none[R]: Last[R] = ???
+}
+
 sealed trait Effect[R, A]
 sealed trait Union[R, A] extends Effect[R, A]
 
