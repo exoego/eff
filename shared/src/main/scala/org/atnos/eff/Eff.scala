@@ -5,6 +5,23 @@ import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
+import scala.annotation.implicitNotFound
+
+@implicitNotFound("No instance found for Member[${T}, ${R}].\nThe effect ${T} is not part of the stack ${R}\n or it was not possible to determine the stack that would result from removing ${T} from ${R}")
+trait Member[T[_], R] {
+  type Out
+
+  def accept[V](union: Union[Out, V]): Union[R, V]
+  def project[V](union: Union[R, V]): Union[Out, V] Either T[V]
+  def aux: Member.Aux[T, R, Out] =  this
+  def transformUnionInto[N[_], U, S, X](nat: T ~> N)(union: Union[R, X])(implicit n: Member.Aux[N, S, U]): Union[S, X] = ???
+}
+
+object Member {
+  @implicitNotFound("No instance found for Member[${T}, ${R}].\nThe effect ${T} is not part of the stack ${R}\n or it was not possible to determine the stack that would result from removing ${T} from ${R}")
+  type Aux[T[_], R, U] = Member[T, R] { type Out = U }
+}
+
 case class Last[R](value: Option[Eval[Eff[R, Unit]]]) {
   def *>(other: Last[R]): Last[R] = ???
 }
