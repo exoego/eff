@@ -107,16 +107,6 @@ case class CollectedUnions[M[_], R, U](effects: Vector[M[Any]], otherEffects: Ve
         Continuation.lift[U, Vector[Any], A](ls =>
           ImpureAp[U, Any, A](Unions(o, rest), continueWith.contramap(reorder(ls, _)), continueWith.onNone))
     }
-
-  def othersEff[A](continueWith: Continuation[U, Vector[Any], A]): Eff[U, A] =
-    otherEffects match {
-      case v if v.isEmpty =>
-        continueWith(Vector.empty)
-
-      case o +: rest =>
-        ImpureAp[U, Any, A](Unions(o, rest), continueWith)
-    }
-
   private def reorder(ls: Vector[Any], xs: Vector[Any]): Vector[Any] =
     (ls.zip(indices) ++ xs.zip(otherIndices)).sortBy(_._2).map(_._1)
 
