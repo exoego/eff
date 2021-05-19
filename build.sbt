@@ -1,7 +1,7 @@
 scalaVersion := "3.0.0"
 crossScalaVersions := Seq(scalaVersion.value, "2.13.6", "2.12.13")
 
-libraryDependencies += "org.typelevel" %%% "cats-core" % "2.6.1"
+libraryDependencies += "org.typelevel" %% "cats-core" % "2.6.1"
 libraryDependencies ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((3, _)) =>
