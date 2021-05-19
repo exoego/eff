@@ -5,6 +5,9 @@ import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
+sealed trait Effect[R, A]
+sealed trait Union[R, A] extends Effect[R, A]
+
 case class Continuation[R, A, B](functions: Vector[Any => Eff[R, Any]], onNone: Last[R] = Last.none[R]) {
   def dimapEff[C, D](f: C => A)(g: Eff[R, B] => Eff[R, D]): Continuation[R, C, D] = ???
 }
