@@ -5,31 +5,10 @@ import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
-sealed trait Eff[R, A] {
-  def addLast(l: =>Eff[R, Unit]): Eff[R, A] =
-    addLast(Last.eff(l))
-
-  private[eff] def addLast(l: Last[R]): Eff[R, A]
-
-}
-
-case class Pure[R, A](value: A, last: Last[R] = Last.none[R]) extends Eff[R, A] {
-  def addLast(l: Last[R]): Eff[R, A] =
-    Pure(value, last <* l)
-}
-
-case class Impure[R, X, A](union: Effect[R, X], continuation: Continuation[R, X, A], last: Last[R] = Last.none[R]) extends Eff[R, A] {
-  def addLast(l: Last[R]): Eff[R, A] =
-    Impure[R, X, A](union, continuation, last <* l)
-}
-
-case class ImpureAp[R, X, A](unions: Unions[R, X], continuation: Continuation[R, Vector[Any], A], last: Last[R] = Last.none[R]) extends Eff[R, A] {
-  def toMonadic: Eff[R, A] =
-    Impure[R, unions.X, A](unions.first, unions.continueWith(continuation), last)
-
-  def addLast(l: Last[R]): Eff[R, A] =
-    ImpureAp[R, X, A](unions, continuation, last <* l)
-}
+sealed trait Eff[R, A]
+case class Pure[R, A](value: A, last: Last[R] = Last.none[R]) extends Eff[R, A]
+case class Impure[R, X, A](union: Effect[R, X], continuation: Continuation[R, X, A], last: Last[R] = Last.none[R]) extends Eff[R, A]
+case class ImpureAp[R, X, A](unions: Unions[R, X], continuation: Continuation[R, Vector[Any], A], last: Last[R] = Last.none[R]) extends Eff[R, A]
 
 trait EffImplicits {
 
