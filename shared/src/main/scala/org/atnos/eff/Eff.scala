@@ -2,44 +2,10 @@ package org.atnos.eff
 
 import cats._
 import cats.syntax.all._
-import Eff._
 
 import scala.concurrent.duration.FiniteDuration
 
 sealed trait Eff[R, A] {
-
-  def ap[B](f: Eff[R, A => B]): Eff[R, B] =
-    EffApplicative[R].ap(f)(this)
-
-  def product[B](fb: Eff[R, B]): Eff[R, (A, B)] =
-    EffApplicative[R].product(this, fb)
-
-  def map2[B, C](fb: Eff[R, B])(f: (A, B) => C): Eff[R, C] =
-    EffApplicative[R].map2(this, fb)(f)
-
-  def map2Flatten[B, C](fb: Eff[R, B])(f: (A, B) => Eff[R, C]): Eff[R, C] =
-    EffMonad[R].flatMap(EffApplicative[R].product(this, fb)) { case (a, b) => f(a, b) }
-
-  def *>[B](fb: Eff[R, B]): Eff[R, B] =
-    EffApplicative[R].map2(this, fb) { case (_, b) => b }
-
-  def <*[B](fb: Eff[R, B]): Eff[R, A] =
-    EffApplicative[R].map2(this, fb) { case (a, _) => a }
-
-  def >>=[B](f: A => Eff[R, B]): Eff[R, B] =
-    flatMap(f)
-
-  def >>[B](fb: Eff[R, B]): Eff[R, B] =
-    flatMap(_ => fb)
-
-  def <<[B](fb: Eff[R, B]): Eff[R, A] =
-    flatMap(a => fb.map(_ => a))
-
-  def flatMap[B](f: A => Eff[R, B]): Eff[R, B] =
-    EffMonad[R].flatMap(this)(f)
-
-  def flatten[B](implicit ev: A <:< Eff[R, B]): Eff[R, B] =
-    flatMap(ev)
 
   /** add one last action to be executed after any computation chained to this Eff value */
   def addLast(l: =>Eff[R, Unit]): Eff[R, A] =
@@ -99,64 +65,7 @@ case class ImpureAp[R, X, A](unions: Unions[R, X], continuation: Continuation[R,
     ImpureAp[R, X, A](unions, continuation, last <* l)
 }
 
-
-object Eff extends EffCreation with
-  EffInterpretation with
-  EffImplicits
-
 trait EffImplicits {
-
-  @deprecated(message = "use EffMonad", since = "")
-  final def effMonadUnsafe: Monad[Eff[AnyRef, *]] = effMonadUnsafeImpl
-
-  /**
-    * Monad implementation for the Eff[R, *] type
-    */
-  private[this] final val effMonadUnsafeImpl: Monad[Eff[AnyRef, *]] = new Monad[Eff[AnyRef, *]] {
-
-    def pure[A](a: A): Eff[AnyRef, A] =
-      Pure[AnyRef, A](a)
-
-    override def map[A, B](fa: Eff[AnyRef, A])(f: A => B): Eff[AnyRef, B] =
-      fa match {
-        case Pure(a, l) =>
-          Impure(NoEffect(a), Continuation.unit.map(f), l)
-
-        case Impure(union, continuation, last) =>
-          Impure(union, continuation map f, last)
-
-        case ImpureAp(unions, continuations, last) =>
-          ImpureAp(unions, continuations map f, last)
-      }
-
-    /**
-      * When flatMapping the last action must still be executed after the next action
-      */
-    def flatMap[A, B](fa: Eff[AnyRef, A])(f: A => Eff[AnyRef, B]): Eff[AnyRef, B] =
-      fa match {
-        case Pure(a, l) =>
-          Impure[AnyRef, A, B](NoEffect[AnyRef, A](a), Continuation.lift(x => f(x).addLast(l)))
-
-        case Impure(union, continuation, last) =>
-          Impure(union, continuation.append(f), last)
-
-        case ImpureAp(unions, continuation, last) =>
-          ImpureAp(unions, continuation.append(f), last)
-      }
-
-    def tailRecM[A, B](a: A)(f: A => Eff[AnyRef, Either[A, B]]): Eff[AnyRef, B] =
-      f(a) match {
-        case Pure(v, l) => v match {
-          case Left(a1) => tailRecM(a1)(f)
-          case Right(b) => Pure(b)
-        }
-        case Impure(u, c, l) =>
-          Impure(u, Continuation.lift((x: u.X) => c(x).flatMap(a1 => a1.fold(a11 => tailRecM(a11)(f), b => pure(b)))), l)
-
-        case ImpureAp(u, c, l) =>
-          ImpureAp(u, Continuation.lift(x => c(x).flatMap(a1 => a1.fold(a11 => tailRecM(a11)(f), b => pure(b)))), l)
-      }
-  }
 
   @deprecated(message = "use EffApplicative", since = "")
   final def effApplicativeUnsafe: Applicative[Eff[AnyRef, *]] = effApplicativeUnsafeImpl
@@ -211,8 +120,6 @@ trait EffImplicits {
       }
   }
 
-  implicit final def EffMonad[R]: Monad[Eff[R, *]] = effMonadUnsafeImpl.asInstanceOf[Monad[Eff[R, *]]]
-
   final def EffApplicative[R]: Applicative[Eff[R, *]] = effApplicativeUnsafeImpl.asInstanceOf[Applicative[Eff[R, *]]]
 
 }
@@ -223,14 +130,6 @@ trait EffCreation {
   /** create an Eff[R, A] value from an effectful value of type T[V] provided that T is one of the effects of R */
   def send[T[_], R, V](tv: T[V])(implicit member: T |= R): Eff[R, V] =
     ImpureAp(Unions(member.inject(tv), Vector.empty), Continuation.lift(xs => pure[R, V](xs.head.asInstanceOf[V])))
-
-  /** use the internal effect as one of the stack effects */
-  def collapse[R, M[_], A](r: Eff[R, M[A]])(implicit m: M |= R): Eff[R, A] =
-    EffMonad[R].flatMap(r)(mx => send(mx)(m))
-
-  /** create an Eff value for () */
-  def unit[R]: Eff[R, Unit] =
-    EffMonad.pure(())
 
   /** create a pure value */
   def pure[R, A](a: A): Eff[R, A] =
@@ -252,13 +151,6 @@ trait EffCreation {
   def ap[R, A, B](a: Eff[R, A])(f: Eff[R, A => B]): Eff[R, B] =
     EffImplicits.EffApplicative[R].ap(f)(a)
 
-  /** use the applicative instance of Eff to traverse a list of values */
-  def traverseA[R, F[_] : Traverse, A, B](fs: F[A])(f: A => Eff[R, B]): Eff[R, F[B]] =
-    Traverse[F].traverse(fs)(f)(EffImplicits.EffApplicative[R])
-
-  /** use the applicative instance of Eff to sequence a list of values */
-  def sequenceA[R, F[_] : Traverse, A](fs: F[Eff[R, A]]): Eff[R, F[A]] =
-    Traverse[F].sequence(fs)(EffImplicits.EffApplicative[R])
 
   /** use the applicative instance of Eff to traverse a list of values, then flatten it */
   def flatTraverseA[R, F[_], A, B](fs: F[A])(f: A => Eff[R, F[B]])(implicit FT: Traverse[F], FM: FlatMap[F]): Eff[R, F[B]] =
@@ -268,81 +160,6 @@ trait EffCreation {
   def flatSequenceA[R, F[_], A](fs: F[Eff[R, F[A]]])(implicit FT: Traverse[F], FM: FlatMap[F]): Eff[R, F[A]] =
     FT.flatSequence[Eff[R, *], A](fs)(EffImplicits.EffApplicative[R], FM)
 
-  /** bracket an action with one last action to execute at the end of the program */
-  def bracketLast[R, A, B, C](acquire: Eff[R, A])(use: A => Eff[R, B])(release: A => Eff[R, C]): Eff[R, B] =
-    for {
-      a <- acquire
-      b <- use(a).addLast(release(a).void)
-    } yield b
-
-  /** attach a clean-up action to the continuation (if any) */
-  def whenStopped[R, A](e: Eff[R, A], action: Last[R]): Eff[R, A] =
-    e match {
-      case Pure(a, l)        => Pure(a, l)
-      case Impure(u, c, l)   => Impure(u,   c.copy(onNone = c.onNone <* action), l)
-      case ImpureAp(u, c, l) => ImpureAp(u, c.copy(onNone = c.onNone <* action), l)
-    }
-
-  def retryUntil[R, A](e: Eff[R, A], condition: A => Boolean, durations: List[FiniteDuration], waitFor: FiniteDuration => Eff[R, Unit]): Eff[R, A] =
-    e.flatMap { a =>
-      if (condition(a))
-        Eff.pure(a)
-      else
-        durations match {
-          case Nil =>
-            Eff.pure(a)
-
-          case duration :: rest =>
-            waitFor(duration) >>
-            retryUntil(e, condition, rest, waitFor)
-        }
-    }
-
 }
 
 object EffCreation extends EffCreation
-
-trait EffInterpretation {
-
-  /**
-   * base runner for an Eff value having no effects at all
-   * the execution is trampolined using Eval
-   */
-  def run[A](eff: Eff[NoFx, A]): A = {
-    def runEval[X](e: Eff[NoFx, X]): Eval[X] =
-      e match {
-        case Pure(a, Last(None)) =>
-          Eval.now(a)
-
-        case Pure(a, Last(Some(l))) =>
-          runEval(l.value).as(a)
-
-        case Impure(NoEffect(a), c, Last(None)) =>
-          Eval.later(c(a)).flatMap(runEval)
-
-        case Impure(NoEffect(a), c, Last(Some(l))) =>
-          Eval.later(c(a)).flatMap(runEval).flatMap(res => runEval(l.value).as(res))
-
-        case other => sys.error("impossible: cannot run the effects in "+other)
-      }
-
-    runEval(eff).value
-  }
-
-
-  /**
-   * get the pure value if there is no effect
-   */
-  def runPure[R, A](eff: Eff[R, A]): Option[A] =
-    eff match {
-      case Pure(a, Last(Some(l)))     => l.value; Some(a)
-      case Pure(a, _)                 => Some(a)
-      case Impure(NoEffect(a), c, l)  => runPure(c(a).addLast(l))
-      case _                          => None
-    }
-
-
-}
-
-object EffInterpretation extends EffInterpretation
-
