@@ -211,31 +211,6 @@ trait Interpret {
 
     })
 
-  /**
-   * Interpret the effect T with a side-effect O (see the write method below)
-   */
-  def augment[R, T[_], O[_], A](eff: Eff[R, A])(w: Augment[T, O])(implicit memberT: MemberInOut[T, R], memberO: MemberIn[O, R]): Eff[R, A] =  {
-    translateInto(eff)(new Translate[T, R] {
-      def apply[X](tx: T[X]): Eff[R, X] = send[O, R, Unit](w(tx)) >> send[T, R, X](tx)
-    })
-  }
-
-  /**
-   * For each effect T add some "log statements" O using the Writer effect
-   */
-  def write[R, T[_], O, A](eff: Eff[R, A])(w: Write[T, O])(implicit memberT: MemberInOut[T, R], memberW: MemberIn[Writer[O, *], R]): Eff[R, A] =  {
-    augment[R, T, Writer[O, *], A](eff)(new Augment[T, Writer[O, *]]{
-      def apply[X](tx: T[X]) = Writer.tell[O](w(tx))
-    })
-  }
-
-  /**
-   * For a single effect T log every value of that effect
-   */
-  def trace[R, T[_], A](eff: Eff[R, A])(implicit memberT: MemberInOut[T, R], memberW: MemberInOut[Writer[T[_], *], R]): Eff[R, A] =
-    write[R, T, T[_], A](eff)(new Write[T, T[_]] {
-      def apply[X](tx: T[X]): T[_] = tx
-    })
 
 }
 
